@@ -35,6 +35,7 @@
       ]
     ],
     "experiments": {
+      "baseUrl": "/Buch-AI",
       "typedRoutes": true
     }
   }
