@@ -1,74 +1,133 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet } from 'react-native';
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
+import { ThemedTextInput } from '@/components/ThemedTextInput';
+import { Button } from '@/components/ui/Button';
+import { useStory } from '@/contexts/StoryContext';
+import { generateStoryStream } from '@/services/huggingface';
+import { SafeAreaScrollView } from '@/components/SafeAreaScrollView';
+import logger from '@/utils/logger';
 
-export default function HomeScreen() {
+export default function CreateStoryScreen() {
+  const [prompt, setPrompt] = useState('');
+  const { state, dispatch } = useStory();
+  const [editableContent, setEditableContent] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  async function handleGenerateStory() {
+    if (!prompt.trim()) return;
+
+    try {
+      setIsGenerating(true);
+      dispatch({ type: 'SET_GENERATING', payload: true });
+      dispatch({ type: 'SET_ERROR', payload: null });
+
+      let generatedText = '';
+      setEditableContent('');
+      logger.info('Story generation started', { prompt });
+
+      const generator = generateStoryStream(prompt);
+
+      for await (const token of generator) {
+        generatedText += token;
+        logger.debug('Story text updated', { length: generatedText.length });
+        setEditableContent(generatedText);
+      }
+
+      logger.info('Story generation completed', { length: generatedText.length });
+
+      const newStory = {
+        id: Date.now().toString(),
+        prompt,
+        content: generatedText,
+        authorId: 'current-user',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      dispatch({ type: 'SET_CURRENT_STORY', payload: newStory });
+    } catch (error) {
+      logger.error('Failed to generate story', { error });
+      dispatch({ type: 'SET_ERROR', payload: 'Failed to generate story' });
+    } finally {
+      setIsGenerating(false);
+      dispatch({ type: 'SET_GENERATING', payload: false });
+    }
+  }
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
+    <SafeAreaScrollView>
+      <ThemedView style={styles.container}>
+        <ThemedText type="title">Create Your Story</ThemedText>
+        <ThemedTextInput
+          placeholder="Enter your story prompt..."
+          value={prompt}
+          onChangeText={setPrompt}
+          multiline
+          style={styles.promptInput}/>
+        <Button
+          onPress={handleGenerateStory}
+          disabled={state.isGenerating || !prompt.trim()}
+          loading={state.isGenerating}>
+          Generate Story
+        </Button>
+        {state.error && <ThemedText style={styles.error}>{state.error}</ThemedText>}
+
+        {editableContent !== '' && (
+          <>
+            <ThemedText type="subtitle" style={styles.editingTitle}>Edit Your Story</ThemedText>
+            <ThemedTextInput
+              value={editableContent}
+              onChangeText={setEditableContent}
+              multiline
+              style={styles.storyEditor}
+              editable={!isGenerating}
+            />
+            <Button
+              onPress={() => {
+                if (state.currentStory) {
+                  const updatedStory = {
+                    ...state.currentStory,
+                    content: editableContent,
+                    updatedAt: new Date(),
+                  };
+                  dispatch({ type: 'UPDATE_STORY', payload: updatedStory });
+                }
+              }}>
+              Save Changes
+            </Button>
+          </>
+        )}
       </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12'
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    </SafeAreaScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  container: {
+    flex: 1,
+    padding: 16,
   },
-  stepContainer: {
-    gap: 8,
+  promptInput: {
+    height: 100,
+    marginVertical: 16,
+    padding: 12,
+    borderRadius: 8,
+  },
+  error: {
+    color: 'red',
+    marginTop: 8,
+  },
+  editingTitle: {
+    marginTop: 24,
     marginBottom: 8,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  storyEditor: {
+    height: 300,
+    marginVertical: 16,
+    padding: 12,
+    borderRadius: 8,
   },
 });
