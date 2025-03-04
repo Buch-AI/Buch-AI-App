@@ -6,7 +6,7 @@ import { ThemedView } from '@/components/ThemedView';
 import { ThemedTextInput } from '@/components/ThemedTextInput';
 import { Button } from '@/components/ui/Button';
 import { useStory } from '@/contexts/StoryContext';
-import { generateStoryStream } from '@/services/huggingface';
+import { HuggingFaceApiAdapter } from '@/services/llmApiAdapter';
 import { SafeAreaScrollView } from '@/components/SafeAreaScrollView';
 import logger from '@/utils/logger';
 
@@ -28,7 +28,8 @@ export default function CreateStoryScreen() {
       setEditableContent('');
       logger.info('Story generation started', { prompt });
 
-      const generator = generateStoryStream(prompt);
+      const huggingFaceApiAdapter = new HuggingFaceApiAdapter;
+      const generator = huggingFaceApiAdapter.generateStoryStream(prompt);
 
       for await (const token of generator) {
         generatedText += token;
