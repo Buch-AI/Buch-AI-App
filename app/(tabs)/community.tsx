@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { StyleSheet, FlatList } from 'react-native';
+import { FlatList } from 'react-native';
 
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
@@ -21,24 +21,14 @@ export default function CommunityScreen() {
   }, [dispatch]);
 
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView className="flex-1 p-4">
       <ThemedText type="title">Community Stories</ThemedText>
       <FlatList
         data={state.stories}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => <StoryCard story={item} />}
-        contentContainerStyle={styles.list}
+        contentContainerStyle={{ gap: 16 }}
       />
     </ThemedView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
-  },
-  list: {
-    gap: 16,
-  },
-});

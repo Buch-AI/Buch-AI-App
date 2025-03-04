@@ -1,4 +1,4 @@
-import { TextInput, TextInputProps, StyleSheet } from 'react-native';
+import { TextInput, TextInputProps } from 'react-native';
 import { useThemeColor } from '../hooks/useThemeColor';
 
 export type ThemedTextInputProps = TextInputProps & {
@@ -13,16 +13,10 @@ export function ThemedTextInput(props: ThemedTextInputProps) {
 
   return (
     <TextInput
-      style={[{ color, backgroundColor }, styles.input, style]}
-      placeholderTextColor={color + '80'}
+      style={[{ color, backgroundColor }, style]}
+      className="border border-gray-300 rounded-lg p-3"
+      placeholderTextColor={`${color}80`}
       {...otherProps}
     />
   );
 }
-
-const styles = StyleSheet.create({
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-  },
-});

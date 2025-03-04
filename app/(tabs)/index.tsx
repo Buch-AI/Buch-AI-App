@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { StyleSheet } from 'react-native';
 
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
@@ -28,7 +27,7 @@ export default function CreateStoryScreen() {
       setEditableContent('');
       logger.info('Story generation started', { prompt });
 
-      const huggingFaceApiAdapter = new HuggingFaceApiAdapter;
+      const huggingFaceApiAdapter = new HuggingFaceApiAdapter();
       const generator = huggingFaceApiAdapter.generateStoryStream(prompt);
 
       for await (const token of generator) {
@@ -60,30 +59,31 @@ export default function CreateStoryScreen() {
 
   return (
     <SafeAreaScrollView>
-      <ThemedView style={styles.container}>
+      <ThemedView className="flex-1 p-4">
         <ThemedText type="title">Create Your Story</ThemedText>
         <ThemedTextInput
           placeholder="Enter your story prompt..."
           value={prompt}
           onChangeText={setPrompt}
           multiline
-          style={styles.promptInput}/>
+          className="h-24 my-4 p-3 rounded-lg"
+        />
         <Button
           onPress={handleGenerateStory}
           disabled={state.isGenerating || !prompt.trim()}
           loading={state.isGenerating}>
           Generate Story
         </Button>
-        {state.error && <ThemedText style={styles.error}>{state.error}</ThemedText>}
+        {state.error && <ThemedText className="text-red-500 mt-2">{state.error}</ThemedText>}
 
         {editableContent !== '' && (
           <>
-            <ThemedText type="subtitle" style={styles.editingTitle}>Edit Your Story</ThemedText>
+            <ThemedText type="subtitle" className="mt-6 mb-2">Edit Your Story</ThemedText>
             <ThemedTextInput
               value={editableContent}
               onChangeText={setEditableContent}
               multiline
-              style={styles.storyEditor}
+              className="h-72 my-4 p-3 rounded-lg"
               editable={!isGenerating}
             />
             <Button
@@ -105,30 +105,3 @@ export default function CreateStoryScreen() {
     </SafeAreaScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
-  },
-  promptInput: {
-    height: 100,
-    marginVertical: 16,
-    padding: 12,
-    borderRadius: 8,
-  },
-  error: {
-    color: 'red',
-    marginTop: 8,
-  },
-  editingTitle: {
-    marginTop: 24,
-    marginBottom: 8,
-  },
-  storyEditor: {
-    height: 300,
-    marginVertical: 16,
-    padding: 12,
-    borderRadius: 8,
-  },
-});
