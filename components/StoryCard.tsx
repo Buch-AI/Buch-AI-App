@@ -1,4 +1,3 @@
-import { StyleSheet } from 'react-native';
 import { Link } from 'expo-router';
 
 import { ThemedText } from './ThemedText';
@@ -12,25 +11,13 @@ interface StoryCardProps {
 export function StoryCard({ story }: StoryCardProps) {
   return (
     <Link href={`/story/${story.id}`} asChild>
-      <ThemedView style={styles.card}>
+      <ThemedView className="gap-2 rounded-lg p-4">
         <ThemedText type="subtitle">{story.prompt}</ThemedText>
         <ThemedText numberOfLines={3}>{story.content}</ThemedText>
-        <ThemedText style={styles.date}>
+        <ThemedText className="text-xs opacity-70">
           {new Date(story.createdAt).toLocaleDateString()}
         </ThemedText>
       </ThemedView>
     </Link>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    padding: 16,
-    borderRadius: 8,
-    gap: 8,
-  },
-  date: {
-    fontSize: 12,
-    opacity: 0.7,
-  },
-});

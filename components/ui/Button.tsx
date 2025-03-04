@@ -1,4 +1,4 @@
-import { TouchableOpacity, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import { TouchableOpacity, Text, ActivityIndicator } from 'react-native';
 
 interface ButtonProps {
   onPress: () => void;
@@ -10,34 +10,14 @@ interface ButtonProps {
 export function Button({ onPress, children, disabled, loading }: ButtonProps) {
   return (
     <TouchableOpacity
-      style={[
-        styles.button,
-        disabled && styles.disabled,
-        { pointerEvents: disabled || loading ? 'none' : 'auto' },
-      ]}
-      onPress={onPress}>
+      className={`items-center rounded-lg bg-[#0a7ea4] p-3 ${disabled ? 'opacity-50' : ''}`}
+      onPress={onPress}
+      disabled={disabled || loading}>
       {loading ? (
         <ActivityIndicator color="white" />
       ) : (
-        <Text style={styles.text}>{children}</Text>
+        <Text className="text-lg font-semibold text-white">{children}</Text>
       )}
     </TouchableOpacity>
   );
 }
-
-const styles = StyleSheet.create({
-  button: {
-    backgroundColor: '#0a7ea4',
-    padding: 12,
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  disabled: {
-    opacity: 0.5,
-  },
-  text: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-});
