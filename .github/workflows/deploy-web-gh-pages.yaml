@@ -9,20 +9,19 @@ jobs:
   deploy:
     environment: github-pages
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
-      
-      - uses: 'google-github-actions/auth@v2'
+    steps:      
+      - name: ⚙️ Authenticate to Google Cloud
+        uses: 'google-github-actions/auth@v2'
         with:
           credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
 
       - name: ⚙️ Set up repository
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
       
-      - name: ❇️ Setup Node.js environment
+      - name: ❇️ Set up Node.js environment
         uses: actions/setup-node@v3.8.2
         with:
           node-version: 18.x
