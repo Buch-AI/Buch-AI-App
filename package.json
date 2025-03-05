@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@expo/vector-icons": "^14.0.2",
+    "@google-cloud/bigquery": "^7.9.2",
     "@huggingface/inference": "^2.8.1",
     "@react-navigation/bottom-tabs": "^7.2.0",
     "@react-navigation/native": "^7.0.14",

@@ -36,5 +36,8 @@ yarn-error.*
 # typescript
 *.tsbuildinfo
 
+# Google Cloud SDK
+*-key.json
+
 # Cursor
 .cursorrules

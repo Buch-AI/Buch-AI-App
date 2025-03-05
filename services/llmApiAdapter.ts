@@ -1,5 +1,5 @@
-import { HF_API_KEY } from '../constants/Config';
 import { HfInference } from '@huggingface/inference';
+import { HF_API_KEY } from '../constants/Config';
 import logger from '../utils/logger';
 
 export interface LlmApiAdapter {
@@ -21,9 +21,9 @@ export class HuggingFaceApiAdapter implements LlmApiAdapter {
       const instructPrompt = [
         `<|system|>You are a creative story writer.`,
         `<|user|>Write a story about: ${prompt}`,
-        `<|assistant|>`
-      ].join("\n");
-  
+        `<|assistant|>`,
+      ].join('\n');
+
       const response = await this.hfInference.textGeneration({
         model: this.hfModelId,
         inputs: instructPrompt,
@@ -36,22 +36,22 @@ export class HuggingFaceApiAdapter implements LlmApiAdapter {
           return_full_text: false,
         },
       });
-  
+
       return response.generated_text;
     } catch (error) {
       logger.error('Failed to generate story:', { error });
       throw error;
     }
   }
-  
-  async * generateStoryStream(prompt: string) {
+
+  async* generateStoryStream(prompt: string) {
     try {
       const instructPrompt = [
         `<|system|>You are a creative story writer.`,
         `<|user|>Write a story about: ${prompt}`,
-        `<|assistant|>`
-      ].join("\n");
-  
+        `<|assistant|>`,
+      ].join('\n');
+
       const stream = await this.hfInference.textGenerationStream({
         model: this.hfModelId,
         inputs: instructPrompt,
@@ -64,7 +64,7 @@ export class HuggingFaceApiAdapter implements LlmApiAdapter {
           return_full_text: false,
         },
       });
-  
+
       for await (const response of stream) {
         logger.debug('Token received:', { tokenLength: response.token.text.length });
         yield response.token.text;
@@ -73,5 +73,5 @@ export class HuggingFaceApiAdapter implements LlmApiAdapter {
       logger.error('Failed to generate story stream:', { error });
       throw error;
     }
-  }  
+  }
 }
