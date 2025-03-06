@@ -7,8 +7,8 @@ import { useEffect } from 'react';
 import { View } from 'react-native';
 import 'react-native-reanimated';
 
-import { useColorScheme } from '../hooks/useColorScheme';
 import { StoryProvider } from '../contexts/StoryContext';
+import { useColorScheme } from '../hooks/useColorScheme';
 
 import '../global.css';
 

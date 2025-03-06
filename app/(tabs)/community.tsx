@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
 import { FlatList } from 'react-native';
 
+import { StoryCard } from '@/components/StoryCard';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useStory } from '@/contexts/StoryContext';
-import { StoryCard } from '@/components/StoryCard';
 
 export default function CommunityScreen() {
   const { state, dispatch } = useStory();

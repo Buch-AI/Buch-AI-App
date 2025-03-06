@@ -1,8 +1,8 @@
 import { Link } from 'expo-router';
 
+import type { Story } from '@/contexts/StoryContext';
 import { ThemedText } from './ThemedText';
 import { ThemedView } from './ThemedView';
-import type { Story } from '@/contexts/StoryContext';
 
 interface StoryCardProps {
   story: Story;

@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 
+import { SafeAreaScrollView } from '@/components/SafeAreaScrollView';
 import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
 import { ThemedTextInput } from '@/components/ThemedTextInput';
+import { ThemedView } from '@/components/ThemedView';
 import { Button } from '@/components/ui/Button';
 import { useStory } from '@/contexts/StoryContext';
 import { HuggingFaceApiAdapter } from '@/services/llmApiAdapter';
-import { SafeAreaScrollView } from '@/components/SafeAreaScrollView';
 import logger from '@/utils/logger';
+import { queryGitHub } from '@/services/databaseAdapter';
 
 export default function CreateStoryScreen() {
   const [prompt, setPrompt] = useState('');
@@ -57,6 +58,8 @@ export default function CreateStoryScreen() {
     }
   }
 
+  queryGitHub();
+
   return (
     <SafeAreaScrollView>
       <ThemedView className="flex-1 p-4">
@@ -66,7 +69,7 @@ export default function CreateStoryScreen() {
           value={prompt}
           onChangeText={setPrompt}
           multiline
-          className="h-24 my-4 p-3 rounded-lg"
+          className="my-4 h-24 rounded-lg p-3"
         />
         <Button
           onPress={handleGenerateStory}
@@ -74,16 +77,16 @@ export default function CreateStoryScreen() {
           loading={state.isGenerating}>
           Generate Story
         </Button>
-        {state.error && <ThemedText className="text-red-500 mt-2">{state.error}</ThemedText>}
+        {state.error && <ThemedText className="mt-2 text-red-500">{state.error}</ThemedText>}
 
         {editableContent !== '' && (
           <>
-            <ThemedText type="subtitle" className="mt-6 mb-2">Edit Your Story</ThemedText>
+            <ThemedText type="subtitle" className="mb-2 mt-6">Edit Your Story</ThemedText>
             <ThemedTextInput
               value={editableContent}
               onChangeText={setEditableContent}
               multiline
-              className="h-72 my-4 p-3 rounded-lg"
+              className="my-4 h-72 rounded-lg p-3"
               editable={!isGenerating}
             />
             <Button

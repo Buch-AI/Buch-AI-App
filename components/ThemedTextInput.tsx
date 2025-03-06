@@ -14,7 +14,7 @@ export function ThemedTextInput(props: ThemedTextInputProps) {
   return (
     <TextInput
       style={[{ color, backgroundColor }, style]}
-      className="border border-gray-300 rounded-lg p-3"
+      className="rounded-lg border border-gray-300 p-3"
       placeholderTextColor={`${color}80`}
       {...otherProps}
     />

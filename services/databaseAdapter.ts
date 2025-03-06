@@ -3,7 +3,7 @@
 
 import { BigQuery } from '@google-cloud/bigquery';
 
-async function queryGitHub() {
+export async function queryGitHub() {
   // Create a client
   const bigqueryClient = new BigQuery();
 
