@@ -8,6 +8,7 @@
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo start --android --clear --no-dev --minify",
     "ios": "expo start --ios --clear --no-dev --minify",
+    "web": "expo start --web --clear --no-dev --minify",
     "web:d": "NODE_ENV=d expo start --web --clear --no-dev --minify",
     "web:p": "NODE_ENV=p expo start --web --clear --no-dev --minify",
     "test": "jest --watchAll",
