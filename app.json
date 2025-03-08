@@ -33,10 +33,6 @@
           "backgroundColor": "#ffffff"
         }
       ]
-    ],
-    "experiments": {
-      "baseUrl": "/Buch-AI",
-      "typedRoutes": true
-    }
+    ]
   }
 }

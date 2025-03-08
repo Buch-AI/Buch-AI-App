@@ -6,9 +6,9 @@ import { ThemedTextInput } from '@/components/ThemedTextInput';
 import { ThemedView } from '@/components/ThemedView';
 import { Button } from '@/components/ui/Button';
 import { useStory } from '@/contexts/StoryContext';
+import { testQueryGithub } from '@/services/databaseAdapter';
 import { HuggingFaceApiAdapter } from '@/services/llmApiAdapter';
 import logger from '@/utils/logger';
-import { queryGitHub } from '@/services/databaseAdapter';
 
 export default function CreateStoryScreen() {
   const [prompt, setPrompt] = useState('');
@@ -58,7 +58,7 @@ export default function CreateStoryScreen() {
     }
   }
 
-  queryGitHub();
+  testQueryGithub();
 
   return (
     <SafeAreaScrollView>

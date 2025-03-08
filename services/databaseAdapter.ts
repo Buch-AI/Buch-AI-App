@@ -1,33 +1,29 @@
-// user authentication
-// https://stepan.wtf/cloud-naming-convention/
+import axios from 'axios';
+import { SERVER_URL } from '@/constants/Config';
+import logger from '@/utils/logger';
 
-import { BigQuery } from '@google-cloud/bigquery';
-
-export async function queryGitHub() {
-  // Create a client
-  const bigqueryClient = new BigQuery();
-
-  const location = 'europe-west2';
-
-  // The SQL query to run
+export async function testQueryGithub() {
   const sqlQuery = `SELECT subject AS subject, COUNT(*) AS num_duplicates
-  FROM \`bigquery-public-data.github_repos.commits\`
-  GROUP BY subject 
-  ORDER BY num_duplicates 
-  DESC LIMIT 10`;
+FROM \`bigquery-public-data.github_repos.commits\`
+GROUP BY subject 
+ORDER BY num_duplicates 
+DESC LIMIT 10`;
 
-  const options = {
-    query: sqlQuery,
-    // Location must match that of the dataset(s) referenced in the query.
-    location: 'US',
-    useQueryCache: false,
-  };
+  try {
+    const response = await axios.post(`${SERVER_URL}/database/query`, {
+      query: sqlQuery,
+    });
+    logger.info(JSON.stringify(response));
 
-  // Run the query
-  const [rows] = await bigqueryClient.query(options);
+    const rows = response.data.data;
 
-  console.log('Rows:');
-  rows.forEach((row) => console.log(`${row.subject}: ${row.num_duplicates}`));
+    logger.info('Rows:');
+    rows.forEach((row: { subject: string; num_duplicates: number }) => logger.info(`${row.subject}: ${row.num_duplicates}`));
+  } catch (error) {
+    logger.error(`${error}`);
+  }
 }
 
-queryGitHub();
+if (typeof require !== 'undefined' && require.main === module) {
+  testQueryGithub();
+}

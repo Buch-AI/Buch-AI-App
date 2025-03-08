@@ -9,10 +9,10 @@ interface LogMessage {
 
 function formatLog(level: LogLevel, message: string, data?: Record<string, unknown>): LogMessage {
   return {
-    level,
+    level: level,
     timestamp: new Date().toISOString(),
-    message,
-    data,
+    message: message,
+    data: data,
   };
 }
 
