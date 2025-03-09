@@ -6,8 +6,7 @@ import { ThemedTextInput } from '@/components/ThemedTextInput';
 import { ThemedView } from '@/components/ThemedView';
 import { Button } from '@/components/ui/Button';
 import { useStory } from '@/contexts/StoryContext';
-import { testQueryGithub } from '@/services/databaseAdapter';
-import { HuggingFaceApiAdapter } from '@/services/llmApiAdapter';
+import { LlmAdapter } from '@/services/llmAdapter';
 import logger from '@/utils/logger';
 
 export default function CreateStoryScreen() {
@@ -28,10 +27,10 @@ export default function CreateStoryScreen() {
       setEditableContent('');
       logger.info('Story generation started', { prompt });
 
-      const huggingFaceApiAdapter = new HuggingFaceApiAdapter();
-      const generator = huggingFaceApiAdapter.generateStoryStream(prompt);
+      const llmAdapter = new LlmAdapter();
+      const streamGenerator = llmAdapter.generateStoryStream(prompt);
 
-      for await (const token of generator) {
+      for await (const token of streamGenerator) {
         generatedText += token;
         logger.debug('Story text updated', { length: generatedText.length });
         setEditableContent(generatedText);
@@ -51,14 +50,12 @@ export default function CreateStoryScreen() {
       dispatch({ type: 'SET_CURRENT_STORY', payload: newStory });
     } catch (error) {
       logger.error('Failed to generate story', { error });
-      dispatch({ type: 'SET_ERROR', payload: 'Failed to generate story' });
+      dispatch({ type: 'SET_ERROR', payload: `Failed to generate story: ${error}` });
     } finally {
       setIsGenerating(false);
       dispatch({ type: 'SET_GENERATING', payload: false });
     }
   }
-
-  testQueryGithub();
 
   return (
     <SafeAreaScrollView>
@@ -81,7 +78,7 @@ export default function CreateStoryScreen() {
 
         {editableContent !== '' && (
           <>
-            <ThemedText type="subtitle" className="mb-2 mt-6">Edit Your Story</ThemedText>
+            <ThemedText type="title" className="mb-2 mt-6">Edit Your Story</ThemedText>
             <ThemedTextInput
               value={editableContent}
               onChangeText={setEditableContent}

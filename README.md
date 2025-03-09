@@ -1,4 +1,4 @@
-# Buch AI
+# Buch AI App
 
 Coming soon. Buch AI is the ultimate short story ideation, brainstorming, manuscript writing and illustration companion, designed for fictional literature creatives and artists.
 
@@ -7,19 +7,20 @@ Coming soon. Buch AI is the ultimate short story ideation, brainstorming, manusc
 Clone the repository.
 
 ```bash
-git clone https://github.com/Buch-AI/Buch-AI.git
+git clone https://github.com/Buch-AI/Buch-AI-App.git
 ```
 
 Install the dependencies.
 ```bash
+cd Buch-AI-App/
 npm install
 ```
 
-Run the app for your intended target platform.
+Run the app for your intended target platform in development mode.
 ```bash
-npm run web
-npm run ios
-npm run android
+npm run web:d
+npm run ios:d
+npm run android:d
 ```
 
 ## Appendix: Expo

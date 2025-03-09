@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "buch-ai",
-    "slug": "buch-ai",
+    "name": "buch-ai-app",
+    "slug": "buch-ai-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
