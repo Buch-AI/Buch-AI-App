@@ -11,6 +11,8 @@ export class LlmAdapter implements LlmAdaptable {
   constructor() {}
 
   async generateStoryString(prompt: string): Promise<string> {
+    logger.info(`Sending request to: ${SERVER_URL}/llm/generate_story_string`);
+
     try {
       const response = await axios.post(`${SERVER_URL}/llm/generate_story_string`, {
         prompt: prompt,
@@ -24,6 +26,8 @@ export class LlmAdapter implements LlmAdaptable {
   }
 
   async* generateStoryStream(prompt: string) {
+    logger.info(`Sending request to: ${SERVER_URL}/llm/generate_story_stream`);
+
     try {
       const response = await fetch(`${SERVER_URL}/llm/generate_story_stream`, {
         method: 'POST',
