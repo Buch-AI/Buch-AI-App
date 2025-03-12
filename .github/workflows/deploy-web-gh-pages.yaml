@@ -49,7 +49,6 @@ jobs:
           mv ./dist/* ./out/
 
       - name: Upload artifact for deployment
-        id: build_upload_artifact
         uses: actions/upload-pages-artifact@v3
         with:
           name: github-pages-artifact
@@ -60,7 +59,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: ${{ steps.build_upload_artifact.outputs.page_url }}
+      url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
       - name: Deploy to GitHub Pages
