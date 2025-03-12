@@ -52,6 +52,7 @@ jobs:
         id: build_upload_artifact
         uses: actions/upload-pages-artifact@v3
         with:
+          name: github-pages-artifact
           path: ./out
 
   deploy:
@@ -65,3 +66,5 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2
+        with:
+          artifact_name: github-pages-artifact
