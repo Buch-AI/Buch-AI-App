@@ -6,8 +6,9 @@ on:
   workflow_dispatch:
 
 permissions:
-  id-token: write
   contents: read
+  pages: write
+  id-token: write
 
 jobs:
   build:
@@ -48,6 +49,7 @@ jobs:
           mv ./dist/* ./out/
 
       - name: Upload artifact for deployment
+        id: build_upload_artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./out
@@ -57,7 +59,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: ${{ steps.build_upload_artifact.outputs.page_url }}
 
     steps:
       - name: Deploy to GitHub Pages
