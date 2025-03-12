@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { BUCHAI_SERVER_URL } from '@/constants/Config';
-import logger from '@/utils/logger';
+import { BUCHAI_SERVER_URL } from '../constants/Config';
+import logger from '../utils/logger';
 
 export async function testQueryGithub() {
   const sqlQuery = `SELECT subject AS subject, COUNT(*) AS num_duplicates

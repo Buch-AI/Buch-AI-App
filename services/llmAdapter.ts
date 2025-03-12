@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { BUCHAI_SERVER_URL } from '@/constants/Config';
-import logger from '@/utils/logger';
+import { BUCHAI_SERVER_URL } from '../constants/Config';
+import logger from '../utils/logger';
 
 export interface LlmAdaptable {
   generateStoryString(prompt: string): Promise<string>;
