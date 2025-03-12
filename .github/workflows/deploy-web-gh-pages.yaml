@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
   
 jobs:
-  deploy:
+  build:
     environment: github-pages
     runs-on: ubuntu-latest
     steps:      
@@ -35,9 +35,27 @@ jobs:
       - name: 📦 Install dependencies
         run: yarn install
 
-      - name: 🌐 Export the app
-        run: |
-          git remote set-url origin https://git:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
-          yarn deploy -- -u "github-actions-bot <support+actions@github.com>"
+      - name: 🌐 Build Expo project for web
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          EXPO_PUBLIC_BUCHAI_SERVER_URL: ${{ secrets.EXPO_PUBLIC_BUCHAI_SERVER_URL }}
+        run: |
+          yarn predeploy
+          mkdir -p ./out
+          mv ./dist/* ./out/
+
+      - name: Upload artifact for deployment
+        uses: actions/upload-pages-artifact@v2
+        with:
+          path: ./out
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2
