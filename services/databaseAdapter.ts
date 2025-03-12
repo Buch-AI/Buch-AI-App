@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { SERVER_URL } from '@/constants/Config';
+import { BUCHAI_SERVER_URL } from '@/constants/Config';
 import logger from '@/utils/logger';
 
 export async function testQueryGithub() {
@@ -10,7 +10,7 @@ ORDER BY num_duplicates
 DESC LIMIT 10`;
 
   try {
-    const response = await axios.post(`${SERVER_URL}/database/query`, {
+    const response = await axios.post(`${BUCHAI_SERVER_URL}/database/query`, {
       query: sqlQuery,
     });
     logger.info(JSON.stringify(response));

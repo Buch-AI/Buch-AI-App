@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { SERVER_URL } from '@/constants/Config';
-import logger from '../utils/logger';
+import { BUCHAI_SERVER_URL } from '@/constants/Config';
+import logger from '@/utils/logger';
 
 export interface LlmAdaptable {
   generateStoryString(prompt: string): Promise<string>;
@@ -11,10 +11,10 @@ export class LlmAdapter implements LlmAdaptable {
   constructor() {}
 
   async generateStoryString(prompt: string): Promise<string> {
-    logger.info(`Sending request to: ${SERVER_URL}/llm/generate_story_string`);
+    logger.info(`Sending request to: ${BUCHAI_SERVER_URL}/llm/generate_story_string`);
 
     try {
-      const response = await axios.post(`${SERVER_URL}/llm/generate_story_string`, {
+      const response = await axios.post(`${BUCHAI_SERVER_URL}/llm/generate_story_string`, {
         prompt: prompt,
       });
 
@@ -26,10 +26,10 @@ export class LlmAdapter implements LlmAdaptable {
   }
 
   async* generateStoryStream(prompt: string) {
-    logger.info(`Sending request to: ${SERVER_URL}/llm/generate_story_stream`);
+    logger.info(`Sending request to: ${BUCHAI_SERVER_URL}/llm/generate_story_stream`);
 
     try {
-      const response = await fetch(`${SERVER_URL}/llm/generate_story_stream`, {
+      const response = await fetch(`${BUCHAI_SERVER_URL}/llm/generate_story_stream`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
