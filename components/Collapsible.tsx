@@ -12,9 +12,9 @@ export function Collapsible({ children, title }: PropsWithChildren & { title: st
   const theme = useColorScheme() ?? 'light';
 
   return (
-    <ThemedView>
+    <ThemedView className="mb-4">
       <TouchableOpacity
-        className="flex-row items-center gap-1"
+        className="flex-row items-center gap-2 rounded-lg bg-gray-200 p-3"
         onPress={() => setIsOpen((value) => !value)}
         activeOpacity={0.8}>
         <IconSymbol

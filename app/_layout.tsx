@@ -1,25 +1,51 @@
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
+import { Stack as ExpoStack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import 'react-native-reanimated';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import SignInScreen from '@/components/auth/sign-in';
+import SignUpScreen from '@/components/auth/sign-up';
+import NotFoundScreen from './+not-found';
 
 import { StoryProvider } from '../contexts/StoryContext';
 import { useColorScheme } from '../hooks/useColorScheme';
 
 import '../global.css';
 
+import TabNavigator from './(tabs)/index';
+
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
+
+const Stack = createNativeStackNavigator();
+
+// Define the type for the AuthNavigator props
+interface AuthNavigatorProps {
+  setAuthenticated: (value: boolean) => void;
+}
+
+function AuthNavigator({ setAuthenticated }: AuthNavigatorProps) {
+  return (
+    <Stack.Navigator initialRouteName="SignIn">
+      <Stack.Screen name="SignIn" options={{ headerShown: false }}>
+        {() => <SignInScreen setAuthenticated={setAuthenticated} />}
+      </Stack.Screen>
+      <Stack.Screen name="SignUp" component={SignUpScreen} options={{ headerShown: false }} />
+    </Stack.Navigator>
+  );
+}
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
+
+  const [isAuthenticated, setAuthenticated] = useState(false);
 
   useEffect(() => {
     if (loaded) {
@@ -35,10 +61,14 @@ export default function RootLayout() {
     <StoryProvider>
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         <View style={{ flex: 1 }}>
-          <Stack>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="+not-found" />
-          </Stack>
+          {isAuthenticated ? (
+            <Stack.Navigator>
+              <Stack.Screen name="Tabs" component={TabNavigator} options={{ headerShown: false }} />
+              <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ headerShown: false }} />
+            </Stack.Navigator>
+          ) : (
+            <AuthNavigator setAuthenticated={setAuthenticated} />
+          )}
           <StatusBar style="auto" />
         </View>
       </ThemeProvider>
