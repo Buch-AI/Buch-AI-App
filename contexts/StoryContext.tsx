@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useReducer } from 'react';
-import logger from '@/utils/logger';
+import logger from '@/utils/Logger';
 
 export interface Story {
   id: string;

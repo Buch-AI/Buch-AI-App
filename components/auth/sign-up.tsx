@@ -3,11 +3,11 @@ import { ParamListBase } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
 import { Modal, TouchableOpacity } from 'react-native';
-import { ThemedButton } from '@/components/ThemedButton';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedTextInput } from '@/components/ThemedTextInput';
-import { ThemedView } from '@/components/ThemedView';
-import { registerUser } from '@/services/databaseAdapter';
+import { ThemedButton } from '@/components/ui-custom/ThemedButton';
+import { ThemedText } from '@/components/ui-custom/ThemedText';
+import { ThemedTextInput } from '@/components/ui-custom/ThemedTextInput';
+import { ThemedView } from '@/components/ui-custom/ThemedView';
+import { registerUser } from '@/services/DatabaseAdapter';
 
 interface AuthStackParamList extends ParamListBase {
   SignIn: undefined;

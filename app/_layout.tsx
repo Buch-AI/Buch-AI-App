@@ -9,12 +9,12 @@ import 'react-native-reanimated';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import SignInScreen from '@/components/auth/sign-in';
 import SignUpScreen from '@/components/auth/sign-up';
+import { StoryProvider } from '@/contexts/StoryContext';
+import { useColorScheme } from '@/hooks/useColorScheme';
 import NotFoundScreen from './+not-found';
 
-import { StoryProvider } from '../contexts/StoryContext';
-import { useColorScheme } from '../hooks/useColorScheme';
 
-import '../global.css';
+import '@/global.css';
 
 import TabNavigator from './(tabs)/index';
 

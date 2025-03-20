@@ -1,4 +1,3 @@
-import { css } from 'nativewind';
 import React from 'react';
 import { TouchableOpacity, Text, ActivityIndicator } from 'react-native';
 

@@ -1,14 +1,14 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import React, { useState } from 'react';
 
-import { SafeAreaScrollView } from '@/components/SafeAreaScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedTextInput } from '@/components/ThemedTextInput';
-import { ThemedView } from '@/components/ThemedView';
-import { Button } from '@/components/ui/Button';
+import { SafeAreaScrollView } from '@/components/ui-custom/SafeAreaScrollView';
+import { ThemedText } from '@/components/ui-custom/ThemedText';
+import { ThemedTextInput } from '@/components/ui-custom/ThemedTextInput';
+import { ThemedView } from '@/components/ui-custom/ThemedView';
+import { Button } from '@/components/ui-default/Button';
 import { useStory } from '@/contexts/StoryContext';
-import { LlmAdapter } from '@/services/llmAdapter';
-import logger from '@/utils/logger';
+import { LlmAdapter } from '@/services/LlmAdapter';
+import logger from '@/utils/Logger';
 import CommunityScreen from './community';
 
 const Tab = createBottomTabNavigator();

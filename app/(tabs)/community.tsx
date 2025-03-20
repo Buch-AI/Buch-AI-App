@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
 import { FlatList } from 'react-native';
 
-import { StoryCard } from '@/components/StoryCard';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+import { StoryCard } from '@/components/ui-custom/StoryCard';
+import { ThemedText } from '@/components/ui-custom/ThemedText';
+import { ThemedView } from '@/components/ui-custom/ThemedView';
 import { useStory } from '@/contexts/StoryContext';
 
 export default function CommunityScreen() {
