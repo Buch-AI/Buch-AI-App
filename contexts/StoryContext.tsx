@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useReducer } from 'react';
-import logger from '@/utils/Logger';
+import Logger from '@/utils/Logger';
 
 export interface Story {
   id: string;
@@ -38,11 +38,7 @@ export function StoryProvider({ children }: { children: React.ReactNode }) {
     error: null,
   });
 
-  logger.debug('Story context state updated', {
-    isGenerating: state.isGenerating,
-    hasError: !!state.error,
-    hasStory: !!state.currentStory,
-  });
+  Logger.info(`Story context state updated - isGenerating: ${state.isGenerating}, hasError: ${!!state.error}, hasStory: ${!!state.currentStory}`);
 
   return <StoryContext.Provider value={{ state, dispatch }}>{children}</StoryContext.Provider>;
 }
@@ -54,19 +50,26 @@ export function useStory() {
 }
 
 function storyReducer(state: StoryState, action: StoryAction): StoryState {
-  logger.debug('Story reducer action', { type: action.type });
+  Logger.info(`Story reducer action: ${action.type}`);
 
   switch (action.type) {
+  case 'SET_CURRENT_STORY':
+    Logger.info(`Setting current story: ${action.payload?.id || 'none'}`);
+    return { ...state, currentStory: action.payload };
+
+  case 'UPDATE_STORY':
+    Logger.info(`Updating story: ${action.payload.id}`);
+    return {
+      ...state,
+      currentStory: action.payload,
+    };
+
   case 'SET_GENERATING':
     return { ...state, isGenerating: action.payload };
+
   case 'SET_ERROR':
     return { ...state, error: action.payload };
-  case 'SET_CURRENT_STORY':
-    logger.info('Setting current story', { storyId: action.payload?.id });
-    return { ...state, currentStory: action.payload };
-  case 'UPDATE_STORY':
-    logger.info('Updating story', { storyId: action.payload.id });
-    return { ...state, currentStory: action.payload };
+
   default:
     return state;
   }

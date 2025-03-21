@@ -1,39 +1,47 @@
-type LogLevel = 'debug' | 'info' | 'warn' | 'error';
+export default class Logger {
+  static log(message: string) {
+    const { methodName, fileName } = Logger.getCallerInfo();
+    const timestamp = new Date().toISOString();
+    console.log(`[${timestamp}] ${fileName} ${methodName}: ${message}`);
+  }
 
-interface LogMessage {
-  level: LogLevel;
-  message: string;
-  data?: Record<string, unknown>;
-  timestamp: string;
-}
+  static info(message: string) {
+    const { methodName, fileName } = Logger.getCallerInfo();
+    const timestamp = new Date().toISOString();
+    console.log(`[${timestamp}] ${fileName} ${methodName}: ${message}`);
+  }
 
-function formatLog(level: LogLevel, message: string, data?: Record<string, unknown>): LogMessage {
-  return {
-    level: level,
-    timestamp: new Date().toISOString(),
-    message: message,
-    data: data,
-  };
-}
+  static warn(message: string) {
+    const { methodName, fileName } = Logger.getCallerInfo();
+    const timestamp = new Date().toISOString();
+    console.warn(`[${timestamp}] ${fileName} ${methodName}: ${message}`);
+  }
 
-const logger = {
-  debug(message: string, data?: Record<string, unknown>) {
-    if (__DEV__) {
-      console.debug(formatLog('debug', message, data));
+  static error(message: string) {
+    const { methodName, fileName } = Logger.getCallerInfo();
+    const timestamp = new Date().toISOString();
+    console.error(`[${timestamp}] ${fileName} ${methodName}: ${message}`);
+  }
+
+  static getCallerInfo() {
+    const stack = new Error().stack?.split('\n') || [];
+    const callerStackLine = stack[3] || '';
+    const callerInfo = callerStackLine.match(/at\s+(.+)\s+\((.+):(\d+):(\d+)\)/) || callerStackLine.match(/at\s+(.+):(\d+):(\d+)\)/);
+
+    if (callerInfo) {
+      const methodName = callerInfo[1];
+      let fileName = callerInfo[2];
+
+      try {
+        const url = new URL(fileName);
+        fileName = url.pathname;
+      } catch (error) {
+        // If file name is not a URL, keep it as is.
+      }
+
+      return { methodName, fileName };
     }
-  },
 
-  info(message: string, data?: Record<string, unknown>) {
-    console.info(formatLog('info', message, data));
-  },
-
-  warn(message: string, data?: Record<string, unknown>) {
-    console.warn(formatLog('warn', message, data));
-  },
-
-  error(message: string, data?: Record<string, unknown>) {
-    console.error(formatLog('error', message, data));
-  },
-};
-
-export default logger;
+    return { methodName: 'unknown', fileName: 'unknown' };
+  }
+}

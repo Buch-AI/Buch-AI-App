@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { BUCHAI_SERVER_URL } from '@/constants/Config';
-import logger from '@/utils/Logger';
+import Logger from '@/utils/Logger';
 
 // Interface for the login request body
 interface LoginRequest {
@@ -45,13 +45,13 @@ export async function login(username: string, password: string): Promise<TokenRe
         'Content-Type': 'application/x-www-form-urlencoded', // Set the content type
       },
     });
-    logger.info('Login successful:', response.data);
+    Logger.info(`Login successful: ${JSON.stringify(response.data)}`);
     return response.data;
   } catch (error: any) {
     if (error.response) {
-      logger.error('Login failed:', error.response.data); // Log the response data for debugging
+      Logger.error(`Login failed: ${JSON.stringify(error.response.data)}`);
     } else {
-      logger.error('Login failed:', error);
+      Logger.error(`Login failed: ${error}`);
     }
     throw error; // Rethrow the error for handling in the component
   }
@@ -60,15 +60,13 @@ export async function login(username: string, password: string): Promise<TokenRe
 // Function to get the current user's information
 export async function getCurrentUser(token: string): Promise<User> {
   try {
-    const response = await axios.get(`${BUCHAI_SERVER_URL}/auth/users/me/`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+    const response = await axios.get(`${BUCHAI_SERVER_URL}/auth/user`, {
+      headers: { Authorization: `Bearer ${token}` },
     });
-    logger.info('Retrieved user information:', response.data);
+    Logger.info(`Retrieved user information: ${JSON.stringify(response.data)}`);
     return response.data;
   } catch (error: any) {
-    logger.error('Failed to retrieve user information:', error);
+    Logger.error(`Failed to retrieve user information: ${error}`);
     throw error; // Rethrow the error for handling in the component
   }
 }
@@ -76,15 +74,13 @@ export async function getCurrentUser(token: string): Promise<User> {
 // Function to get the current user's items
 export async function getCurrentUserItems(token: string): Promise<any> {
   try {
-    const response = await axios.get(`${BUCHAI_SERVER_URL}/auth/users/me/items/`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+    const response = await axios.get(`${BUCHAI_SERVER_URL}/auth/items`, {
+      headers: { Authorization: `Bearer ${token}` },
     });
-    logger.info('Retrieved user items:', response.data);
+    Logger.info(`Retrieved user items: ${JSON.stringify(response.data)}`);
     return response.data;
   } catch (error: any) {
-    logger.error('Failed to retrieve user items:', error);
+    Logger.error(`Failed to retrieve user items: ${error}`);
     throw error; // Rethrow the error for handling in the component
   }
 }

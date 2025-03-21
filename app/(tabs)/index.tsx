@@ -6,7 +6,7 @@ import { ThemedView } from '@/components/ui-custom/ThemedView';
 import { Button } from '@/components/ui-default/Button';
 import { useStory } from '@/contexts/StoryContext';
 import { LlmAdapter } from '@/services/LlmAdapter';
-import logger from '@/utils/Logger';
+import Logger from '@/utils/Logger';
 
 export default function Index() {
   const [prompt, setPrompt] = useState('');
@@ -24,18 +24,18 @@ export default function Index() {
 
       let generatedText = '';
       setEditableContent('');
-      logger.info('Story generation started', { prompt });
+      Logger.info(`Story generation started with prompt: ${prompt}`);
 
       const llmAdapter = new LlmAdapter();
       const streamGenerator = llmAdapter.generateStoryStream(prompt);
 
       for await (const token of streamGenerator) {
         generatedText += token;
-        logger.debug('Story text updated', { length: generatedText.length });
+        Logger.info(`Story text updated, length: ${generatedText.length}`);
         setEditableContent(generatedText);
       }
 
-      logger.info('Story generation completed', { length: generatedText.length });
+      Logger.info(`Story generation completed, length: ${generatedText.length}`);
 
       const newStory = {
         id: Date.now().toString(),
@@ -48,7 +48,7 @@ export default function Index() {
 
       dispatch({ type: 'SET_CURRENT_STORY', payload: newStory });
     } catch (error) {
-      logger.error('Failed to generate story', { error });
+      Logger.error(`Failed to generate story: ${error}`);
       dispatch({ type: 'SET_ERROR', payload: `Failed to generate story: ${error}` });
     } finally {
       setIsGenerating(false);

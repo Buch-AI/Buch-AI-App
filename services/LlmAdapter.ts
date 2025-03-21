@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { BUCHAI_SERVER_URL } from '@/constants/Config';
-import logger from '@/utils/Logger';
+import Logger from '@/utils/Logger';
 
 export interface LlmAdaptable {
   generateStoryString(prompt: string): Promise<string>;
@@ -11,24 +11,22 @@ export class LlmAdapter implements LlmAdaptable {
   constructor() {}
 
   async generateStoryString(prompt: string): Promise<string> {
-    logger.info(`Sending request to: ${BUCHAI_SERVER_URL}/llm/generate_story_string`);
-
     try {
+      Logger.info(`Sending request to: ${BUCHAI_SERVER_URL}/llm/generate_story_string`);
       const response = await axios.post(`${BUCHAI_SERVER_URL}/llm/generate_story_string`, {
         prompt: prompt,
       });
 
       return response.data.story;
     } catch (error) {
-      logger.error('Failed to generate story string', { error });
+      Logger.error(`Failed to generate story string: ${error}`);
       throw error;
     }
   }
 
   async* generateStoryStream(prompt: string) {
-    logger.info(`Sending request to: ${BUCHAI_SERVER_URL}/llm/generate_story_stream`);
-
     try {
+      Logger.info(`Sending request to: ${BUCHAI_SERVER_URL}/llm/generate_story_stream`);
       const response = await fetch(`${BUCHAI_SERVER_URL}/llm/generate_story_stream`, {
         method: 'POST',
         headers: {
@@ -53,11 +51,11 @@ export class LlmAdapter implements LlmAdaptable {
         const { done, value } = await reader.read();
         if (done) break;
         const text = decoder.decode(value, { stream: true });
-        logger.debug('Token received:', { tokenLength: text.length });
+        Logger.info(`Token received, length: ${text.length}`);
         yield text;
       }
     } catch (error) {
-      logger.error('Failed to generate story stream', { error });
+      Logger.error(`Failed to generate story stream: ${error}`);
       throw error;
     }
   }

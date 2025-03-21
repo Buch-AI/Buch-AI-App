@@ -2,7 +2,7 @@ import axios from 'axios';
 import bcrypt from 'bcryptjs'; // Import bcrypt for password hashing
 import sqlString from 'sqlstring'; // Import sqlstring for escaping SQL inputs
 import { BUCHAI_SERVER_URL } from '@/constants/Config';
-import logger from '@/utils/Logger';
+import Logger from '@/utils/Logger';
 
 export async function testQueryGithub() {
   const sqlQuery = `SELECT subject AS subject, COUNT(*) AS num_duplicates
@@ -15,14 +15,14 @@ DESC LIMIT 10`;
     const response = await axios.post(`${BUCHAI_SERVER_URL}/database/query`, {
       query: sqlQuery,
     });
-    logger.info(JSON.stringify(response));
+    Logger.info(JSON.stringify(response));
 
     const rows = response.data.data;
 
-    logger.info('Rows:');
-    rows.forEach((row: { subject: string; num_duplicates: number }) => logger.info(`${row.subject}: ${row.num_duplicates}`));
+    Logger.info('Rows:');
+    rows.forEach((row: { subject: string; num_duplicates: number }) => Logger.info(`${row.subject}: ${row.num_duplicates}`));
   } catch (error) {
-    logger.error(`${error}`);
+    Logger.error(`${error}`);
   }
 }
 
@@ -40,7 +40,7 @@ async function userExists(userId: string): Promise<boolean> {
     const count = response.data.data[0].count;
     return count > 0; // Return true if user exists
   } catch (error) {
-    logger.error(`Error checking user existence: ${error}`);
+    Logger.error(`Error checking user existence: ${error}`);
     throw error; // Rethrow the error for handling in the component
   }
 }
@@ -65,7 +65,7 @@ export async function authenticateUser(email: string, password: string): Promise
     }
     return false; // User not found
   } catch (error) {
-    logger.error(`Error authenticating user: ${error}`);
+    Logger.error(`Error authenticating user: ${error}`);
     throw error; // Rethrow the error for handling in the component
   }
 }
@@ -99,10 +99,10 @@ export async function registerUser(userData: {
     const response = await axios.post(`${BUCHAI_SERVER_URL}/database/query`, {
       query: sqlQuery,
     });
-    logger.info('User registered:', response.data);
+    Logger.info('User registered:', response.data);
     return response.data;
   } catch (error) {
-    logger.error(`Registration error: ${error}`);
+    Logger.error(`Registration error: ${error}`);
     throw error; // Rethrow the error for handling in the component
   }
 }
