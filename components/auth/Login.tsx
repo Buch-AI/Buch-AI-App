@@ -7,51 +7,44 @@ import { ThemedButton } from '@/components/ui-custom/ThemedButton';
 import { ThemedText } from '@/components/ui-custom/ThemedText';
 import { ThemedTextInput } from '@/components/ui-custom/ThemedTextInput';
 import { ThemedView } from '@/components/ui-custom/ThemedView';
-import { registerUser } from '@/services/DatabaseAdapter';
+import { authenticateUser } from '@/services/DatabaseAdapter'; // Import the authenticate function
 
+// Define the type for the navigation prop
 interface AuthStackParamList extends ParamListBase {
-  SignIn: undefined;
+  Login: undefined;
   SignUp: undefined;
 }
 
-export default function SignUpScreen() {
+export default function LoginScreen({ setAuthenticated }: { setAuthenticated: (value: boolean) => void }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false); // Loading state
   const navigation = useNavigation<NativeStackNavigationProp<AuthStackParamList>>();
 
-  const handleSignUp = async () => {
-    if (password === confirmPassword) {
-      setLoading(true);
-      try {
-        const userData = {
-          user_id: email,
-          username: email,
-          email,
-          password,
-        };
-        await registerUser(userData);
-        console.log('Sign up successful');
-        navigation.navigate('SignIn');
-      } catch (error: any) {
-        console.error('Sign up failed:', error);
-        setErrorMessage(error.message || 'An error occurred during sign up.');
+  const handleLogin = async () => {
+    setLoading(true); // Start loading
+    try {
+      const isAuthenticated = await authenticateUser(email, password);
+      if (isAuthenticated) {
+        setAuthenticated(true);
+      } else {
+        setErrorMessage('Invalid email or password.');
         setModalVisible(true);
-      } finally {
-        setLoading(false);
       }
-    } else {
-      setErrorMessage('Passwords do not match.');
+    } catch (error: any) {
+      console.error('Login failed:', error);
+      setErrorMessage('An error occurred during sign in.');
       setModalVisible(true);
+    } finally {
+      setLoading(false); // Stop loading
     }
   };
 
   return (
     <ThemedView className="flex-1 items-center justify-center bg-gray-100 p-6">
-      <ThemedText className="mb-6 text-3xl font-bold">Sign Up</ThemedText>
+      <ThemedText className="mb-6 text-3xl font-bold">Log In</ThemedText>
       <ThemedTextInput
         placeholder="Email"
         value={email}
@@ -63,18 +56,11 @@ export default function SignUpScreen() {
         value={password}
         onChangeText={setPassword}
         secureTextEntry
-        className="mb-4 w-full rounded-lg border border-gray-300 p-4"
-      />
-      <ThemedTextInput
-        placeholder="Confirm Password"
-        value={confirmPassword}
-        onChangeText={setConfirmPassword}
-        secureTextEntry
         className="mb-6 w-full rounded-lg border border-gray-300 p-4"
       />
-      <ThemedButton title="Sign Up" onPress={handleSignUp} loading={loading} />
-      <ThemedText onPress={() => navigation.navigate('SignIn')} className="mt-4 text-blue-600">
-        Already have an account? Sign In
+      <ThemedButton title="Log In" onPress={handleLogin} loading={loading} />
+      <ThemedText onPress={() => navigation.navigate('SignUp')} className="mt-4 text-blue-600">
+        Don't have an account? Sign Up
       </ThemedText>
 
       <Modal
@@ -83,8 +69,8 @@ export default function SignUpScreen() {
         visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}
       >
-        <ThemedView className="flex-1 items-center justify-center bg-black bg-opacity-50">
-          <ThemedView className="rounded-lg bg-white p-6 shadow-lg">
+        <ThemedView className="flex-1 items-center justify-center bg-white bg-opacity-50">
+          <ThemedView className="p-6">
             <ThemedText className="text-lg font-bold">Error</ThemedText>
             <ThemedText className="mt-2">{errorMessage}</ThemedText>
             <TouchableOpacity onPress={() => setModalVisible(false)} className="mt-4 rounded bg-blue-500 p-2">

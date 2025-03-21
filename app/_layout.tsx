@@ -7,8 +7,8 @@ import { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import 'react-native-reanimated';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import SignInScreen from '@/components/auth/sign-in';
-import SignUpScreen from '@/components/auth/sign-up';
+import LoginScreen from '@/components/auth/Login';
+import SignUpScreen from '@/components/auth/SignUp';
 import { StoryProvider } from '@/contexts/StoryContext';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import NotFoundScreen from './+not-found';
@@ -30,9 +30,9 @@ interface AuthNavigatorProps {
 
 function AuthNavigator({ setAuthenticated }: AuthNavigatorProps) {
   return (
-    <Stack.Navigator initialRouteName="SignIn">
-      <Stack.Screen name="SignIn" options={{ headerShown: false }}>
-        {() => <SignInScreen setAuthenticated={setAuthenticated} />}
+    <Stack.Navigator initialRouteName="Login">
+      <Stack.Screen name="Login" options={{ headerShown: false }}>
+        {() => <LoginScreen setAuthenticated={setAuthenticated} />}
       </Stack.Screen>
       <Stack.Screen name="SignUp" component={SignUpScreen} options={{ headerShown: false }} />
     </Stack.Navigator>
