@@ -26,7 +26,6 @@ export default function LoginScreen() {
       if (token) {
         await AsyncStorage.setItem('access_token', token);
         setAuthenticated(true);
-        console.log('Access Token:', token);
       } else {
         throw new Error('No token received');
       }

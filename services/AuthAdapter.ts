@@ -60,7 +60,7 @@ export async function login(username: string, password: string): Promise<TokenRe
 // Function to get the current user's information
 export async function getCurrentUser(token: string): Promise<User> {
   try {
-    const response = await axios.get(`${BUCHAI_SERVER_URL}/auth/user`, {
+    const response = await axios.get(`${BUCHAI_SERVER_URL}/auth/users/me`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     Logger.info(`Retrieved user information: ${JSON.stringify(response.data)}`);
@@ -74,7 +74,7 @@ export async function getCurrentUser(token: string): Promise<User> {
 // Function to get the current user's items
 export async function getCurrentUserItems(token: string): Promise<any> {
   try {
-    const response = await axios.get(`${BUCHAI_SERVER_URL}/auth/items`, {
+    const response = await axios.get(`${BUCHAI_SERVER_URL}/auth/users/items`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     Logger.info(`Retrieved user items: ${JSON.stringify(response.data)}`);
