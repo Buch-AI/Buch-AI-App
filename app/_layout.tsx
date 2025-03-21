@@ -10,6 +10,7 @@ import { useColorScheme } from '@/hooks/useColorScheme';
 import { getCurrentUser } from '@/services/AuthAdapter';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Logger from '@/utils/Logger';
+import { StorageKeys } from '@/constants/Storage';
 import '@/global.css';
 
 // Define route types
@@ -61,14 +62,14 @@ export default function RootLayout() {
 
   useEffect(() => {
     const checkAuthentication = async () => {
-      const token = await AsyncStorage.getItem('access_token');
+      const token = await AsyncStorage.getItem(StorageKeys.AUTH_JWT);
       if (token) {
         try {
           await getCurrentUser(token);
           setAuthenticated(true);
         } catch (error) {
           Logger.error(`Token validation failed: ${error}`);
-          await AsyncStorage.removeItem('access_token');
+          await AsyncStorage.removeItem(StorageKeys.AUTH_JWT);
           setAuthenticated(false);
         }
       } else {

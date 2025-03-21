@@ -8,6 +8,7 @@ import { ThemedTextInput } from '@/components/ui-custom/ThemedTextInput';
 import { ThemedView } from '@/components/ui-custom/ThemedView';
 import { login } from '@/services/AuthAdapter';
 import Logger from '@/utils/Logger';
+import { StorageKeys } from '@/constants/Storage';
 import { useAuth } from '../_layout';
 
 export default function LoginScreen() {
@@ -25,7 +26,7 @@ export default function LoginScreen() {
       const token = tokenResponse.access_token;
 
       if (token) {
-        await AsyncStorage.setItem('access_token', token);
+        await AsyncStorage.setItem(StorageKeys.AUTH_JWT, token);
         setAuthenticated(true);
       } else {
         throw new Error('No token received');
