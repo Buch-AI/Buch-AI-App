@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -7,7 +8,7 @@ import { ThemedButton } from '@/components/ui-custom/ThemedButton';
 import { ThemedText } from '@/components/ui-custom/ThemedText';
 import { ThemedTextInput } from '@/components/ui-custom/ThemedTextInput';
 import { ThemedView } from '@/components/ui-custom/ThemedView';
-import { authenticateUser } from '@/services/DatabaseAdapter'; // Import the authenticate function
+import { login } from '@/services/AuthAdapter'; // Import the login function from AuthAdapter
 
 // Define the type for the navigation prop
 interface AuthStackParamList extends ParamListBase {
@@ -26,12 +27,16 @@ export default function LoginScreen({ setAuthenticated }: { setAuthenticated: (v
   const handleLogin = async () => {
     setLoading(true); // Start loading
     try {
-      const isAuthenticated = await authenticateUser(email, password);
-      if (isAuthenticated) {
-        setAuthenticated(true);
+      const tokenResponse = await login(email, password); // Call the login function from AuthAdapter
+      const token = tokenResponse.access_token; // Get the access token
+
+      if (token) {
+        // Store the token in local storage or context
+        await AsyncStorage.setItem('access_token', token); // Store token for future requests
+        setAuthenticated(true); // Set authenticated state to true
+        console.log('Access Token:', token);
       } else {
-        setErrorMessage('Invalid email or password.');
-        setModalVisible(true);
+        throw new Error('No token received');
       }
     } catch (error: any) {
       console.error('Login failed:', error);

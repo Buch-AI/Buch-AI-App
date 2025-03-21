@@ -11,12 +11,12 @@ import LoginScreen from '@/components/auth/Login';
 import SignUpScreen from '@/components/auth/SignUp';
 import { StoryProvider } from '@/contexts/StoryContext';
 import { useColorScheme } from '@/hooks/useColorScheme';
+import { getCurrentUser } from '@/services/AuthAdapter';
+import TabNavigator from './(tabs)/index';
 import NotFoundScreen from './+not-found';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import '@/global.css';
-
-import TabNavigator from './(tabs)/index';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -48,6 +48,24 @@ export default function RootLayout() {
   const [isAuthenticated, setAuthenticated] = useState(false);
 
   useEffect(() => {
+    const checkAuthentication = async () => {
+      const token = await AsyncStorage.getItem('access_token');
+      if (token) {
+        try {
+          await getCurrentUser(token);
+          setAuthenticated(true);
+        } catch (error) {
+          console.error('Token validation failed:', error);
+          await AsyncStorage.removeItem('access_token');
+          setAuthenticated(false);
+        }
+      } else {
+        setAuthenticated(false);
+      }
+    };
+
+    checkAuthentication();
+
     if (loaded) {
       SplashScreen.hideAsync();
     }

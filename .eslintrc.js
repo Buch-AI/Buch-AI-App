@@ -53,5 +53,6 @@ module.exports = {
       },
     ],
     'tailwindcss/classnames-order': ['error'],
+    'spaced-comment': ['error', 'always', { 'markers': ['/'] }],
   },
 };
