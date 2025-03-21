@@ -1,36 +1,18 @@
 import { useFonts } from 'expo-font';
+import { usePathname } from 'expo-router';
 import { Stack } from 'expo-router/stack';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { View } from 'react-native';
 import 'react-native-reanimated';
+import { StorageKeys } from '@/constants/Storage';
 import { StoryProvider } from '@/contexts/StoryContext';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { getCurrentUser } from '@/services/AuthAdapter';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Logger from '@/utils/Logger';
-import { StorageKeys } from '@/constants/Storage';
 import '@/global.css';
-
-// Define route types
-type AuthRoutes = {
-  '(auth)': {
-    'login': undefined;
-    'sign-up': undefined;
-  };
-};
-
-type TabRoutes = {
-  '(tabs)': {
-    'index': undefined;
-    'community': undefined;
-  };
-};
-
-type RootRoutes = AuthRoutes & TabRoutes & {
-  '+not-found': undefined;
-};
 
 // Create auth context
 interface AuthContextType {
@@ -53,12 +35,15 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
+  const pathname = usePathname();
   const [loaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
 
-  // Set this initially as true so that there is no unnecessary redirect
-  const [isAuthenticated, setAuthenticated] = useState(true);
+  // Set initial authentication state based on the current path
+  // TODO: This is a temporary solution to ensure the user is authenticated when they navigate to the sign-up or login pages.
+  const isAuthRoute = pathname?.startsWith('/sign-up');
+  const [isAuthenticated, setAuthenticated] = useState(!isAuthRoute);
 
   useEffect(() => {
     const checkAuthentication = async () => {
@@ -73,7 +58,10 @@ export default function RootLayout() {
           setAuthenticated(false);
         }
       } else {
-        setAuthenticated(false);
+        // Only set to false if we're on an auth route
+        if (isAuthRoute) {
+          setAuthenticated(false);
+        }
       }
     };
 
@@ -82,7 +70,7 @@ export default function RootLayout() {
     if (loaded) {
       SplashScreen.hideAsync();
     }
-  }, [loaded]);
+  }, [loaded, isAuthRoute]);
 
   if (!loaded) {
     return null;

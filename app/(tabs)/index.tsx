@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
+import { View } from 'react-native';
 import { SafeAreaScrollView } from '@/components/ui-custom/SafeAreaScrollView';
+import { ThemedButton } from '@/components/ui-custom/ThemedButton';
 import { ThemedText } from '@/components/ui-custom/ThemedText';
 import { ThemedTextInput } from '@/components/ui-custom/ThemedTextInput';
 import { ThemedView } from '@/components/ui-custom/ThemedView';
-import { Button } from '@/components/ui-default/Button';
 import { useStory } from '@/contexts/StoryContext';
 import { LlmAdapter } from '@/services/LlmAdapter';
 import Logger from '@/utils/Logger';
@@ -61,31 +62,33 @@ export default function Index() {
       <ThemedView className="flex-1 p-4">
         <ThemedText type="title">Create Your Story</ThemedText>
         <ThemedTextInput
-          placeholder="Enter your story prompt..."
+          placeholder="What is your story about?"
           value={prompt}
           onChangeText={setPrompt}
           multiline
-          className="my-4 h-24 rounded-lg p-3"
+          className="my-4 h-24 rounded-lg !bg-white/40 p-3 shadow-lg"
         />
-        <Button
+        <ThemedButton
           onPress={handleGenerateStory}
           disabled={state.isGenerating || !prompt.trim()}
-          loading={state.isGenerating}>
-          Generate Story
-        </Button>
+          loading={state.isGenerating}
+          title="Generate Story"
+        />
         {state.error && <ThemedText className="mt-2 text-red-500">{state.error}</ThemedText>}
 
         {editableContent !== '' && (
           <>
-            <ThemedText type="title" className="mb-2 mt-6">Edit Your Story</ThemedText>
+            {/* TODO: Fix the colouring. Refactor. */}
+            <View className="my-6 h-px bg-gray-200 dark:bg-gray-700" />
+            <ThemedText type="title">Edit Your Story</ThemedText>
             <ThemedTextInput
               value={editableContent}
               onChangeText={setEditableContent}
               multiline
-              className="my-4 h-72 rounded-lg p-3"
+              className="my-4 h-72 rounded-lg !bg-white/40 p-3 shadow-lg"
               editable={!isGenerating}
             />
-            <Button
+            <ThemedButton
               onPress={() => {
                 if (state.currentStory) {
                   const updatedStory = {
@@ -95,9 +98,9 @@ export default function Index() {
                   };
                   dispatch({ type: 'UPDATE_STORY', payload: updatedStory });
                 }
-              }}>
-              Save Changes
-            </Button>
+              }}
+              title="Save Changes"
+            />
           </>
         )}
       </ThemedView>

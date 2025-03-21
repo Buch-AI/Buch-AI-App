@@ -1,14 +1,16 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Link } from 'expo-router';
 import React, { useState } from 'react';
-import { Modal, Pressable, TouchableOpacity } from 'react-native';
+import { Image, Modal, Pressable, TouchableOpacity } from 'react-native';
+import { RFValue } from 'react-native-responsive-fontsize';
+import { SafeAreaScrollView } from '@/components/ui-custom/SafeAreaScrollView';
 import { ThemedButton } from '@/components/ui-custom/ThemedButton';
 import { ThemedText } from '@/components/ui-custom/ThemedText';
 import { ThemedTextInput } from '@/components/ui-custom/ThemedTextInput';
 import { ThemedView } from '@/components/ui-custom/ThemedView';
+import { StorageKeys } from '@/constants/Storage';
 import { login } from '@/services/AuthAdapter';
 import Logger from '@/utils/Logger';
-import { StorageKeys } from '@/constants/Storage';
 import { useAuth } from '../_layout';
 
 export default function LoginScreen() {
@@ -40,30 +42,43 @@ export default function LoginScreen() {
     }
   };
 
+  const illustrationSize = RFValue(160); // Base size for a 680px screen height
+
   return (
-    <ThemedView className="flex-1 items-center justify-center bg-gray-100 p-6">
-      <ThemedText className="mb-6 text-3xl font-bold">Log In</ThemedText>
-      <ThemedTextInput
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        className="mb-4 w-full rounded-lg border border-gray-300 p-4"
-      />
-      <ThemedTextInput
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-        className="mb-6 w-full rounded-lg border border-gray-300 p-4"
-      />
-      <ThemedButton title="Log In" onPress={handleLogin} loading={loading} />
-      <Link href="/(auth)/sign-up" asChild>
-        <Pressable>
-          <ThemedText className="mt-4 text-blue-600">
-            Don't have an account? Sign Up
-          </ThemedText>
-        </Pressable>
-      </Link>
+    <SafeAreaScrollView className="bg-gray-100">
+      <ThemedView className="min-h-screen flex-1 items-center justify-center p-6">
+        <Image
+          source={require('@/assets/images/illustration-sample-1.jpg')}
+          style={{
+            width: illustrationSize,
+            height: illustrationSize * 0.75,
+            resizeMode: 'contain',
+            marginBottom: RFValue(20),
+          }}
+        />
+        <ThemedText type="title" className="mb-6 font-bold">Log In</ThemedText>
+        <ThemedTextInput
+          placeholder="Email"
+          value={email}
+          onChangeText={setEmail}
+          className="mb-4 w-full rounded-lg border border-gray-300 p-4"
+        />
+        <ThemedTextInput
+          placeholder="Password"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+          className="mb-6 w-full rounded-lg border border-gray-300 p-4"
+        />
+        <ThemedButton title="Log In" onPress={handleLogin} loading={loading} />
+        <Link href="/(auth)/sign-up" asChild>
+          <Pressable>
+            <ThemedText className="mt-4 text-blue-600">
+              Don't have an account? Sign up.
+            </ThemedText>
+          </Pressable>
+        </Link>
+      </ThemedView>
 
       <Modal
         animationType="slide"
@@ -81,6 +96,6 @@ export default function LoginScreen() {
           </ThemedView>
         </ThemedView>
       </Modal>
-    </ThemedView>
+    </SafeAreaScrollView>
   );
 }
