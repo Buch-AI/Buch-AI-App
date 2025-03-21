@@ -9,7 +9,7 @@ import { StoryProvider } from '@/contexts/StoryContext';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { getCurrentUser } from '@/services/AuthAdapter';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import Logger from '@/utils/Logger';
 import '@/global.css';
 
 // Define route types
@@ -67,7 +67,7 @@ export default function RootLayout() {
           await getCurrentUser(token);
           setAuthenticated(true);
         } catch (error) {
-          console.error('Token validation failed:', error);
+          Logger.error(`Token validation failed: ${error}`);
           await AsyncStorage.removeItem('access_token');
           setAuthenticated(false);
         }

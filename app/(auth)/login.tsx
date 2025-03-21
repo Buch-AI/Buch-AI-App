@@ -1,12 +1,13 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Link } from 'expo-router';
 import React, { useState } from 'react';
-import { Modal, TouchableOpacity } from 'react-native';
+import { Modal, Pressable, TouchableOpacity } from 'react-native';
 import { ThemedButton } from '@/components/ui-custom/ThemedButton';
 import { ThemedText } from '@/components/ui-custom/ThemedText';
 import { ThemedTextInput } from '@/components/ui-custom/ThemedTextInput';
 import { ThemedView } from '@/components/ui-custom/ThemedView';
 import { login } from '@/services/AuthAdapter';
+import Logger from '@/utils/Logger';
 import { useAuth } from '../_layout';
 
 export default function LoginScreen() {
@@ -30,7 +31,7 @@ export default function LoginScreen() {
         throw new Error('No token received');
       }
     } catch (error: any) {
-      console.error('Login failed:', error);
+      Logger.error(`Login failed: ${error}`);
       setErrorMessage('An error occurred during sign in.');
       setModalVisible(true);
     } finally {
@@ -56,9 +57,11 @@ export default function LoginScreen() {
       />
       <ThemedButton title="Log In" onPress={handleLogin} loading={loading} />
       <Link href="/(auth)/sign-up" asChild>
-        <ThemedText className="mt-4 text-blue-600">
-          Don't have an account? Sign Up
-        </ThemedText>
+        <Pressable>
+          <ThemedText className="mt-4 text-blue-600">
+            Don't have an account? Sign Up
+          </ThemedText>
+        </Pressable>
       </Link>
 
       <Modal

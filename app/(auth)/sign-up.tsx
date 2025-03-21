@@ -1,18 +1,12 @@
-import { useNavigation } from '@react-navigation/native';
-import { ParamListBase } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { Link, router } from 'expo-router';
 import React, { useState } from 'react';
-import { Modal, TouchableOpacity } from 'react-native';
+import { Modal, Pressable, TouchableOpacity } from 'react-native';
 import { ThemedButton } from '@/components/ui-custom/ThemedButton';
 import { ThemedText } from '@/components/ui-custom/ThemedText';
 import { ThemedTextInput } from '@/components/ui-custom/ThemedTextInput';
 import { ThemedView } from '@/components/ui-custom/ThemedView';
 import { registerUser } from '@/services/DatabaseAdapter';
-
-interface AuthStackParamList extends ParamListBase {
-  Login: undefined;
-  SignUp: undefined;
-}
+import Logger from '@/utils/Logger';
 
 export default function SignUpScreen() {
   const [email, setEmail] = useState('');
@@ -21,7 +15,6 @@ export default function SignUpScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(false);
-  const navigation = useNavigation<NativeStackNavigationProp<AuthStackParamList>>();
 
   const handleSignUp = async () => {
     if (password === confirmPassword) {
@@ -34,10 +27,10 @@ export default function SignUpScreen() {
           password,
         };
         await registerUser(userData);
-        console.log('Sign up successful');
-        navigation.navigate('Login');
+        Logger.info('Sign-up successful!');
+        router.replace('/(auth)/login');
       } catch (error: any) {
-        console.error('Sign up failed:', error);
+        Logger.error(`Sign-up failed: ${error}`);
         setErrorMessage(error.message || 'An error occurred during sign up.');
         setModalVisible(true);
       } finally {
@@ -73,9 +66,13 @@ export default function SignUpScreen() {
         className="mb-6 w-full rounded-lg border border-gray-300 p-4"
       />
       <ThemedButton title="Sign Up" onPress={handleSignUp} loading={loading} />
-      <ThemedText onPress={() => navigation.navigate('Login')} className="mt-4 text-blue-600">
-        Already have an account? Log In
-      </ThemedText>
+      <Link href="/(auth)/login" asChild>
+        <Pressable>
+          <ThemedText className="mt-4 text-blue-600">
+            Already have an account? Log In
+          </ThemedText>
+        </Pressable>
+      </Link>
 
       <Modal
         animationType="slide"
