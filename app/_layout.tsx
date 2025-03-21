@@ -1,43 +1,54 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
-import { Stack as ExpoStack } from 'expo-router';
+import { Stack } from 'expo-router/stack';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { View } from 'react-native';
 import 'react-native-reanimated';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import LoginScreen from '@/components/auth/Login';
-import SignUpScreen from '@/components/auth/SignUp';
 import { StoryProvider } from '@/contexts/StoryContext';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { getCurrentUser } from '@/services/AuthAdapter';
-import TabNavigator from './(tabs)/index';
-import NotFoundScreen from './+not-found';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import '@/global.css';
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
+// Define route types
+type AuthRoutes = {
+  '(auth)': {
+    'login': undefined;
+    'sign-up': undefined;
+  };
+};
 
-const Stack = createNativeStackNavigator();
+type TabRoutes = {
+  '(tabs)': {
+    'index': undefined;
+    'community': undefined;
+  };
+};
 
-// Define the type for the AuthNavigator props
-interface AuthNavigatorProps {
+type RootRoutes = AuthRoutes & TabRoutes & {
+  '+not-found': undefined;
+};
+
+// Create auth context
+interface AuthContextType {
+  isAuthenticated: boolean;
   setAuthenticated: (value: boolean) => void;
 }
 
-function AuthNavigator({ setAuthenticated }: AuthNavigatorProps) {
-  return (
-    <Stack.Navigator initialRouteName="Login">
-      <Stack.Screen name="Login" options={{ headerShown: false }}>
-        {() => <LoginScreen setAuthenticated={setAuthenticated} />}
-      </Stack.Screen>
-      <Stack.Screen name="SignUp" component={SignUpScreen} options={{ headerShown: false }} />
-    </Stack.Navigator>
-  );
+const AuthContext = createContext<AuthContextType | null>(null);
+
+export function useAuth() {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
 }
+
+// Prevent the splash screen from auto-hiding before asset loading is complete.
+SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
@@ -45,7 +56,8 @@ export default function RootLayout() {
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
 
-  const [isAuthenticated, setAuthenticated] = useState(false);
+  // Set this initially as true so that there is no unnecessary redirect
+  const [isAuthenticated, setAuthenticated] = useState(true);
 
   useEffect(() => {
     const checkAuthentication = async () => {
@@ -76,20 +88,26 @@ export default function RootLayout() {
   }
 
   return (
-    <StoryProvider>
-      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <View style={{ flex: 1 }}>
-          {isAuthenticated ? (
-            <Stack.Navigator>
-              <Stack.Screen name="Tabs" component={TabNavigator} options={{ headerShown: false }} />
-              <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ headerShown: false }} />
-            </Stack.Navigator>
-          ) : (
-            <AuthNavigator setAuthenticated={setAuthenticated} />
-          )}
+    <AuthContext.Provider value={{ isAuthenticated, setAuthenticated }}>
+      <StoryProvider>
+        <View style={{ flex: 1, backgroundColor: colorScheme === 'dark' ? '#000' : '#fff' }}>
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen
+              name="(auth)"
+              redirect={isAuthenticated}
+            />
+            <Stack.Screen
+              name="(tabs)"
+              redirect={!isAuthenticated}
+            />
+            <Stack.Screen
+              name="+not-found"
+              options={{ presentation: 'modal' }}
+            />
+          </Stack>
           <StatusBar style="auto" />
         </View>
-      </ThemeProvider>
-    </StoryProvider>
+      </StoryProvider>
+    </AuthContext.Provider>
   );
 }

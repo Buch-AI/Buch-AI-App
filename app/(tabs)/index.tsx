@@ -1,6 +1,4 @@
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import React, { useState } from 'react';
-
 import { SafeAreaScrollView } from '@/components/ui-custom/SafeAreaScrollView';
 import { ThemedText } from '@/components/ui-custom/ThemedText';
 import { ThemedTextInput } from '@/components/ui-custom/ThemedTextInput';
@@ -9,22 +7,8 @@ import { Button } from '@/components/ui-default/Button';
 import { useStory } from '@/contexts/StoryContext';
 import { LlmAdapter } from '@/services/LlmAdapter';
 import logger from '@/utils/Logger';
-import CommunityScreen from './community';
 
-const Tab = createBottomTabNavigator();
-
-function TabNavigator() {
-  return (
-    <Tab.Navigator>
-      <Tab.Screen name="Home" component={CreateStoryScreen} />
-      <Tab.Screen name="Community" component={CommunityScreen} />
-    </Tab.Navigator>
-  );
-}
-
-export default TabNavigator;
-
-function CreateStoryScreen() {
+export default function Index() {
   const [prompt, setPrompt] = useState('');
   const { state, dispatch } = useStory();
   const [editableContent, setEditableContent] = useState('');

@@ -1,12 +1,10 @@
 import { Tabs } from 'expo-router';
-import React from 'react';
 import { Platform } from 'react-native';
-
-import { HapticTab } from '@/components/ui-custom/HapticTab';
 import { IconSymbol } from '@/components/ui-default/IconSymbol';
 import TabBarBackground from '@/components/ui-default/TabBarBackground';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
+import { HapticTab } from '@/components/ui-custom/HapticTab';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -26,11 +24,7 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Create Story',
-          tabBarIcon: ({ color }) => <IconSymbol
-            size={28}
-            name="pencil.and.outline"
-            color={color}
-          />,
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="pencil.and.outline" color={color} />,
         }}
       />
       <Tabs.Screen

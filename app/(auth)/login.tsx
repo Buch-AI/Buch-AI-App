@@ -1,39 +1,31 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation } from '@react-navigation/native';
-import { ParamListBase } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { Link } from 'expo-router';
 import React, { useState } from 'react';
 import { Modal, TouchableOpacity } from 'react-native';
 import { ThemedButton } from '@/components/ui-custom/ThemedButton';
 import { ThemedText } from '@/components/ui-custom/ThemedText';
 import { ThemedTextInput } from '@/components/ui-custom/ThemedTextInput';
 import { ThemedView } from '@/components/ui-custom/ThemedView';
-import { login } from '@/services/AuthAdapter'; // Import the login function from AuthAdapter
+import { login } from '@/services/AuthAdapter';
+import { useAuth } from '../_layout';
 
-// Define the type for the navigation prop
-interface AuthStackParamList extends ParamListBase {
-  Login: undefined;
-  SignUp: undefined;
-}
-
-export default function LoginScreen({ setAuthenticated }: { setAuthenticated: (value: boolean) => void }) {
+export default function LoginScreen() {
+  const { setAuthenticated } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const [loading, setLoading] = useState(false); // Loading state
-  const navigation = useNavigation<NativeStackNavigationProp<AuthStackParamList>>();
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async () => {
-    setLoading(true); // Start loading
+    setLoading(true);
     try {
-      const tokenResponse = await login(email, password); // Call the login function from AuthAdapter
-      const token = tokenResponse.access_token; // Get the access token
+      const tokenResponse = await login(email, password);
+      const token = tokenResponse.access_token;
 
       if (token) {
-        // Store the token in local storage or context
-        await AsyncStorage.setItem('access_token', token); // Store token for future requests
-        setAuthenticated(true); // Set authenticated state to true
+        await AsyncStorage.setItem('access_token', token);
+        setAuthenticated(true);
         console.log('Access Token:', token);
       } else {
         throw new Error('No token received');
@@ -43,7 +35,7 @@ export default function LoginScreen({ setAuthenticated }: { setAuthenticated: (v
       setErrorMessage('An error occurred during sign in.');
       setModalVisible(true);
     } finally {
-      setLoading(false); // Stop loading
+      setLoading(false);
     }
   };
 
@@ -64,9 +56,11 @@ export default function LoginScreen({ setAuthenticated }: { setAuthenticated: (v
         className="mb-6 w-full rounded-lg border border-gray-300 p-4"
       />
       <ThemedButton title="Log In" onPress={handleLogin} loading={loading} />
-      <ThemedText onPress={() => navigation.navigate('SignUp')} className="mt-4 text-blue-600">
-        Don't have an account? Sign Up
-      </ThemedText>
+      <Link href="/(auth)/sign-up" asChild>
+        <ThemedText className="mt-4 text-blue-600">
+          Don't have an account? Sign Up
+        </ThemedText>
+      </Link>
 
       <Modal
         animationType="slide"
