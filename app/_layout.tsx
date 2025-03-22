@@ -47,6 +47,12 @@ export default function RootLayout() {
 
   useEffect(() => {
     const checkAuthentication = async () => {
+      // Override and set to false if we're on an auth route
+      if (isAuthRoute) {
+        setAuthenticated(false);
+        return;
+      }
+
       const token = await AsyncStorage.getItem(StorageKeys.AUTH_JWT);
       if (token) {
         try {
@@ -58,10 +64,8 @@ export default function RootLayout() {
           setAuthenticated(false);
         }
       } else {
-        // Only set to false if we're on an auth route
-        if (isAuthRoute) {
-          setAuthenticated(false);
-        }
+        Logger.warn(`Token validation not found!`);
+        setAuthenticated(false);
       }
     };
 

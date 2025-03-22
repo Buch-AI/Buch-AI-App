@@ -27,6 +27,7 @@ export class LlmAdapter implements LlmAdaptable {
   async* generateStoryStream(prompt: string) {
     try {
       Logger.info(`Sending request to: ${BUCHAI_SERVER_URL}/llm/generate_story_stream`);
+      // Using fetch because axios doesn't support streaming
       const response = await fetch(`${BUCHAI_SERVER_URL}/llm/generate_story_stream`, {
         method: 'POST',
         headers: {
@@ -51,7 +52,7 @@ export class LlmAdapter implements LlmAdaptable {
         const { done, value } = await reader.read();
         if (done) break;
         const text = decoder.decode(value, { stream: true });
-        Logger.info(`Token received, length: ${text.length}`);
+        Logger.info(`Token received. Text length: ${text.length}`);
         yield text;
       }
     } catch (error) {
