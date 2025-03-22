@@ -15,6 +15,7 @@ export class LlmAdapter implements LlmAdaptable {
       Logger.info(`Sending request to: ${BUCHAI_SERVER_URL}/llm/generate_story_string`);
       const response = await axios.post(`${BUCHAI_SERVER_URL}/llm/generate_story_string`, {
         prompt: prompt,
+        model_type: 'lite',
       });
 
       return response.data.story;
@@ -34,12 +35,12 @@ export class LlmAdapter implements LlmAdaptable {
           'Content-Type': 'application/json',
           'Accept': 'text/event-stream',
         },
-        body: JSON.stringify({ prompt: prompt }),
+        body: JSON.stringify({ prompt: prompt, model_type: 'pro' }),
       });
 
       if (!response.ok) {
         const errorBody = await response.json();
-        throw new Error(`generateStoryStream HTTP error! status: ${response.status} ${response.statusText}. Details: ${JSON.stringify(errorBody)}`);
+        throw new Error(`generateStoryStream HTTP error! Status: ${response.status} ${response.statusText}. Details: ${JSON.stringify(errorBody)}`);
       }
 
       const reader = response.body?.getReader();
