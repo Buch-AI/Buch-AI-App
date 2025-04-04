@@ -29,6 +29,7 @@ export class ImageAdapter {
       const url = `${this.baseUrl}/image/generate`;
       Logger.info(`Sending request to: ${url}`);
 
+      // TODO: There is a mismatch between this structure and the API request.
       const request: ImageGenerationRequest = {
         prompt,
         width: 512,
