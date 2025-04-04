@@ -12,33 +12,11 @@ import Logger from '@/utils/Logger';
 
 interface StoryPart {
   text: string;
-  imageData?: string; // base64 string of the image
+  imageData?: string;
 }
 
-// TODO: We might not need this.
-async function downloadImageAsBase64(url: string): Promise<string> {
-  try {
-    Logger.info(`Downloading image from: ${url}`);
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error(`Failed to download image: ${response.status} ${response.statusText}`);
-    }
-    const blob = await response.blob();
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const base64data = reader.result as string;
-        Logger.info(`Successfully converted image to base64, length: ${base64data.length}`);
-        resolve(base64data);
-      };
-      reader.onerror = () => reject(new Error('Failed to convert image to base64'));
-      reader.readAsDataURL(blob);
-    });
-  } catch (error) {
-    Logger.error(`Error downloading image: ${error}`);
-    throw error;
-  }
-}
+// TODO: Find a better way to handle this.
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export default function Index() {
   const [prompt, setPrompt] = useState('');
@@ -56,12 +34,12 @@ export default function Index() {
     try {
       for (const text of parts) {
         try {
-          const imageUrl = await imageAdapter.generateImage(text);
-          Logger.info(`Generated image URL: ${imageUrl}`);
-          const imageData = await downloadImageAsBase64(imageUrl);
+          await delay(5000);
+          const imageData = await imageAdapter.generateImage(text);
+          Logger.info('Generated image data successfully');
           updatedParts.push({ text, imageData });
         } catch (error) {
-          Logger.error(`Failed to generate/download image for part: ${error}`);
+          Logger.error(`Failed to generate image for part: ${error}`);
           updatedParts.push({ text }); // Still add the part even if image generation fails
         }
       }

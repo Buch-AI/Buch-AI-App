@@ -11,7 +11,8 @@ interface ImageGenerationRequest {
 }
 
 interface ImageGenerationResponse {
-  image_url: string;
+  data: string; // base64 encoded string
+  content_type: string;
 }
 
 export class ImageAdapter {
@@ -57,8 +58,13 @@ export class ImageAdapter {
       if (!response.ok) {
         let errorMessage;
         try {
-          const errorBody = await response.json();
-          errorMessage = errorBody?.detail || response.statusText;
+          const errorText = await response.text();
+          try {
+            const errorBody = JSON.parse(errorText);
+            errorMessage = errorBody?.detail || response.statusText;
+          } catch {
+            errorMessage = errorText || response.statusText;
+          }
         } catch {
           errorMessage = response.statusText;
         }
@@ -67,20 +73,15 @@ export class ImageAdapter {
         throw new Error(error);
       }
 
-      const data = await response.json() as ImageGenerationResponse;
-      Logger.info(`Image generation completed. Response data: ${JSON.stringify(data)}`);
+      // Parse the response to get the base64 data and content type
+      const responseData = await response.json() as ImageGenerationResponse;
+      Logger.info(`Received image data with content type: ${responseData.content_type}`);
 
-      if (!data.image_url) {
-        throw new Error('No image URL in response');
-      }
+      // Create data URL using the base64 string directly
+      const dataUrl = `data:${responseData.content_type};base64,${responseData.data}`;
 
-      // Ensure the URL is absolute
-      const imageUrl = data.image_url.startsWith('http') ?
-        data.image_url :
-        `${this.baseUrl}${data.image_url}`;
-
-      Logger.info(`Final image URL: ${imageUrl}`);
-      return imageUrl;
+      Logger.info('Image generation completed successfully');
+      return dataUrl;
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred';
       Logger.error(`Image generation error: ${errorMessage}`);
