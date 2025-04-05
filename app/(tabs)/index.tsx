@@ -47,7 +47,7 @@ export default function Home() {
 
   const renderCreationItem = ({ item }: { item: Creation }) => (
     <Link href={{ pathname: '../editor', params: { id: item.id } }} asChild>
-      <ThemedView className="mb-4 rounded-lg bg-white/10 p-4">
+      <ThemedView className="mb-4 rounded-lg !bg-white/80 p-4 shadow-md">
         <ThemedText className="text-lg">Creation ID: {item.id}</ThemedText>
       </ThemedView>
     </Link>
@@ -58,8 +58,11 @@ export default function Home() {
       <ThemedView className="flex-1 p-4">
         <View className="mb-6 flex-row items-center justify-between">
           <ThemedText type="title">Your Stories</ThemedText>
+        </View>
+
+        <View className="mb-6">
           <Link href="../editor" asChild>
-            <ThemedButton title="Create New" onPress={() => {}} />
+            <ThemedButton title="Create a New Story" onPress={() => {}} />
           </Link>
         </View>
 
@@ -92,7 +95,7 @@ export default function Home() {
             data={creations}
             renderItem={renderCreationItem}
             keyExtractor={(item) => item.id}
-            contentContainerStyle={{ paddingBottom: 20 }}
+            contentContainerStyle={{ padding: 20 }}
           />
         )}
       </ThemedView>

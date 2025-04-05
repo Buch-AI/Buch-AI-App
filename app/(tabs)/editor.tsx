@@ -197,7 +197,7 @@ export default function Editor() {
           value={prompt}
           onChangeText={setPrompt}
           multiline
-          className="my-4 h-24 rounded-lg !bg-white/40 p-3 shadow-lg"
+          className="my-4 h-24 rounded-lg !bg-white/40 p-3 shadow-md"
           editable={!isGenerating}
         />
 
