@@ -154,4 +154,18 @@ export class MeAdapter {
       throw error;
     }
   }
+
+  async deleteCreation(creationId: string): Promise<string> {
+    try {
+      Logger.info(`Deleting creation: ${creationId}`);
+      const response = await axios.delete<CreationResponse>(
+        `${this.baseUrl}/me/creation/${creationId}/delete`,
+        { headers: this.headers },
+      );
+      return response.data.data;
+    } catch (error) {
+      Logger.error(`Failed to delete creation: ${error}`);
+      throw error;
+    }
+  }
 }
