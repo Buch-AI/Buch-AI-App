@@ -49,6 +49,11 @@ export default function Editor() {
   useEffect(() => {
     if (creationId) {
       loadExistingCreation(creationId);
+    } else {
+      // Clear state when there's no creation ID
+      setPrompt('');
+      setWorkflowState(initialWorkflowState);
+      dispatch({ type: 'SET_CURRENT_STORY', payload: null });
     }
   }, [creationId]);
 
@@ -110,9 +115,10 @@ export default function Editor() {
     if (!prompt.trim()) return;
 
     try {
-      // Reset state
+      // Reset state but preserve creationId if it exists
       updateWorkflowState({
         ...initialWorkflowState,
+        creationId: creationId || null,
         currentStep: 'generating-story',
       });
       dispatch({ type: 'SET_ERROR', payload: null });
@@ -122,9 +128,9 @@ export default function Editor() {
       const llmAdapter = new LlmAdapter();
       const imageAdapter = new ImageAdapter();
 
-      // Step 1: Generate creation ID
-      const newCreationId = await meAdapter.generateCreation();
-      updateWorkflowState({ creationId: newCreationId });
+      // Step 1: Use existing creation ID or generate a new one
+      const activeCreationId = creationId || await meAdapter.generateCreation();
+      updateWorkflowState({ creationId: activeCreationId });
 
       // Step 2: Generate story
       let generatedText = '';
@@ -142,7 +148,7 @@ export default function Editor() {
       });
 
       // Save story parts to backend
-      await meAdapter.setStoryParts(newCreationId, creationParts);
+      await meAdapter.setStoryParts(activeCreationId, creationParts);
 
       // Step 4: Generate images for each part
       const updatedParts: CreationPart[] = [];
@@ -160,7 +166,7 @@ export default function Editor() {
       const images = updatedParts
         .map((part) => part.imageData)
         .filter((img): img is string => Boolean(img));
-      await meAdapter.setImages(newCreationId, images);
+      await meAdapter.setImages(activeCreationId, images);
 
       // Update final state
       updateWorkflowState({
@@ -172,7 +178,7 @@ export default function Editor() {
       dispatch({
         type: 'SET_CURRENT_STORY',
         payload: {
-          id: newCreationId,
+          id: activeCreationId,
           prompt,
           content: generatedText,
           authorId: 'current-user',

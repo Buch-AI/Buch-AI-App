@@ -6,8 +6,23 @@ interface ImageData {
   data: string; // base64 encoded string
 }
 
-interface CreationResponse {
-  data: string;
+interface CreationProfile {
+  creation_id: string;
+  title: string;
+  description?: string;
+  creator_id: string;
+  user_id: string;
+  created_at: string;
+  updated_at: string;
+  status: string;
+  visibility: string;
+  tags: string[];
+  metadata?: any;
+  is_active: boolean;
+}
+
+interface CreationsResponse {
+  data: CreationProfile[];
 }
 
 interface StoryPartsResponse {
@@ -26,6 +41,10 @@ interface GenerateResponse {
   data: string; // URL
 }
 
+interface CreationResponse {
+  data: string;
+}
+
 export class MeAdapter {
   private readonly baseUrl: string;
   private readonly headers: { Authorization: string };
@@ -35,13 +54,13 @@ export class MeAdapter {
     this.headers = { Authorization: `Bearer ${token}` };
   }
 
-  async getUserCreations(): Promise<string[]> {
+  async getUserCreations(): Promise<CreationProfile[]> {
     try {
       Logger.info('Fetching user creations');
-      const response = await axios.get(`${this.baseUrl}/me/creations`, {
+      const response = await axios.get<CreationsResponse>(`${this.baseUrl}/me/creations`, {
         headers: this.headers,
       });
-      return response.data;
+      return response.data.data;
     } catch (error) {
       Logger.error(`Failed to fetch user creations: ${error}`);
       throw error;

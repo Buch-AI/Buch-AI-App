@@ -11,7 +11,12 @@ import { MeAdapter } from '@/services/MeAdapter';
 import Logger from '@/utils/Logger';
 
 interface Creation {
-  id: string;
+  creation_id: string;
+  title: string;
+  description?: string;
+  created_at: string;
+  updated_at: string;
+  status: string;
 }
 
 export default function Home() {
@@ -34,8 +39,15 @@ export default function Home() {
       }
 
       const meAdapter = new MeAdapter(token);
-      const creationIds = await meAdapter.getUserCreations();
-      setCreations(creationIds.map((id) => ({ id })));
+      const creationProfiles = await meAdapter.getUserCreations();
+      setCreations(creationProfiles.map((profile) => ({
+        creation_id: profile.creation_id,
+        title: profile.title,
+        description: profile.description,
+        created_at: profile.created_at,
+        updated_at: profile.updated_at,
+        status: profile.status,
+      })));
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       Logger.error(`Failed to load creations: ${message}`);
@@ -46,9 +58,23 @@ export default function Home() {
   };
 
   const renderCreationItem = ({ item }: { item: Creation }) => (
-    <Link href={{ pathname: '../editor', params: { id: item.id } }} asChild>
+    <Link href={{ pathname: '../editor', params: { id: item.creation_id } }} asChild>
       <ThemedView className="mb-4 rounded-lg !bg-white/80 p-4 shadow-md">
-        <ThemedText className="text-lg">Creation ID: {item.id}</ThemedText>
+        <ThemedText className="mb-1 text-lg font-bold">{item.title}</ThemedText>
+        {item.description && (
+          <ThemedText className="text-sm">{item.description}</ThemedText>
+        )}
+        <ThemedText className="text-sm opacity-70">
+          Created on {new Date(item.created_at).toLocaleDateString()} at {new Date(item.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+        </ThemedText>
+        <ThemedText className="text-sm opacity-70">
+          Last updated on {new Date(item.updated_at).toLocaleDateString()} at {new Date(item.updated_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+        </ThemedText>
+        <View className="mt-2">
+          <ThemedText className="inline-block rounded-full bg-gray-200 px-2 py-1 text-xs dark:bg-gray-700">
+            {item.status}
+          </ThemedText>
+        </View>
       </ThemedView>
     </Link>
   );
@@ -61,7 +87,7 @@ export default function Home() {
         </View>
 
         <View className="mb-6">
-          <Link href="../editor" asChild>
+          <Link href={{ pathname: '../editor', params: { id: undefined } }} asChild>
             <ThemedButton title="Create a New Story" onPress={() => {}} />
           </Link>
         </View>
@@ -86,7 +112,7 @@ export default function Home() {
             <ThemedText className="mb-4 text-center opacity-70">
               You haven't created any stories yet.
             </ThemedText>
-            <Link href="../editor" asChild>
+            <Link href={{ pathname: '../editor', params: { id: undefined } }} asChild>
               <ThemedButton title="Create Your First Story" onPress={() => {}} />
             </Link>
           </ThemedView>
@@ -94,7 +120,7 @@ export default function Home() {
           <FlatList
             data={creations}
             renderItem={renderCreationItem}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item) => item.creation_id}
             contentContainerStyle={{ padding: 20 }}
           />
         )}
