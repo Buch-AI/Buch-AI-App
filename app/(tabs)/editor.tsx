@@ -203,7 +203,7 @@ export default function Editor() {
           value={prompt}
           onChangeText={setPrompt}
           multiline
-          className="my-4 h-24 rounded-lg !bg-white/40 p-3 shadow-md"
+          className="my-4 h-24 rounded-lg !bg-white/40 p-3 shadow-xl"
           editable={!isGenerating}
         />
 
@@ -235,10 +235,10 @@ export default function Editor() {
 
             {workflowState.creationParts.map((part, index) => (
               <View key={index} className="my-4">
-                <ThemedText className="mb-2 text-sm opacity-70">
-                  Part {index + 1}
+                <ThemedText type="book" className="mb-2 text-xl font-bold opacity-50">
+                  Chapter {index + 1}
                 </ThemedText>
-                <ThemedText className="mb-4">{part.text}</ThemedText>
+                <ThemedText type="book" className="mb-4">{part.text}</ThemedText>
 
                 {workflowState.currentStep === 'generating-images' && !part.imageData ? (
                   <View className="h-[512px] items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-800">

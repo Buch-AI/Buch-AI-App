@@ -7,7 +7,14 @@ module.exports = {
   ],
   presets: [require('nativewind/preset')],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        // Semantic naming for our fonts
+        brand: ['IndieFlower', 'cursive'],
+        body: ['SpaceGrotesk', 'system-ui', 'sans-serif'],
+        book: ['EBGaramond', 'serif'],
+      },
+    },
   },
   plugins: [],
 };

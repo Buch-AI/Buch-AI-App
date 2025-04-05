@@ -28,7 +28,7 @@ export const ThemedButton: React.FC<ThemedButtonProps> = ({ title, onPress, load
       {loading ? (
         <ActivityIndicator color={colorScheme === 'light' ? 'white' : Colors[colorScheme].text} />
       ) : (
-        <Text className={`text-lg font-semibold text-white dark:text-black ${textClassName}`}>{title}</Text>
+        <Text className={`font-body text-lg font-semibold text-white dark:text-black ${textClassName}`}>{title}</Text>
       )}
     </TouchableOpacity>
   );

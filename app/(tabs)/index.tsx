@@ -99,7 +99,7 @@ export default function Home() {
   };
 
   const renderCreationItem = ({ item }: { item: Creation }) => (
-    <ThemedView className="mb-4 rounded-lg !bg-white/80 p-4 shadow-md">
+    <ThemedView className="mb-4 rounded-lg !bg-white/80 p-4 shadow-xl">
       <View className="flex-row items-start justify-between">
         <Link href={{ pathname: '../editor', params: { id: item.creation_id } }} asChild className="flex-1">
           <View>
@@ -141,12 +141,24 @@ export default function Home() {
           <Link href={{ pathname: '../editor', params: { id: undefined } }} asChild>
             <ThemedButton title="Create a New Story" onPress={() => {}} />
           </Link>
+          <TouchableOpacity
+            onPress={loadCreations}
+            disabled={isLoading}
+            className="mt-3 flex-row items-center justify-center space-x-2 rounded-lg py-2"
+          >
+            {isLoading ? (
+              <ActivityIndicator size="small" />
+            ) : (
+              <>
+                <Ionicons name="refresh-outline" size={20} />
+                <ThemedText>Refresh Story List</ThemedText>
+              </>
+            )}
+          </TouchableOpacity>
         </View>
 
         {isLoading ? (
-          <View className="flex-1 items-center justify-center py-8">
-            <ActivityIndicator size="large" />
-          </View>
+          <></>
         ) : error ? (
           <ThemedView className="rounded-lg bg-red-100 p-4 dark:bg-red-900">
             <ThemedText className="text-red-800 dark:text-red-200">

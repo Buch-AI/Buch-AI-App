@@ -36,8 +36,10 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const pathname = usePathname();
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+  const [fontsLoaded] = useFonts({
+    'IndieFlower': require('../assets/fonts/IndieFlower-Regular.ttf'),
+    'SpaceGrotesk': require('../assets/fonts/SpaceGrotesk-VariableFont_wght.ttf'),
+    'EBGaramond': require('../assets/fonts/EBGaramond-VariableFont_wght.ttf'),
   });
 
   // Set initial authentication state based on the current path
@@ -71,12 +73,12 @@ export default function RootLayout() {
 
     checkAuthentication();
 
-    if (loaded) {
+    if (fontsLoaded) {
       SplashScreen.hideAsync();
     }
-  }, [loaded, isAuthRoute]);
+  }, [fontsLoaded, isAuthRoute]);
 
-  if (!loaded) {
+  if (!fontsLoaded) {
     return null;
   }
 
