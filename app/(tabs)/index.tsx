@@ -6,6 +6,7 @@ import { ThemedButton } from '@/components/ui-custom/ThemedButton';
 import { ThemedText } from '@/components/ui-custom/ThemedText';
 import { ThemedTextInput } from '@/components/ui-custom/ThemedTextInput';
 import { ThemedView } from '@/components/ui-custom/ThemedView';
+import { WorkflowStatusBox, WorkflowState } from '@/components/ui-custom/WorkflowStatusBox';
 import { StorageKeys } from '@/constants/Storage';
 import { useStory } from '@/contexts/StoryContext';
 import { ImageAdapter } from '@/services/ImageAdapter';
@@ -13,31 +14,36 @@ import { LlmAdapter } from '@/services/LlmAdapter';
 import { MeAdapter } from '@/services/MeAdapter';
 import Logger from '@/utils/Logger';
 
-interface StoryPart {
+interface CreationPart {
   text: string;
   imageData?: string;
 }
 
-interface WorkflowState {
-  creationId: string | null;
-  storyParts: StoryPart[];
-  currentStep: 'idle' | 'generating-story' | 'generating-images' | 'completed';
-  error: string | null;
+interface CreationWorkflowState extends WorkflowState {
+  creationParts: CreationPart[];
 }
 
-const initialWorkflowState: WorkflowState = {
+// Add status messages for each step
+const workflowStatusMessages: Record<WorkflowState['currentStep'], string> = {
+  'idle': 'Ready to generate your story',
+  'generating-story': 'Crafting your story with AI...',
+  'generating-images': 'Creating beautiful illustrations for your story...',
+  'completed': 'Your story has been created!',
+};
+
+const initialWorkflowState: CreationWorkflowState = {
   creationId: null,
-  storyParts: [],
   currentStep: 'idle',
   error: null,
+  creationParts: [],
 };
 
 export default function Index() {
   const [prompt, setPrompt] = useState('');
   const { dispatch } = useStory();
-  const [workflowState, setWorkflowState] = useState<WorkflowState>(initialWorkflowState);
+  const [workflowState, setWorkflowState] = useState<CreationWorkflowState>(initialWorkflowState);
 
-  const updateWorkflowState = (updates: Partial<WorkflowState>) => {
+  const updateWorkflowState = (updates: Partial<CreationWorkflowState>) => {
     setWorkflowState((current) => ({ ...current, ...updates }));
   };
 
@@ -84,18 +90,18 @@ export default function Index() {
       }
 
       // Step 3: Split story into parts
-      const storyParts = await llmAdapter.splitStory(generatedText);
-      const partsWithoutImages = storyParts.map((text) => ({ text }));
+      const creationParts = await llmAdapter.splitStory(generatedText);
+      const partsWithoutImages = creationParts.map((text) => ({ text }));
       updateWorkflowState({
-        storyParts: partsWithoutImages,
+        creationParts: partsWithoutImages,
         currentStep: 'generating-images',
       });
 
       // Save story parts to backend
-      await meAdapter.setStoryParts(creationId, storyParts);
+      await meAdapter.setStoryParts(creationId, creationParts);
 
       // Step 4: Generate images for each part
-      const updatedParts: StoryPart[] = [];
+      const updatedParts: CreationPart[] = [];
       for (const part of partsWithoutImages) {
         try {
           const imageData = await imageAdapter.generateImage(part.text);
@@ -114,7 +120,7 @@ export default function Index() {
 
       // Update final state
       updateWorkflowState({
-        storyParts: updatedParts,
+        creationParts: updatedParts,
         currentStep: 'completed',
       });
 
@@ -158,16 +164,21 @@ export default function Index() {
           title={isGenerating ? 'Generating...' : 'Generate Story'}
         />
 
+        <WorkflowStatusBox
+          workflowState={workflowState}
+          workflowStatusMessages={workflowStatusMessages}
+        />
+
         {workflowState.error && (
           <ThemedText className="mt-2 text-red-500">{workflowState.error}</ThemedText>
         )}
 
-        {workflowState.storyParts.length > 0 && (
+        {workflowState.creationParts.length > 0 && (
           <>
             <View className="my-6 h-px bg-gray-200 dark:bg-gray-700" />
             <ThemedText type="title">Story Parts</ThemedText>
 
-            {workflowState.storyParts.map((part, index) => (
+            {workflowState.creationParts.map((part, index) => (
               <View key={index} className="my-4">
                 <ThemedText className="mb-2 text-sm opacity-70">
                   Part {index + 1}
