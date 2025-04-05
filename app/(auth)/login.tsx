@@ -1,10 +1,11 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Link } from 'expo-router';
 import React, { useState } from 'react';
-import { Image, Modal, Pressable, TouchableOpacity } from 'react-native';
+import { Image, Pressable } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { SafeAreaScrollView } from '@/components/ui-custom/SafeAreaScrollView';
 import { ThemedButton } from '@/components/ui-custom/ThemedButton';
+import { ThemedModal } from '@/components/ui-custom/ThemedModal';
 import { ThemedText } from '@/components/ui-custom/ThemedText';
 import { ThemedTextInput } from '@/components/ui-custom/ThemedTextInput';
 import { ThemedView } from '@/components/ui-custom/ThemedView';
@@ -80,22 +81,12 @@ export default function LoginScreen() {
         </Link>
       </ThemedView>
 
-      <Modal
-        animationType="slide"
-        transparent={true}
+      <ThemedModal
         visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <ThemedView className="flex-1 items-center justify-center bg-white bg-opacity-50">
-          <ThemedView className="p-6">
-            <ThemedText className="text-lg font-bold">Error</ThemedText>
-            <ThemedText className="mt-2">{errorMessage}</ThemedText>
-            <TouchableOpacity onPress={() => setModalVisible(false)} className="mt-4 rounded bg-blue-500 p-2">
-              <ThemedText className="text-center text-white">Close</ThemedText>
-            </TouchableOpacity>
-          </ThemedView>
-        </ThemedView>
-      </Modal>
+        onClose={() => setModalVisible(false)}
+        title="Error"
+        message={errorMessage}
+      />
     </SafeAreaScrollView>
   );
 }

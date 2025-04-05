@@ -2,9 +2,10 @@ import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Link } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { View, FlatList, ActivityIndicator, Modal, TouchableOpacity } from 'react-native';
+import { View, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { SafeAreaScrollView } from '@/components/ui-custom/SafeAreaScrollView';
 import { ThemedButton } from '@/components/ui-custom/ThemedButton';
+import { ThemedModal } from '@/components/ui-custom/ThemedModal';
 import { ThemedText } from '@/components/ui-custom/ThemedText';
 import { ThemedView } from '@/components/ui-custom/ThemedView';
 import { StorageKeys } from '@/constants/Storage';
@@ -188,43 +189,18 @@ export default function Home() {
           />
         )}
 
-        <Modal
-          animationType="fade"
-          transparent={true}
+        <ThemedModal
           visible={deleteModalVisible}
-          onRequestClose={() => setDeleteModalVisible(false)}
-        >
-          <View className="flex-1 items-center justify-center bg-black/50">
-            <ThemedView className="m-5 w-[90%] max-w-md rounded-2xl bg-white p-8 shadow-xl">
-              <ThemedText className="mb-4 text-xl font-bold">Delete Story</ThemedText>
-              <ThemedText className="mb-6">
-                Are you sure you want to delete "{selectedCreation?.title}"? This action cannot be undone.
-              </ThemedText>
-              <View className="flex-row justify-end space-x-4">
-                <TouchableOpacity
-                  onPress={() => setDeleteModalVisible(false)}
-                  className="rounded-lg bg-gray-200 px-4 py-2"
-                  disabled={isDeleting}
-                >
-                  <ThemedText>Cancel</ThemedText>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={handleDeleteConfirm}
-                  className="rounded-lg bg-red-500 px-4 py-2"
-                  disabled={isDeleting}
-                >
-                  <View className="flex-row items-center space-x-2">
-                    {isDeleting ? (
-                      <ActivityIndicator size="small" color="white" />
-                    ) : (
-                      <ThemedText className="text-white">Delete</ThemedText>
-                    )}
-                  </View>
-                </TouchableOpacity>
-              </View>
-            </ThemedView>
-          </View>
-        </Modal>
+          onClose={() => setDeleteModalVisible(false)}
+          title="Delete Story"
+          message={`Are you sure you want to delete "${selectedCreation?.title}"? This action cannot be undone.`}
+          primaryButton={{
+            title: 'Delete',
+            onPress: handleDeleteConfirm,
+            loading: isDeleting,
+            variant: 'danger',
+          }}
+        />
       </ThemedView>
     </SafeAreaScrollView>
   );
