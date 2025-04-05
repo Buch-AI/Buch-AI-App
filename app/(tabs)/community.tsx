@@ -1,34 +1,28 @@
-import { useEffect } from 'react';
-import { FlatList } from 'react-native';
-
-import { StoryCard } from '@/components/ui-custom/StoryCard';
+import { View } from 'react-native';
 import { ThemedText } from '@/components/ui-custom/ThemedText';
 import { ThemedView } from '@/components/ui-custom/ThemedView';
-import { useStory } from '@/contexts/StoryContext';
+import { IconSymbol } from '@/components/ui-default/IconSymbol';
+import { Colors } from '@/constants/Colors';
+import { useColorScheme } from '@/hooks/useColorScheme';
 
 export default function CommunityScreen() {
-  const { state, dispatch } = useStory();
-
-  // In a real app, you'd fetch stories from an API
-  useEffect(() => {
-    // Simulated API call
-    dispatch({
-      type: 'SET_STORIES',
-      payload: [
-        // Your story data
-      ],
-    });
-  }, [dispatch]);
+  const colorScheme = useColorScheme();
 
   return (
-    <ThemedView className="flex-1 p-4">
-      <ThemedText type="title">Community Stories</ThemedText>
-      <FlatList
-        data={state.stories}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <StoryCard story={item} />}
-        contentContainerStyle={{ gap: 16 }}
-      />
+    <ThemedView className="flex-1 items-center justify-center p-4">
+      <View className="items-center space-y-4">
+        <IconSymbol
+          name="person.2.fill"
+          size={64}
+          color={Colors[colorScheme ?? 'light'].tint}
+        />
+        <ThemedText type="title" className="text-center">
+          Coming Soon
+        </ThemedText>
+        <ThemedText className="max-w-[360px] text-center text-gray-500">
+          We're working hard to bring you a space where you can share and discover amazing stories with other writers.
+        </ThemedText>
+      </View>
     </ThemedView>
   );
 }

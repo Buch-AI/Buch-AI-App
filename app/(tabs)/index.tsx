@@ -1,211 +1,99 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { useState } from 'react';
-import { View, Image } from 'react-native';
+import { Link } from 'expo-router';
+import React, { useEffect, useState } from 'react';
+import { View, FlatList, ActivityIndicator } from 'react-native';
 import { SafeAreaScrollView } from '@/components/ui-custom/SafeAreaScrollView';
 import { ThemedButton } from '@/components/ui-custom/ThemedButton';
 import { ThemedText } from '@/components/ui-custom/ThemedText';
-import { ThemedTextInput } from '@/components/ui-custom/ThemedTextInput';
 import { ThemedView } from '@/components/ui-custom/ThemedView';
-import { WorkflowStatusBox, WorkflowState } from '@/components/ui-custom/WorkflowStatusBox';
 import { StorageKeys } from '@/constants/Storage';
-import { useStory } from '@/contexts/StoryContext';
-import { ImageAdapter } from '@/services/ImageAdapter';
-import { LlmAdapter } from '@/services/LlmAdapter';
 import { MeAdapter } from '@/services/MeAdapter';
 import Logger from '@/utils/Logger';
 
-interface CreationPart {
-  text: string;
-  imageData?: string;
+interface Creation {
+  id: string;
 }
 
-interface CreationWorkflowState extends WorkflowState {
-  creationParts: CreationPart[];
-}
+export default function Home() {
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [creations, setCreations] = useState<Creation[]>([]);
 
-// Add status messages for each step
-const workflowStatusMessages: Record<WorkflowState['currentStep'], string> = {
-  'idle': 'Ready to generate your story',
-  'generating-story': 'Crafting your story with AI...',
-  'generating-images': 'Creating beautiful illustrations for your story...',
-  'completed': 'Your story has been created!',
-};
+  useEffect(() => {
+    loadCreations();
+  }, []);
 
-const initialWorkflowState: CreationWorkflowState = {
-  creationId: null,
-  currentStep: 'idle',
-  error: null,
-  creationParts: [],
-};
-
-export default function Index() {
-  const [prompt, setPrompt] = useState('');
-  const { dispatch } = useStory();
-  const [workflowState, setWorkflowState] = useState<CreationWorkflowState>(initialWorkflowState);
-
-  const updateWorkflowState = (updates: Partial<CreationWorkflowState>) => {
-    setWorkflowState((current) => ({ ...current, ...updates }));
-  };
-
-  const handleError = (error: unknown, step: string) => {
-    const errorMessage = error instanceof Error ? error.message : String(error);
-    Logger.error(`Error in ${step}: ${errorMessage}`);
-    updateWorkflowState({
-      error: `Failed during ${step}: ${errorMessage}`,
-      currentStep: 'idle',
-    });
-    dispatch({ type: 'SET_ERROR', payload: errorMessage });
-  };
-
-  async function startWorkflow() {
-    const token = await AsyncStorage.getItem(StorageKeys.AUTH_JWT);
-    if (!token) {
-      throw new Error('Unauthorized');
-    }
-
-    if (!prompt.trim()) return;
-
+  const loadCreations = async () => {
     try {
-      // Reset state
-      updateWorkflowState({
-        ...initialWorkflowState,
-        currentStep: 'generating-story',
-      });
-      dispatch({ type: 'SET_ERROR', payload: null });
+      setIsLoading(true);
+      setError(null);
 
-      // Initialize adapters
+      const token = await AsyncStorage.getItem(StorageKeys.AUTH_JWT);
+      if (!token) {
+        throw new Error('Unauthorized');
+      }
+
       const meAdapter = new MeAdapter(token);
-      const llmAdapter = new LlmAdapter();
-      const imageAdapter = new ImageAdapter();
-
-      // Step 1: Generate creation ID
-      const creationId = await meAdapter.generateCreation();
-      updateWorkflowState({ creationId });
-
-      // Step 2: Generate story
-      let generatedText = '';
-      const streamGenerator = llmAdapter.generateStoryStream(prompt);
-      for await (const token of streamGenerator) {
-        generatedText += token;
-      }
-
-      // Step 3: Split story into parts
-      const creationParts = await llmAdapter.splitStory(generatedText);
-      const partsWithoutImages = creationParts.map((text) => ({ text }));
-      updateWorkflowState({
-        creationParts: partsWithoutImages,
-        currentStep: 'generating-images',
-      });
-
-      // Save story parts to backend
-      await meAdapter.setStoryParts(creationId, creationParts);
-
-      // Step 4: Generate images for each part
-      const updatedParts: CreationPart[] = [];
-      for (const part of partsWithoutImages) {
-        try {
-          const imageData = await imageAdapter.generateImage(part.text);
-          updatedParts.push({ ...part, imageData });
-        } catch (error) {
-          Logger.error(`Failed to generate image: ${error}`);
-          updatedParts.push(part); // Keep the part even if image generation fails
-        }
-      }
-
-      // Save images to backend
-      const images = updatedParts
-        .map((part) => part.imageData)
-        .filter((img): img is string => Boolean(img));
-      await meAdapter.setImages(creationId, images);
-
-      // Update final state
-      updateWorkflowState({
-        creationParts: updatedParts,
-        currentStep: 'completed',
-      });
-
-      // Update story context
-      dispatch({
-        type: 'SET_CURRENT_STORY',
-        payload: {
-          id: creationId,
-          prompt,
-          content: generatedText,
-          authorId: 'current-user',
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
-      });
+      const creationIds = await meAdapter.getUserCreations();
+      setCreations(creationIds.map((id) => ({ id })));
     } catch (error) {
-      handleError(error, workflowState.currentStep);
+      const message = error instanceof Error ? error.message : String(error);
+      Logger.error(`Failed to load creations: ${message}`);
+      setError(message);
+    } finally {
+      setIsLoading(false);
     }
-  }
+  };
 
-  const isGenerating = workflowState.currentStep !== 'idle' && workflowState.currentStep !== 'completed';
+  const renderCreationItem = ({ item }: { item: Creation }) => (
+    <Link href={{ pathname: '../editor', params: { id: item.id } }} asChild>
+      <ThemedView className="mb-4 rounded-lg bg-white/10 p-4">
+        <ThemedText className="text-lg">Creation ID: {item.id}</ThemedText>
+      </ThemedView>
+    </Link>
+  );
 
   return (
     <SafeAreaScrollView>
       <ThemedView className="flex-1 p-4">
-        <ThemedText type="title">Create Your Story</ThemedText>
+        <View className="mb-6 flex-row items-center justify-between">
+          <ThemedText type="title">Your Stories</ThemedText>
+          <Link href="../editor" asChild>
+            <ThemedButton title="Create New" onPress={() => {}} />
+          </Link>
+        </View>
 
-        <ThemedTextInput
-          placeholder="What is your story about?"
-          value={prompt}
-          onChangeText={setPrompt}
-          multiline
-          className="my-4 h-24 rounded-lg !bg-white/40 p-3 shadow-lg"
-          editable={!isGenerating}
-        />
-
-        <ThemedButton
-          onPress={startWorkflow}
-          disabled={isGenerating || !prompt.trim()}
-          loading={isGenerating}
-          title={isGenerating ? 'Generating...' : 'Generate Story'}
-        />
-
-        <WorkflowStatusBox
-          workflowState={workflowState}
-          workflowStatusMessages={workflowStatusMessages}
-        />
-
-        {workflowState.error && (
-          <ThemedText className="mt-2 text-red-500">{workflowState.error}</ThemedText>
-        )}
-
-        {workflowState.creationParts.length > 0 && (
-          <>
-            <View className="my-6 h-px bg-gray-200 dark:bg-gray-700" />
-            <ThemedText type="title">Story Parts</ThemedText>
-
-            {workflowState.creationParts.map((part, index) => (
-              <View key={index} className="my-4">
-                <ThemedText className="mb-2 text-sm opacity-70">
-                  Part {index + 1}
-                </ThemedText>
-                <ThemedText className="mb-4">{part.text}</ThemedText>
-
-                {workflowState.currentStep === 'generating-images' && !part.imageData ? (
-                  <View className="h-[512px] items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-800">
-                    <ThemedText>Generating image...</ThemedText>
-                  </View>
-                ) : part.imageData ? (
-                  <View className="h-[512px] w-full overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-800">
-                    <Image
-                      source={{ uri: part.imageData }}
-                      className="size-full"
-                      style={{ width: '100%', height: '100%' }}
-                      resizeMode="contain"
-                    />
-                  </View>
-                ) : (
-                  <View className="h-[512px] items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-800">
-                    <ThemedText>Failed to generate image</ThemedText>
-                  </View>
-                )}
-              </View>
-            ))}
-          </>
+        {isLoading ? (
+          <View className="flex-1 items-center justify-center py-8">
+            <ActivityIndicator size="large" />
+          </View>
+        ) : error ? (
+          <ThemedView className="rounded-lg bg-red-100 p-4 dark:bg-red-900">
+            <ThemedText className="text-red-800 dark:text-red-200">
+              {error}
+            </ThemedText>
+            <ThemedButton
+              className="mt-4"
+              title="Try Again"
+              onPress={loadCreations}
+            />
+          </ThemedView>
+        ) : creations.length === 0 ? (
+          <ThemedView className="items-center justify-center py-8">
+            <ThemedText className="mb-4 text-center opacity-70">
+              You haven't created any stories yet.
+            </ThemedText>
+            <Link href="../editor" asChild>
+              <ThemedButton title="Create Your First Story" onPress={() => {}} />
+            </Link>
+          </ThemedView>
+        ) : (
+          <FlatList
+            data={creations}
+            renderItem={renderCreationItem}
+            keyExtractor={(item) => item.id}
+            contentContainerStyle={{ paddingBottom: 20 }}
+          />
         )}
       </ThemedView>
     </SafeAreaScrollView>
