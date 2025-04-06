@@ -1,12 +1,13 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { View, Image, ActivityIndicator } from 'react-native';
+import { View, Image, ActivityIndicator, Platform } from 'react-native';
 import { SafeAreaScrollView } from '@/components/ui-custom/SafeAreaScrollView';
 import { ThemedButton } from '@/components/ui-custom/ThemedButton';
 import { ThemedText } from '@/components/ui-custom/ThemedText';
 import { ThemedTextInput } from '@/components/ui-custom/ThemedTextInput';
 import { ThemedView } from '@/components/ui-custom/ThemedView';
+import { VideoPlayer } from '@/components/ui-custom/VideoPlayer';
 import { WorkflowStatusBox, WorkflowState } from '@/components/ui-custom/WorkflowStatusBox';
 import { StorageKeys } from '@/constants/Storage';
 import { useStory } from '@/contexts/StoryContext';
@@ -22,21 +23,24 @@ interface CreationPart {
 
 interface CreationWorkflowState extends WorkflowState {
   creationParts: CreationPart[];
+  creationVideoUrl?: string;
 }
 
 // Add status messages for each step
-const workflowStatusMessages: Record<WorkflowState['currentStep'], string> = {
+const workflowStatusMessages: Record<WorkflowState['currStep'], string> = {
   'idle': 'Ready to generate your story',
   'generating-story': 'Crafting your story with AI...',
   'generating-images': 'Creating beautiful illustrations for your story...',
+  'generating-video': 'Creating a video from your story...',
   'completed': 'Your story has been created!',
 };
 
 const initialWorkflowState: CreationWorkflowState = {
   creationId: null,
-  currentStep: 'idle',
+  currStep: 'idle',
   error: null,
   creationParts: [],
+  creationVideoUrl: undefined,
 };
 
 export default function Editor() {
@@ -45,6 +49,15 @@ export default function Editor() {
   const { dispatch } = useStory();
   const [workflowState, setWorkflowState] = useState<CreationWorkflowState>(initialWorkflowState);
   const [isLoadingCreation, setIsLoadingCreation] = useState(false);
+
+  // Cleanup Blob URL on unmount or when video URL changes
+  useEffect(() => {
+    return () => {
+      if (Platform.OS === 'web' && workflowState.creationVideoUrl?.startsWith('blob:')) {
+        URL.revokeObjectURL(workflowState.creationVideoUrl);
+      }
+    };
+  }, [workflowState.creationVideoUrl]);
 
   useEffect(() => {
     if (creationId) {
@@ -71,6 +84,7 @@ export default function Editor() {
       // Get story parts
       const storyParts = await meAdapter.getStoryParts(id);
       const images = await meAdapter.getImages(id);
+      const video = await meAdapter.getVideo(id);
 
       // Create creation parts by combining text and images
       const creationParts = storyParts.map((text, index) => ({
@@ -82,8 +96,9 @@ export default function Editor() {
       setWorkflowState({
         ...initialWorkflowState,
         creationId: id,
-        currentStep: 'completed',
+        currStep: 'completed',
         creationParts,
+        creationVideoUrl: video,
       });
     } catch (error) {
       handleError(error, 'loading-existing-creation');
@@ -101,7 +116,7 @@ export default function Editor() {
     Logger.error(`Error in ${step}: ${errorMessage}`);
     updateWorkflowState({
       error: `Failed during ${step}: ${errorMessage}`,
-      currentStep: 'idle',
+      currStep: 'idle',
     });
     dispatch({ type: 'SET_ERROR', payload: errorMessage });
   };
@@ -119,7 +134,7 @@ export default function Editor() {
       updateWorkflowState({
         ...initialWorkflowState,
         creationId: creationId || null,
-        currentStep: 'generating-story',
+        currStep: 'generating-story',
       });
       dispatch({ type: 'SET_ERROR', payload: null });
 
@@ -144,7 +159,7 @@ export default function Editor() {
       const partsWithoutImages = creationParts.map((text) => ({ text }));
       updateWorkflowState({
         creationParts: partsWithoutImages,
-        currentStep: 'generating-images',
+        currStep: 'generating-images',
       });
 
       // Save story parts to backend
@@ -168,10 +183,19 @@ export default function Editor() {
         .filter((img): img is string => Boolean(img));
       await meAdapter.setImages(activeCreationId, images);
 
-      // Update final state
+      // Step 5: Generate video
       updateWorkflowState({
         creationParts: updatedParts,
-        currentStep: 'completed',
+        currStep: 'generating-video',
+      });
+
+      const videoUrl = await meAdapter.generateVideo(activeCreationId);
+      Logger.info(`Received video URL: ${videoUrl}`);
+
+      updateWorkflowState({
+        creationParts: updatedParts,
+        creationVideoUrl: videoUrl,
+        currStep: 'completed',
       });
 
       // Update story context
@@ -187,11 +211,11 @@ export default function Editor() {
         },
       });
     } catch (error) {
-      handleError(error, workflowState.currentStep);
+      handleError(error, workflowState.currStep);
     }
   }
 
-  const isGenerating = workflowState.currentStep !== 'idle' && workflowState.currentStep !== 'completed';
+  const isGenerating = workflowState.currStep !== 'idle' && workflowState.currStep !== 'completed';
 
   return (
     <SafeAreaScrollView>
@@ -240,7 +264,7 @@ export default function Editor() {
                 </ThemedText>
                 <ThemedText type="book" className="mb-4">{part.text}</ThemedText>
 
-                {workflowState.currentStep === 'generating-images' && !part.imageData ? (
+                {workflowState.currStep === 'generating-images' && !part.imageData ? (
                   <View className="h-[512px] items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-800">
                     <ThemedText>Generating image...</ThemedText>
                   </View>
@@ -260,6 +284,16 @@ export default function Editor() {
                 )}
               </View>
             ))}
+
+            {workflowState.creationVideoUrl && (
+              <>
+                <View className="my-6 h-px bg-gray-200 dark:bg-gray-700" />
+                <ThemedText type="title" className="mb-4">Story Video</ThemedText>
+                <View className="h-[512px] w-full overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-800">
+                  <VideoPlayer base64DataUrl={workflowState.creationVideoUrl} />
+                </View>
+              </>
+            )}
           </>
         )}
       </ThemedView>

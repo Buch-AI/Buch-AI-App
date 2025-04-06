@@ -176,9 +176,6 @@ export default function Home() {
             <ThemedText className="mb-4 text-center opacity-70">
               You haven't created any stories yet.
             </ThemedText>
-            <Link href={{ pathname: '../editor', params: { id: undefined } }} asChild>
-              <ThemedButton title="Create Your First Story" onPress={() => {}} />
-            </Link>
           </ThemedView>
         ) : (
           <FlatList

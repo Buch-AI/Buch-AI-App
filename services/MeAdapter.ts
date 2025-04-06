@@ -140,6 +140,20 @@ export class MeAdapter {
     }
   }
 
+  async generateVideo(creationId: string): Promise<string> {
+    try {
+      Logger.info(`Generating video for creation: ${creationId}`);
+      const response = await axios.get<VideoResponse>(
+        `${this.baseUrl}/me/creation/${creationId}/generate_video`,
+        { headers: this.headers },
+      );
+      return response.data.data;
+    } catch (error) {
+      Logger.error(`Failed to generate video: ${error}`);
+      throw error;
+    }
+  }
+
   async generateCreation(): Promise<string> {
     try {
       Logger.info('Generating new creation');

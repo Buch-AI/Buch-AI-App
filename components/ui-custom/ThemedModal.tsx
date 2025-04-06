@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, TouchableOpacity, View } from 'react-native';
+import { Modal, TouchableOpacity, View, ActivityIndicator } from 'react-native';
 import { ThemedText } from './ThemedText';
 import { ThemedView } from './ThemedView';
 
@@ -54,6 +54,9 @@ export function ThemedModal({
                   <ThemedText className="text-white">
                     {primaryButton.title}
                   </ThemedText>
+                  {primaryButton.loading && (
+                    <ActivityIndicator size="small" color="white" />
+                  )}
                 </View>
               </TouchableOpacity>
             )}
