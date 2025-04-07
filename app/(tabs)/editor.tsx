@@ -121,6 +121,36 @@ export default function Editor() {
     dispatch({ type: 'SET_ERROR', payload: errorMessage });
   };
 
+  const pollGenerateVideoStatus = async (
+    meAdapter: MeAdapter,
+    activeCreationId: string,
+    maxAttempts = 60, // 10 minutes with 10-second intervals
+    interval = 10,
+  ): Promise<string> => {
+    let attempts = 0;
+
+    while (attempts < maxAttempts) {
+      try {
+        const status = await meAdapter.generateVideoStatus(activeCreationId);
+
+        if (status.status === 'completed') {
+          // Video is ready, get the URL
+          return await meAdapter.getVideo(activeCreationId);
+        } else if (status.status === 'failed') {
+          throw new Error(status.message || 'Video generation failed');
+        }
+
+        // Still pending, wait and try again
+        await new Promise((resolve) => setTimeout(resolve, interval * 1000));
+        attempts++;
+      } catch (error) {
+        throw error;
+      }
+    }
+
+    throw new Error('Video generation timed out');
+  };
+
   async function startWorkflow() {
     const token = await AsyncStorage.getItem(StorageKeys.AUTH_JWT);
     if (!token) {
@@ -189,7 +219,14 @@ export default function Editor() {
         currStep: 'generating-video',
       });
 
-      const videoUrl = await meAdapter.generateVideo(activeCreationId);
+      // Start video generation
+      const videoGeneration = await meAdapter.generateVideo(activeCreationId);
+      if (videoGeneration.status === 'failed') {
+        throw new Error(videoGeneration.message || 'Failed to start video generation');
+      }
+
+      // Poll for video completion
+      const videoUrl = await pollGenerateVideoStatus(meAdapter, activeCreationId);
       Logger.info(`Received video URL: ${videoUrl}`);
 
       updateWorkflowState({

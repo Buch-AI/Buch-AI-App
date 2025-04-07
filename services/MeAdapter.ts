@@ -37,6 +37,11 @@ interface VideoResponse {
   data: string; // URL
 }
 
+interface TaskStatus {
+  status: 'pending' | 'completed' | 'failed';
+  message?: string;
+}
+
 interface GenerateResponse {
   data: string; // URL
 }
@@ -140,16 +145,30 @@ export class MeAdapter {
     }
   }
 
-  async generateVideo(creationId: string): Promise<string> {
+  async generateVideo(creationId: string): Promise<TaskStatus> {
     try {
       Logger.info(`Generating video for creation: ${creationId}`);
-      const response = await axios.get<VideoResponse>(
+      const response = await axios.get<TaskStatus>(
         `${this.baseUrl}/me/creation/${creationId}/generate_video`,
         { headers: this.headers },
       );
-      return response.data.data;
+      return response.data;
     } catch (error) {
       Logger.error(`Failed to generate video: ${error}`);
+      throw error;
+    }
+  }
+
+  async generateVideoStatus(creationId: string): Promise<TaskStatus> {
+    try {
+      Logger.info(`Getting video generation status for creation: ${creationId}`);
+      const response = await axios.get<TaskStatus>(
+        `${this.baseUrl}/me/creation/${creationId}/generate_video_status`,
+        { headers: this.headers },
+      );
+      return response.data;
+    } catch (error) {
+      Logger.error(`Failed to get video generation status: ${error}`);
       throw error;
     }
   }
