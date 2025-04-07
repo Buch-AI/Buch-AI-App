@@ -2,6 +2,10 @@
 
 Coming soon. Buch AI is the ultimate short story ideation, brainstorming, manuscript writing and illustration companion, designed for fictional literature creatives and artists.
 
+## Tech Stack
+
+[![My Skills](https://skillicons.dev/icons?i=fastapi,githubactions,js,nodejs,npm,react,tailwind,ts)](https://skillicons.dev)
+
 ## Get started with development
 
 Clone the repository.
