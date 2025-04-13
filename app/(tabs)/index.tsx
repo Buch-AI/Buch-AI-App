@@ -24,11 +24,13 @@ interface Creation {
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
   const [creations, setCreations] = useState<Creation[]>([]);
 
-  // Delete modal
+  const [isSelecting, setIsSelecting] = useState(false);
+  const [selectedCreationIds, setSelectedCreationIds] = useState<Set<string>>(new Set());
+
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
-  const [selectedCreation, setSelectedCreation] = useState<Creation | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
@@ -55,6 +57,10 @@ export default function Home() {
         updated_at: profile.updated_at,
         status: profile.status,
       })));
+
+      // Clear selections when loading new data
+      setIsSelecting(false);
+      setSelectedCreationIds(new Set());
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       Logger.error(`Failed to load creations: ${message}`);
@@ -64,45 +70,102 @@ export default function Home() {
     }
   };
 
-  const handleDeletePress = (creation: Creation) => {
-    setSelectedCreation(creation);
-    setDeleteModalVisible(true);
-  };
 
   const handleDeleteConfirm = async () => {
-    if (!selectedCreation) return;
-
     try {
       setIsDeleting(true);
-      Logger.info(`Proceeding with deletion of creation: ${selectedCreation.creation_id}`);
       const token = await AsyncStorage.getItem(StorageKeys.AUTH_JWT);
       if (!token) {
         throw new Error('Unauthorized');
       }
 
       const meAdapter = new MeAdapter(token);
-      await meAdapter.deleteCreation(selectedCreation.creation_id);
-      Logger.info('Creation deleted successfully');
 
-      // Update the local state to remove the deleted creation
-      setCreations((prevCreations) =>
-        prevCreations.filter((creation) => creation.creation_id !== selectedCreation.creation_id),
-      );
+      // Determine which IDs to delete
+      const idsToDelete = Array.from(selectedCreationIds);
+
+      if (idsToDelete.length === 0) return;
+
+      // Delete all selected creations
+      const deletePromises = idsToDelete.map((id) => {
+        return meAdapter.deleteCreation(id);
+      });
+
+      await Promise.all(deletePromises);
+      Logger.info('Deletion completed successfully');
+
+      // Update the local state to remove the deleted creations
+      setCreations((prevCreations) => {
+        if (selectedCreationIds.size > 0) {
+          return prevCreations.filter((creation) => !selectedCreationIds.has(creation.creation_id));
+        }
+        return prevCreations;
+      });
+
+      // Reset selection state
       setDeleteModalVisible(false);
-      setSelectedCreation(null);
+      setSelectedCreationIds(new Set());
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
-      Logger.error(`Failed to delete creation: ${message}`);
-      setError('Failed to delete the story. Please try again.');
+      Logger.error(`Failed to delete creation(s): ${message}`);
+      setError('Failed to delete the story/stories. Please try again.');
     } finally {
       setIsDeleting(false);
     }
   };
 
+  const handleBulkDeletePress = () => {
+    if (selectedCreationIds.size === 0) return;
+    setDeleteModalVisible(true);
+  };
+
+  const toggleSelectMode = () => {
+    setIsSelecting(!isSelecting);
+    if (isSelecting) {
+      setSelectedCreationIds(new Set());
+    }
+  };
+
+  const toggleSelection = (id: string) => {
+    const newSelectedIds = new Set(selectedCreationIds);
+    if (newSelectedIds.has(id)) {
+      newSelectedIds.delete(id);
+    } else {
+      newSelectedIds.add(id);
+    }
+    setSelectedCreationIds(newSelectedIds);
+  };
+
+  const selectAll = () => {
+    const allIds = new Set(creations.map((creation) => creation.creation_id));
+    setSelectedCreationIds(allIds);
+  };
+
+  const deselectAll = () => {
+    setSelectedCreationIds(new Set());
+  };
+
   const renderCreationItem = ({ item }: { item: Creation }) => (
     <ThemedView className="mb-4 rounded-lg !bg-white/80 p-4 shadow-xl">
       <View className="flex-row items-start justify-between">
-        <Link href={{ pathname: '../editor', params: { id: item.creation_id } }} asChild className="flex-1">
+        {isSelecting && (
+          <TouchableOpacity
+            onPress={() => toggleSelection(item.creation_id)}
+            className="mr-3 mt-1 size-6 items-center justify-center rounded-md border border-gray-300"
+            style={{ backgroundColor: selectedCreationIds.has(item.creation_id) ? '#4F46E5' : 'transparent' }}
+          >
+            {selectedCreationIds.has(item.creation_id) && (
+              <Ionicons name="checkmark" size={16} color="#FFFFFF" />
+            )}
+          </TouchableOpacity>
+        )}
+
+        <Link
+          href={{ pathname: '../editor', params: { id: item.creation_id } }}
+          asChild
+          className="flex-1"
+          disabled={isSelecting}
+        >
           <View>
             <ThemedText className="mb-1 text-lg font-bold">{item.title}</ThemedText>
             {item.description && (
@@ -121,12 +184,6 @@ export default function Home() {
             </View>
           </View>
         </Link>
-        <TouchableOpacity
-          onPress={() => handleDeletePress(item)}
-          className="ml-4 size-8 items-center justify-center rounded-full"
-        >
-          <Ionicons name="trash-outline" size={20} color="#EF4444" />
-        </TouchableOpacity>
       </View>
     </ThemedView>
   );
@@ -142,21 +199,67 @@ export default function Home() {
           <Link href={{ pathname: '../editor', params: { id: undefined } }} asChild>
             <ThemedButton title="Create a New Story" onPress={() => {}} />
           </Link>
-          <TouchableOpacity
-            onPress={loadCreations}
-            disabled={isLoading}
-            className="mt-3 flex-row items-center justify-center space-x-2 rounded-lg py-2"
-          >
-            {isLoading ? (
-              <ActivityIndicator size="small" />
-            ) : (
-              <>
-                <Ionicons name="refresh-outline" size={20} />
-                <ThemedText>Refresh Story List</ThemedText>
-              </>
-            )}
-          </TouchableOpacity>
         </View>
+
+        <View className="mb-4 flex-row items-center justify-between">
+          <ThemedButton
+            onPress={toggleSelectMode}
+            title={isSelecting ? 'Cancel Selection' : 'Select Stories'}
+            className="!mr-2 !flex-1 !rounded-full !bg-gray-400 dark:!bg-gray-800"
+            disabled={isLoading || creations.length === 0}
+            leadingIcon={
+              <Ionicons
+                name={isSelecting ? 'close-circle-outline' : 'checkbox-outline'}
+                size={20}
+                color="white"
+              />
+            }
+          />
+
+          <ThemedButton
+            onPress={loadCreations}
+            title="Refresh Stories"
+            loading={isLoading}
+            disabled={isLoading}
+            className="!ml-2 !flex-1 !rounded-full !bg-gray-400 dark:!bg-gray-800"
+            leadingIcon={
+              <Ionicons
+                name="refresh-outline"
+                size={20}
+                color="white"
+              />
+            }
+          />
+        </View>
+
+        {isSelecting && (
+          <View className="mb-4 flex-row items-center justify-between">
+            <View className="flex-row space-x-2">
+              <TouchableOpacity
+                onPress={selectAll}
+                className="rounded-full bg-gray-200 px-3 py-1 dark:bg-gray-700"
+              >
+                <ThemedText className="text-sm">Select All</ThemedText>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={deselectAll}
+                className="rounded-full bg-gray-200 px-3 py-1 dark:bg-gray-700"
+              >
+                <ThemedText className="text-sm">Deselect All</ThemedText>
+              </TouchableOpacity>
+            </View>
+            {selectedCreationIds.size > 0 && (
+              <TouchableOpacity
+                onPress={handleBulkDeletePress}
+                className="rounded-full bg-red-500 px-3 py-1"
+              >
+                <ThemedText className="text-sm text-white">
+                      Delete Selected ({selectedCreationIds.size})
+                </ThemedText>
+              </TouchableOpacity>
+            )}
+          </View>
+        )}
 
         {isLoading ? (
           <></>
@@ -189,8 +292,8 @@ export default function Home() {
         <ThemedModal
           visible={deleteModalVisible}
           onClose={() => setDeleteModalVisible(false)}
-          title="Delete Story"
-          message={`Are you sure you want to delete "${selectedCreation?.title}"? This action cannot be undone.`}
+          title={'Delete Stories'}
+          message={`Are you sure you want to delete ${selectedCreationIds.size} ${selectedCreationIds.size === 1 ? 'story' : 'stories'}? This action cannot be undone.`}
           primaryButton={{
             title: 'Delete',
             onPress: handleDeleteConfirm,
