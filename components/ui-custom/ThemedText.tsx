@@ -14,7 +14,7 @@ export const ThemedText = forwardRef<Text, ThemedTextProps>(({ type = 'body', cl
   const baseStyle = (() => {
     switch (type) {
     case 'title':
-      return 'text-2xl font-brand font-bold';
+      return 'text-3xl font-brand font-bold';
     case 'book':
       return 'text-lg font-book leading-relaxed';
     default:

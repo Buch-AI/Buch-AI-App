@@ -206,6 +206,7 @@ export default function Home() {
             onPress={toggleSelectMode}
             title={isSelecting ? 'Cancel Selection' : 'Select Stories'}
             className="!mr-2 !flex-1 !rounded-full !bg-gray-400 dark:!bg-gray-800"
+            textClassName="!text-sm"
             disabled={isLoading || creations.length === 0}
             leadingIcon={
               <Ionicons
@@ -222,6 +223,7 @@ export default function Home() {
             loading={isLoading}
             disabled={isLoading}
             className="!ml-2 !flex-1 !rounded-full !bg-gray-400 dark:!bg-gray-800"
+            textClassName="!text-sm"
             leadingIcon={
               <Ionicons
                 name="refresh-outline"
@@ -237,13 +239,13 @@ export default function Home() {
             <View className="flex-row space-x-2">
               <TouchableOpacity
                 onPress={selectAll}
-                className="rounded-full bg-gray-200 px-3 py-1 dark:bg-gray-700"
+                className="rounded-full bg-gray-200 px-3 py-1 dark:bg-gray-800"
               >
                 <ThemedText className="text-sm">Select All</ThemedText>
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={deselectAll}
-                className="rounded-full bg-gray-200 px-3 py-1 dark:bg-gray-700"
+                className="rounded-full bg-gray-200 px-3 py-1 dark:bg-gray-800"
               >
                 <ThemedText className="text-sm">Deselect All</ThemedText>
               </TouchableOpacity>

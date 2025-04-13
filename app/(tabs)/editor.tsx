@@ -260,7 +260,7 @@ export default function Editor() {
         <ThemedText type="title">Create Your Story</ThemedText>
 
         <ThemedTextInput
-          placeholder="What is your story about?"
+          label="What is your story about?"
           value={prompt}
           onChangeText={setPrompt}
           multiline

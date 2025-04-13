@@ -1,22 +1,92 @@
-import { TextInput, TextInputProps } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { useEffect, useRef, useState } from 'react';
+import { TextInput, TextInputProps, View, Animated, Pressable } from 'react-native';
 import { useThemeColor } from '@/hooks/useThemeColor';
 
 export type ThemedTextInputProps = TextInputProps & {
+  label: string;
   lightColor?: string;
   darkColor?: string;
+  className?: string;
 };
 
 export function ThemedTextInput(props: ThemedTextInputProps) {
-  const { style, lightColor, darkColor, ...otherProps } = props;
+  const { style, lightColor, darkColor, className, label, value, onFocus, onBlur, secureTextEntry, ...otherProps } = props;
   const color = useThemeColor({ light: lightColor, dark: darkColor }, 'text');
   const backgroundColor = useThemeColor({}, 'background');
+  const [isFocused, setIsFocused] = useState(false);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+
+  const animatedValue = useRef(new Animated.Value(value ? 1 : 0)).current;
+
+  useEffect(() => {
+    Animated.timing(animatedValue, {
+      toValue: (isFocused || value) ? 1 : 0,
+      duration: 200,
+      useNativeDriver: false,
+    }).start();
+  }, [isFocused, value]);
+
+  const labelStyle = {
+    position: 'absolute' as const,
+    left: 16,
+    top: animatedValue.interpolate({
+      inputRange: [0, 1],
+      outputRange: [18, -9],
+    }),
+    fontSize: animatedValue.interpolate({
+      inputRange: [0, 1],
+      outputRange: [16, 12],
+    }),
+    color: animatedValue.interpolate({
+      inputRange: [0, 1],
+      outputRange: [color + '40', color + '80'],
+    }),
+    backgroundColor: animatedValue.interpolate({
+      inputRange: [0, 1],
+      outputRange: ['transparent', backgroundColor],
+    }),
+    paddingHorizontal: animatedValue.interpolate({
+      inputRange: [0, 1],
+      outputRange: [0, 4],
+    }),
+    zIndex: 1,
+  };
 
   return (
-    <TextInput
-      style={[{ color, backgroundColor }, style]}
-      className="rounded-lg border border-gray-300 p-3"
-      placeholderTextColor={`${color}80`}
-      {...otherProps}
-    />
+    <View className={className}>
+      <View className="relative">
+        <Animated.Text style={labelStyle as any}>
+          {label}
+        </Animated.Text>
+        <TextInput
+          style={[{ color, backgroundColor }, style]}
+          className="w-full rounded-xl border border-gray-200 bg-white/80 px-4 py-3.5 text-base shadow-sm backdrop-blur-sm transition-colors duration-200 focus:border-blue-500 focus:bg-white focus:shadow-md dark:border-gray-700 dark:bg-gray-800/80 dark:focus:border-blue-400 dark:focus:bg-gray-800"
+          value={value}
+          onFocus={(e) => {
+            setIsFocused(true);
+            onFocus?.(e);
+          }}
+          onBlur={(e) => {
+            setIsFocused(false);
+            onBlur?.(e);
+          }}
+          secureTextEntry={secureTextEntry && !isPasswordVisible}
+          {...otherProps}
+        />
+        {secureTextEntry && (
+          <Pressable
+            onPress={() => setIsPasswordVisible(!isPasswordVisible)}
+            className="absolute right-3 top-3.5"
+          >
+            <Ionicons
+              name={isPasswordVisible ? 'eye-off-outline' : 'eye-outline'}
+              size={24}
+              color={color + '80'}
+            />
+          </Pressable>
+        )}
+      </View>
+    </View>
   );
 }

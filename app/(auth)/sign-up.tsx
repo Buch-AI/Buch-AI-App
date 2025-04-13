@@ -1,6 +1,6 @@
 import { Link, router } from 'expo-router';
 import React, { useState } from 'react';
-import { Image, Pressable } from 'react-native';
+import { Image, Pressable, View } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { SafeAreaScrollView } from '@/components/ui-custom/SafeAreaScrollView';
 import { ThemedButton } from '@/components/ui-custom/ThemedButton';
@@ -56,35 +56,38 @@ export default function SignUpScreen() {
   return (
     <SafeAreaScrollView className="bg-gray-100">
       <ThemedView className="min-h-screen flex-1 items-center justify-center p-6">
-        <Image
-          source={require('@/assets/images/illustration-sample-1.jpg')}
-          style={{
-            width: illustrationSize,
-            height: illustrationSize * 0.75,
-            resizeMode: 'contain',
-            marginBottom: RFValue(20),
-          }}
-        />
+        <View pointerEvents="none">
+          <Image
+            source={require('@/assets/images/illustration-sample-1.png')}
+            style={{
+              width: illustrationSize,
+              height: illustrationSize * 0.75,
+              resizeMode: 'contain',
+              marginBottom: RFValue(20),
+            }}
+            accessible={false}
+          />
+        </View>
         <ThemedText type="title" className="mb-6 font-bold">Sign Up</ThemedText>
         <ThemedTextInput
-          placeholder="Email"
+          label="Email"
           value={email}
           onChangeText={setEmail}
-          className="mb-4 w-full rounded-lg border border-gray-300 p-4"
+          className="mb-4 w-full"
         />
         <ThemedTextInput
-          placeholder="Password"
+          label="Password"
           value={password}
           onChangeText={setPassword}
           secureTextEntry
-          className="mb-4 w-full rounded-lg border border-gray-300 p-4"
+          className="mb-4 w-full"
         />
         <ThemedTextInput
-          placeholder="Confirm Password"
+          label="Confirm Password"
           value={confirmPassword}
           onChangeText={setConfirmPassword}
           secureTextEntry
-          className="mb-6 w-full rounded-lg border border-gray-300 p-4"
+          className="mb-4 w-full"
         />
         <ThemedButton title="Sign Up" onPress={handleSignUp} loading={loading} />
         <Link href="/(auth)/login" asChild>

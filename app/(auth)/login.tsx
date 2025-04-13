@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Link } from 'expo-router';
 import React, { useState } from 'react';
-import { Image, Pressable } from 'react-native';
+import { Image, Pressable, View } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { SafeAreaScrollView } from '@/components/ui-custom/SafeAreaScrollView';
 import { ThemedButton } from '@/components/ui-custom/ThemedButton';
@@ -48,28 +48,31 @@ export default function LoginScreen() {
   return (
     <SafeAreaScrollView className="bg-gray-100">
       <ThemedView className="min-h-screen flex-1 items-center justify-center p-6">
-        <Image
-          source={require('@/assets/images/illustration-sample-1.jpg')}
-          style={{
-            width: illustrationSize,
-            height: illustrationSize * 0.75,
-            resizeMode: 'contain',
-            marginBottom: RFValue(20),
-          }}
-        />
+        <View pointerEvents="none">
+          <Image
+            source={require('@/assets/images/illustration-sample-1.png')}
+            style={{
+              width: illustrationSize,
+              height: illustrationSize * 0.75,
+              resizeMode: 'contain',
+              marginBottom: RFValue(20),
+            }}
+            accessible={false}
+          />
+        </View>
         <ThemedText type="title" className="mb-6 font-bold">Log In</ThemedText>
         <ThemedTextInput
-          placeholder="Email"
+          label="Email"
           value={email}
           onChangeText={setEmail}
-          className="mb-4 w-full rounded-lg border border-gray-300 p-4"
+          className="mb-4 w-full"
         />
         <ThemedTextInput
-          placeholder="Password"
+          label="Password"
           value={password}
           onChangeText={setPassword}
           secureTextEntry
-          className="mb-6 w-full rounded-lg border border-gray-300 p-4"
+          className="mb-4 w-full"
         />
         <ThemedButton title="Log In" onPress={handleLogin} loading={loading} />
         <Link href="/(auth)/sign-up" asChild>
