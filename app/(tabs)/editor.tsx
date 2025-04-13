@@ -264,8 +264,9 @@ export default function Editor() {
           value={prompt}
           onChangeText={setPrompt}
           multiline
-          className="my-4 h-24 rounded-lg !bg-white/40 p-3 shadow-xl"
+          className="my-4 h-24 rounded-lg"
           editable={!isGenerating}
+          maxLength={1000}
         />
 
         <ThemedButton
