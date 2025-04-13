@@ -61,7 +61,7 @@ export function ThemedTextInput(props: ThemedTextInputProps) {
         </Animated.Text>
         <TextInput
           style={[{ color, backgroundColor }, style]}
-          className="w-full rounded-xl border border-gray-200 bg-white/80 p-4 text-base shadow-sm backdrop-blur-sm transition-colors duration-200 focus:border-blue-500 focus:bg-white focus:shadow-md dark:border-gray-700 dark:bg-gray-800/80 dark:focus:border-blue-400 dark:focus:bg-gray-800"
+          className="w-full rounded-xl border border-gray-200 !bg-white/40 p-4 text-base shadow-sm backdrop-blur-sm transition-colors duration-200 focus:border-blue-500 focus:bg-white focus:shadow-md dark:border-gray-800 dark:bg-gray-800/80 dark:focus:border-blue-400 dark:focus:bg-gray-800"
           value={value}
           onFocus={(e) => {
             setIsFocused(true);

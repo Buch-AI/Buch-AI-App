@@ -3,8 +3,8 @@ import { router } from 'expo-router';
 import { View } from 'react-native';
 import { useAuth } from '@/app/_layout';
 import { ThemedButton } from '@/components/ui-custom/ThemedButton';
+import { ThemedContainerView } from '@/components/ui-custom/ThemedContainerView';
 import { ThemedText } from '@/components/ui-custom/ThemedText';
-import { ThemedView } from '@/components/ui-custom/ThemedView';
 import { StorageKeys } from '@/constants/Storage';
 
 export default function ProfileScreen() {
@@ -17,7 +17,7 @@ export default function ProfileScreen() {
   };
 
   return (
-    <ThemedView className="flex-1 p-4">
+    <ThemedContainerView className="flex-1 p-4">
       <View className="flex-1 items-center justify-center">
         <ThemedButton
           title="Sign Out"
@@ -25,6 +25,6 @@ export default function ProfileScreen() {
           className="!bg-red-500"
         />
       </View>
-    </ThemedView>
+    </ThemedContainerView>
   );
 }

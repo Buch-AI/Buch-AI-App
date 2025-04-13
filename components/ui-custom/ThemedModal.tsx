@@ -1,7 +1,7 @@
 import React from 'react';
 import { Modal, TouchableOpacity, View, ActivityIndicator } from 'react-native';
+import { ThemedContainerView } from './ThemedContainerView';
 import { ThemedText } from './ThemedText';
-import { ThemedView } from './ThemedView';
 
 interface ThemedModalProps {
   visible: boolean;
@@ -31,7 +31,7 @@ export function ThemedModal({
       onRequestClose={onClose}
     >
       <View className="flex-1 items-center justify-center bg-black/50">
-        <ThemedView className="m-5 w-[90%] max-w-md rounded-2xl bg-white p-8 shadow-xl">
+        <View className="m-5 w-[90%] max-w-md rounded-2xl bg-white p-8 shadow-xl">
           <ThemedText className="mb-4 text-xl font-bold">{title}</ThemedText>
           <ThemedText className="mb-6">{message}</ThemedText>
           <View className="flex-row justify-end space-x-4">
@@ -61,7 +61,7 @@ export function ThemedModal({
               </TouchableOpacity>
             )}
           </View>
-        </ThemedView>
+        </View>
       </View>
     </Modal>
   );

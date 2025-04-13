@@ -6,6 +6,7 @@ import { StatusBar } from 'expo-status-bar';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { View } from 'react-native';
 import 'react-native-reanimated';
+import { Colors } from '@/constants/Colors';
 import { StorageKeys } from '@/constants/Storage';
 import { StoryProvider } from '@/contexts/StoryContext';
 import { useColorScheme } from '@/hooks/useColorScheme';
@@ -85,7 +86,7 @@ export default function RootLayout() {
   return (
     <AuthContext.Provider value={{ isAuthenticated, setAuthenticated }}>
       <StoryProvider>
-        <View style={{ flex: 1, backgroundColor: colorScheme === 'dark' ? '#000' : '#fff' }}>
+        <View style={{ flex: 1, backgroundColor: Colors[colorScheme ?? 'light'].background }}>
           <Stack screenOptions={{ headerShown: false }}>
             <Stack.Screen
               name="(auth)"

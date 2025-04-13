@@ -1,8 +1,8 @@
 import { PropsWithChildren, useState } from 'react';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 
+import { ThemedContainerView } from '@/components/ui-custom/ThemedContainerView';
 import { ThemedText } from '@/components/ui-custom/ThemedText';
-import { ThemedView } from '@/components/ui-custom/ThemedView';
 import { IconSymbol } from '@/components/ui-default/IconSymbol';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
@@ -12,7 +12,7 @@ export function Collapsible({ children, title }: PropsWithChildren & { title: st
   const theme = useColorScheme() ?? 'light';
 
   return (
-    <ThemedView className="mb-4">
+    <ThemedContainerView className="mb-4">
       <TouchableOpacity
         className="flex-row items-center gap-2 rounded-lg bg-gray-200 p-3"
         onPress={() => setIsOpen((value) => !value)}
@@ -26,7 +26,7 @@ export function Collapsible({ children, title }: PropsWithChildren & { title: st
         />
         <ThemedText type="defaultSemiBold">{title}</ThemedText>
       </TouchableOpacity>
-      {isOpen && <ThemedView className="ml-6 mt-1">{children}</ThemedView>}
-    </ThemedView>
+      {isOpen && <View className="ml-6 mt-1">{children}</View>}
+    </ThemedContainerView>
   );
 }

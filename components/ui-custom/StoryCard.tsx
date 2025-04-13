@@ -1,8 +1,8 @@
 import { Link } from 'expo-router';
 
 import type { Story } from '@/contexts/StoryContext';
+import { ThemedContainerView } from './ThemedContainerView';
 import { ThemedText } from './ThemedText';
-import { ThemedView } from './ThemedView';
 
 interface StoryCardProps {
   story: Story;
@@ -11,13 +11,13 @@ interface StoryCardProps {
 export function StoryCard({ story }: StoryCardProps) {
   return (
     <Link href={`/story/${story.id}`} asChild>
-      <ThemedView className="gap-2 rounded-lg p-4">
+      <ThemedContainerView className="gap-2 rounded-lg p-4">
         <ThemedText type="subtitle">{story.prompt}</ThemedText>
         <ThemedText numberOfLines={3}>{story.content}</ThemedText>
         <ThemedText className="text-xs opacity-70">
           {new Date(story.createdAt).toLocaleDateString()}
         </ThemedText>
-      </ThemedView>
+      </ThemedContainerView>
     </Link>
   );
 }

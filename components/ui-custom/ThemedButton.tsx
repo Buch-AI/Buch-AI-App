@@ -8,6 +8,7 @@ interface ThemedButtonProps {
   onPress: () => void;
   loading?: boolean; // Optional loading state
   disabled?: boolean;
+  transparent?: boolean; // Optional transparent style
   className?: string; // Optional className for additional styling
   textClassName?: string; // Optional className for text styling
   leadingIcon?: React.ReactNode;
@@ -15,21 +16,37 @@ interface ThemedButtonProps {
   iconClassName?: string;
 }
 
-export const ThemedButton: React.FC<ThemedButtonProps> = ({ title, onPress, loading, disabled, className, textClassName, leadingIcon, trailingIcon, iconClassName }) => {
+export const ThemedButton: React.FC<ThemedButtonProps> = ({
+  title,
+  onPress,
+  loading,
+  disabled,
+  transparent = false,
+  className = '',
+  textClassName = '',
+  leadingIcon,
+  trailingIcon,
+  iconClassName = '',
+}) => {
   const colorScheme = useColorScheme() ?? 'light';
   const tintColor = Colors[colorScheme].tint;
+
+  // Determine text color based on transparent prop
+  const textColor = transparent ?
+    colorScheme === 'light' ? Colors[colorScheme].tint : Colors[colorScheme].text :
+    colorScheme === 'light' ? 'white' : Colors[colorScheme].text;
 
   return (
     <TouchableOpacity
       onPress={onPress}
-      className={`flex flex-row items-center justify-center rounded-lg p-3 ${className}`}
+      className={`flex flex-row items-center justify-center rounded-lg p-3 ${transparent ? 'bg-transparent' : ''} ${className}`}
       style={{
-        backgroundColor: tintColor,
+        backgroundColor: transparent ? 'transparent' : tintColor,
         opacity: (disabled || loading) ? 0.5 : 1,
       }}
       disabled={disabled || loading}>
       {loading ? (
-        <ActivityIndicator color={colorScheme === 'light' ? 'white' : Colors[colorScheme].text} />
+        <ActivityIndicator color={textColor} />
       ) : (
         <>
           {leadingIcon && (
@@ -37,7 +54,12 @@ export const ThemedButton: React.FC<ThemedButtonProps> = ({ title, onPress, load
               {leadingIcon}
             </View>
           )}
-          <Text className={`font-body text-lg font-semibold text-white dark:text-black ${textClassName}`}>{title}</Text>
+          <Text
+            className={`font-body text-lg font-semibold ${textClassName}`}
+            style={{ color: textColor }}
+          >
+            {title}
+          </Text>
           {trailingIcon && (
             <View className={`ml-2 ${iconClassName}`}>
               {trailingIcon}

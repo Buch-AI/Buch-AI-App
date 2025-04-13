@@ -5,9 +5,9 @@ import React, { useEffect, useState } from 'react';
 import { View, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { SafeAreaScrollView } from '@/components/ui-custom/SafeAreaScrollView';
 import { ThemedButton } from '@/components/ui-custom/ThemedButton';
+import { ThemedContainerView } from '@/components/ui-custom/ThemedContainerView';
 import { ThemedModal } from '@/components/ui-custom/ThemedModal';
 import { ThemedText } from '@/components/ui-custom/ThemedText';
-import { ThemedView } from '@/components/ui-custom/ThemedView';
 import { StorageKeys } from '@/constants/Storage';
 import { MeAdapter } from '@/services/MeAdapter';
 import Logger from '@/utils/Logger';
@@ -146,7 +146,7 @@ export default function Home() {
   };
 
   const renderCreationItem = ({ item }: { item: Creation }) => (
-    <ThemedView className="mb-4 rounded-lg !bg-white/80 p-4 shadow-xl">
+    <View className="mb-4 rounded-lg !bg-white/60 p-4 shadow-sm">
       <View className="flex-row items-start justify-between">
         {isSelecting && (
           <TouchableOpacity
@@ -185,12 +185,12 @@ export default function Home() {
           </View>
         </Link>
       </View>
-    </ThemedView>
+    </View>
   );
 
   return (
     <SafeAreaScrollView>
-      <ThemedView className="flex-1 p-4">
+      <ThemedContainerView className="flex-1 p-4">
         <View className="mb-6 flex-row items-center justify-between">
           <ThemedText type="title">Your Stories</ThemedText>
         </View>
@@ -266,7 +266,7 @@ export default function Home() {
         {isLoading ? (
           <></>
         ) : error ? (
-          <ThemedView className="rounded-lg bg-red-100 p-4 dark:bg-red-900">
+          <View className="rounded-lg bg-red-100 p-4 dark:bg-red-900">
             <ThemedText className="text-red-800 dark:text-red-200">
               {error}
             </ThemedText>
@@ -275,13 +275,13 @@ export default function Home() {
               title="Try Again"
               onPress={loadCreations}
             />
-          </ThemedView>
+          </View>
         ) : creations.length === 0 ? (
-          <ThemedView className="items-center justify-center py-8">
+          <View className="items-center justify-center py-8">
             <ThemedText className="mb-4 text-center opacity-70">
               You haven't created any stories yet.
             </ThemedText>
-          </ThemedView>
+          </View>
         ) : (
           <FlatList
             data={creations}
@@ -303,7 +303,7 @@ export default function Home() {
             variant: 'danger',
           }}
         />
-      </ThemedView>
+      </ThemedContainerView>
     </SafeAreaScrollView>
   );
 }

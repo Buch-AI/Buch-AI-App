@@ -4,9 +4,9 @@ import React, { useEffect, useState } from 'react';
 import { View, Image, ActivityIndicator, Platform } from 'react-native';
 import { SafeAreaScrollView } from '@/components/ui-custom/SafeAreaScrollView';
 import { ThemedButton } from '@/components/ui-custom/ThemedButton';
+import { ThemedContainerView } from '@/components/ui-custom/ThemedContainerView';
 import { ThemedText } from '@/components/ui-custom/ThemedText';
 import { ThemedTextInput } from '@/components/ui-custom/ThemedTextInput';
-import { ThemedView } from '@/components/ui-custom/ThemedView';
 import { VideoPlayer } from '@/components/ui-custom/VideoPlayer';
 import { WorkflowStatusBox, WorkflowState } from '@/components/ui-custom/WorkflowStatusBox';
 import { StorageKeys } from '@/constants/Storage';
@@ -256,7 +256,7 @@ export default function Editor() {
 
   return (
     <SafeAreaScrollView>
-      <ThemedView className="flex-1 p-4">
+      <ThemedContainerView className="flex-1 p-4">
         <ThemedText type="title">Create Your Story</ThemedText>
 
         <ThemedTextInput
@@ -334,7 +334,7 @@ export default function Editor() {
             )}
           </>
         )}
-      </ThemedView>
+      </ThemedContainerView>
     </SafeAreaScrollView>
   );
 }

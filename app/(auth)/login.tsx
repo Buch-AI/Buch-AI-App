@@ -5,10 +5,10 @@ import { Image, Pressable, View } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { SafeAreaScrollView } from '@/components/ui-custom/SafeAreaScrollView';
 import { ThemedButton } from '@/components/ui-custom/ThemedButton';
+import { ThemedContainerView } from '@/components/ui-custom/ThemedContainerView';
 import { ThemedModal } from '@/components/ui-custom/ThemedModal';
 import { ThemedText } from '@/components/ui-custom/ThemedText';
 import { ThemedTextInput } from '@/components/ui-custom/ThemedTextInput';
-import { ThemedView } from '@/components/ui-custom/ThemedView';
 import { StorageKeys } from '@/constants/Storage';
 import { login } from '@/services/AuthAdapter';
 import Logger from '@/utils/Logger';
@@ -46,8 +46,8 @@ export default function LoginScreen() {
   const illustrationSize = RFValue(160); // Base size for a 680px screen height
 
   return (
-    <SafeAreaScrollView className="bg-gray-100">
-      <ThemedView className="min-h-screen flex-1 items-center justify-center p-6">
+    <SafeAreaScrollView>
+      <ThemedContainerView className="flex-1 items-center justify-center p-6">
         <View pointerEvents="none">
           <Image
             source={require('@/assets/images/illustration-sample-1.png')}
@@ -82,7 +82,7 @@ export default function LoginScreen() {
             </ThemedText>
           </Pressable>
         </Link>
-      </ThemedView>
+      </ThemedContainerView>
 
       <ThemedModal
         visible={modalVisible}
