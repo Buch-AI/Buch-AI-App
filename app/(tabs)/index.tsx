@@ -147,7 +147,7 @@ export default function Home() {
   };
 
   const renderCreationItem = ({ item }: { item: Creation }) => (
-    <View className="mb-4 rounded-lg !bg-white/60 p-4 shadow-sm">
+    <View className="mb-4 rounded-lg !bg-white/60 p-4">
       <View className="flex-row items-start justify-between">
         {isSelecting && (
           <TouchableOpacity
@@ -221,7 +221,7 @@ export default function Home() {
 
             <ThemedButton
               onPress={loadCreations}
-              title="Refresh Stories"
+              title="Refresh"
               loading={isLoading}
               disabled={isLoading}
               className="!ml-2 !flex-1 !rounded-full !bg-gray-400 dark:!bg-gray-800"
@@ -289,7 +289,6 @@ export default function Home() {
               data={creations}
               renderItem={renderCreationItem}
               keyExtractor={(item) => item.creation_id}
-              contentContainerStyle={{ padding: 20 }}
             />
           )}
 
