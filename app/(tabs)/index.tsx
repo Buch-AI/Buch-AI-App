@@ -196,75 +196,75 @@ export default function Home() {
           <ThemedText type="title">Your Stories</ThemedText>
         </View>
 
-        <SafeAreaScrollView>
-          <View className="mb-6">
-            <Link href={{ pathname: '../editor', params: { id: undefined } }} asChild>
-              <ThemedButton title="Create a New Story" onPress={() => {}} />
-            </Link>
-          </View>
+        <View className="mb-4">
+          <Link href={{ pathname: '../editor', params: { id: undefined } }} asChild>
+            <ThemedButton title="Create a New Story" onPress={() => {}} />
+          </Link>
+        </View>
 
+        <View className="mb-4 flex-row items-center justify-between">
+          <ThemedButton
+            onPress={toggleSelectMode}
+            title={isSelecting ? 'Cancel Selection' : 'Select Stories'}
+            className="!mr-2 !flex-1 !rounded-full !bg-gray-400 dark:!bg-gray-800"
+            textClassName="!text-sm"
+            disabled={isLoading || creations.length === 0}
+            leadingIcon={
+              <Ionicons
+                name={isSelecting ? 'close-circle-outline' : 'checkbox-outline'}
+                size={20}
+                color="white"
+              />
+            }
+          />
+
+          <ThemedButton
+            onPress={loadCreations}
+            title="Refresh"
+            loading={isLoading}
+            disabled={isLoading}
+            className="!ml-2 !flex-1 !rounded-full !bg-gray-400 dark:!bg-gray-800"
+            textClassName="!text-sm"
+            leadingIcon={
+              <Ionicons
+                name="refresh-outline"
+                size={20}
+                color="white"
+              />
+            }
+          />
+        </View>
+
+        {isSelecting && (
           <View className="mb-4 flex-row items-center justify-between">
-            <ThemedButton
-              onPress={toggleSelectMode}
-              title={isSelecting ? 'Cancel Selection' : 'Select Stories'}
-              className="!mr-2 !flex-1 !rounded-full !bg-gray-400 dark:!bg-gray-800"
-              textClassName="!text-sm"
-              disabled={isLoading || creations.length === 0}
-              leadingIcon={
-                <Ionicons
-                  name={isSelecting ? 'close-circle-outline' : 'checkbox-outline'}
-                  size={20}
-                  color="white"
-                />
-              }
-            />
-
-            <ThemedButton
-              onPress={loadCreations}
-              title="Refresh"
-              loading={isLoading}
-              disabled={isLoading}
-              className="!ml-2 !flex-1 !rounded-full !bg-gray-400 dark:!bg-gray-800"
-              textClassName="!text-sm"
-              leadingIcon={
-                <Ionicons
-                  name="refresh-outline"
-                  size={20}
-                  color="white"
-                />
-              }
-            />
-          </View>
-
-          {isSelecting && (
-            <View className="mb-4 flex-row items-center justify-between">
-              <View className="flex-row space-x-2">
-                <TouchableOpacity
-                  onPress={selectAll}
-                  className="rounded-full bg-gray-200 px-3 py-1 dark:bg-gray-800"
-                >
-                  <ThemedText className="text-sm">Select All</ThemedText>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={deselectAll}
-                  className="rounded-full bg-gray-200 px-3 py-1 dark:bg-gray-800"
-                >
-                  <ThemedText className="text-sm">Deselect All</ThemedText>
-                </TouchableOpacity>
-              </View>
-              {selectedCreationIds.size > 0 && (
-                <TouchableOpacity
-                  onPress={handleBulkDeletePress}
-                  className="rounded-full bg-red-500 px-3 py-1"
-                >
-                  <ThemedText className="text-sm text-white">
-                      Delete Selected ({selectedCreationIds.size})
-                  </ThemedText>
-                </TouchableOpacity>
-              )}
+            <View className="flex-row space-x-2">
+              <TouchableOpacity
+                onPress={selectAll}
+                className="rounded-full bg-gray-200 px-3 py-1 dark:bg-gray-800"
+              >
+                <ThemedText className="text-sm">Select All</ThemedText>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={deselectAll}
+                className="rounded-full bg-gray-200 px-3 py-1 dark:bg-gray-800"
+              >
+                <ThemedText className="text-sm">Deselect All</ThemedText>
+              </TouchableOpacity>
             </View>
-          )}
+            {selectedCreationIds.size > 0 && (
+              <TouchableOpacity
+                onPress={handleBulkDeletePress}
+                className="rounded-full bg-red-500 px-3 py-1"
+              >
+                <ThemedText className="text-sm text-white">
+                    Delete Selected ({selectedCreationIds.size})
+                </ThemedText>
+              </TouchableOpacity>
+            )}
+          </View>
+        )}
 
+        <SafeAreaScrollView>
           {isLoading ? (
             <></>
           ) : error ? (

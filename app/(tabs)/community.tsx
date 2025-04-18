@@ -22,7 +22,7 @@ export default function CommunityScreen() {
             size={64}
             color={Colors[colorScheme ?? 'light'].tint}
           />
-          <ThemedText type="title" className="text-center">
+          <ThemedText type="title" className="mb-2 text-center">
           Coming Soon
           </ThemedText>
           <ThemedText className="max-w-[360px] text-center text-gray-500">

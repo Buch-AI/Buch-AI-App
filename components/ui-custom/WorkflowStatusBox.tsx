@@ -1,5 +1,5 @@
-import React from 'react';
-import { View } from 'react-native';
+import React, { useState } from 'react';
+import { View, TouchableOpacity } from 'react-native';
 import { ThemedText } from './ThemedText';
 
 export interface WorkflowState {
@@ -57,41 +57,54 @@ function getProgress<T extends string>(currStep: T, allSteps: Record<T, string>)
 export function WorkflowStatusBox({ workflowState, workflowStatusMessages }: WorkflowStatusBoxProps) {
   const { currStep, creationId } = workflowState;
   const isInProgress = !isInitialStep(currStep) && !isTerminalStep(currStep);
+  const [showDetails, setShowDetails] = useState(false);
 
   return (
-    <View className={`mt-2 rounded-lg p-4 ${getStatusColor(currStep)}`}>
-      {/* Debug State Information */}
-      <View className="flex-row items-center justify-between">
-        <ThemedText className="mt-2 w-full text-left font-mono text-xs opacity-50">
-          workflowState.currStep   = "{currStep}"
-        </ThemedText>
-      </View>
-
-      <View className="flex-row items-center justify-between">
-        {/* Additional Status Details */}
-        <ThemedText className="mt-2 w-full text-left font-mono text-xs opacity-50">
-          workflowState.creationId = "{creationId}"
-        </ThemedText>
-      </View>
-
-      <View className="flex-row items-center justify-between">
-        <ThemedText className="mt-2 w-full text-left font-medium">
+    <View className={`rounded-lg p-4 ${getStatusColor(currStep)}`}>
+      <View>
+        <ThemedText className="w-full text-left font-medium">
           Status: {workflowStatusMessages[currStep]}
         </ThemedText>
-        {isInProgress && (
-          <ThemedText className="text-sm opacity-70">
-            {getProgress(currStep, workflowStatusMessages)}%
-          </ThemedText>
-        )}
       </View>
 
-      {/* Progress Bar */}
       {isInProgress && (
-        <View className="mt-2 h-2 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
-          <View
-            className="h-full bg-blue-500 dark:bg-blue-400"
-            style={{ width: `${getProgress(currStep, workflowStatusMessages)}%` }}
-          />
+        <View className="mt-2 flex-row items-center">
+          <View className="flex-1 h-2 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
+            <View
+              className="h-full bg-blue-500 dark:bg-blue-400"
+              style={{ width: `${getProgress(currStep, workflowStatusMessages)}%` }}
+            />
+          </View>
+          <View className="ml-4">
+            <ThemedText className="text-sm opacity-70">
+              {getProgress(currStep, workflowStatusMessages)}%
+            </ThemedText>
+          </View>
+        </View>
+      )}
+
+      {/* Toggle Details Button */}
+      <TouchableOpacity 
+        onPress={() => setShowDetails(!showDetails)}
+        className="mt-1"
+      >
+        <ThemedText className="text-xs text-blue-600 dark:text-blue-400">
+          {showDetails ? 'Hide Details' : 'Show Details'}
+        </ThemedText>
+      </TouchableOpacity>
+
+      {showDetails && (
+        <View className="mt-1">
+          <View className="flex-row items-center justify-between">
+            <ThemedText className="w-full text-left font-mono text-xs opacity-50">
+              workflowState.creationId = "{creationId}"
+            </ThemedText>
+          </View>
+          <View className="flex-row items-center justify-between">
+            <ThemedText className="w-full text-left font-mono text-xs opacity-50">
+              workflowState.currStep   = "{currStep}"
+            </ThemedText>
+          </View>
         </View>
       )}
     </View>

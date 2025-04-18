@@ -30,10 +30,10 @@ interface CreationWorkflowState extends WorkflowState {
 
 // Add status messages for each step
 const workflowStatusMessages: Record<WorkflowState['currStep'], string> = {
-  'idle': 'Ready to generate your story',
-  'generating-story': 'Crafting your story with AI...',
-  'generating-images': 'Creating beautiful illustrations for your story...',
-  'generating-video': 'Creating a video from your story...',
+  'idle': 'Ready to generate your story.',
+  'generating-story': 'Drafting your story with AI...',
+  'generating-images': 'Generating illustrations...',
+  'generating-video': 'Generating the video...',
   'completed': 'Your story has been created!',
 };
 
@@ -267,13 +267,22 @@ export default function Editor() {
           <ThemedText type="title">Create Your Story</ThemedText>
         </View>
 
+        <WorkflowStatusBox
+          workflowState={workflowState}
+          workflowStatusMessages={workflowStatusMessages}
+        />
+
+        {workflowState.error && (
+          <ThemedText className="mt-2 text-red-500">{workflowState.error}</ThemedText>
+        )}
+
         <SafeAreaScrollView>
           <ThemedTextInput
             label="What is your story about?"
             value={prompt}
             onChangeText={setPrompt}
             multiline
-            className="mb-4 h-24 rounded-lg"
+            className="mt-2 h-24 rounded-lg"
             editable={!isGenerating}
             maxLength={1000}
           />
@@ -284,15 +293,6 @@ export default function Editor() {
             loading={isGenerating}
             title={isGenerating ? 'Generating...' : 'Generate Story'}
           />
-
-          <WorkflowStatusBox
-            workflowState={workflowState}
-            workflowStatusMessages={workflowStatusMessages}
-          />
-
-          {workflowState.error && (
-            <ThemedText className="mt-2 text-red-500">{workflowState.error}</ThemedText>
-          )}
 
           {isLoadingCreation ? (
             <View className="my-6 items-center justify-center py-8">
