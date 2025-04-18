@@ -26,7 +26,7 @@ interface CreationsResponse {
 }
 
 interface StoryPartsResponse {
-  data: string[];
+  data: string[][];
 }
 
 interface ImagesResponse {
@@ -72,7 +72,7 @@ export class MeAdapter {
     }
   }
 
-  async setStoryParts(creationId: string, storyParts: string[]): Promise<string[]> {
+  async setStoryParts(creationId: string, storyParts: string[][]): Promise<string[][]> {
     try {
       Logger.info(`Setting story parts for creation: ${creationId}`);
       const response = await axios.post<StoryPartsResponse>(
@@ -87,7 +87,7 @@ export class MeAdapter {
     }
   }
 
-  async getStoryParts(creationId: string): Promise<string[]> {
+  async getStoryParts(creationId: string): Promise<string[][]> {
     try {
       Logger.info(`Getting story parts for creation: ${creationId}`);
       const response = await axios.get<StoryPartsResponse>(

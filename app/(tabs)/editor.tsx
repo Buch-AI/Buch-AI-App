@@ -18,7 +18,8 @@ import { MeAdapter } from '@/services/MeAdapter';
 import Logger from '@/utils/Logger';
 
 interface CreationPart {
-  text: string;
+  textJoined: string;
+  textParts: string[];
   imageData?: string;
 }
 
@@ -88,8 +89,9 @@ export default function Editor() {
       const video = await meAdapter.getVideo(id);
 
       // Create creation parts by combining text and images
-      const creationParts = storyParts.map((text, index) => ({
-        text,
+      const creationParts = storyParts.map((part, index) => ({
+        textJoined: part.join('\n\n'), // Join all sub-parts as the main text
+        textParts: part, // Keep the original sub-parts array
         imageData: images[index],
       }));
 
@@ -186,21 +188,24 @@ export default function Editor() {
       }
 
       // Step 3: Split story into parts
-      const creationParts = await llmAdapter.splitStory(generatedText);
-      const partsWithoutImages = creationParts.map((text) => ({ text }));
+      const textParts = await llmAdapter.splitStory(generatedText);
+      const textPartsWithoutImages = textParts.map((part) => ({
+        textJoined: part.join('\n\n'), // Join all sub-parts as the main text
+        textParts: part, // Keep the original sub-parts array
+      }));
       updateWorkflowState({
-        creationParts: partsWithoutImages,
+        creationParts: textPartsWithoutImages,
         currStep: 'generating-images',
       });
 
       // Save story parts to backend
-      await meAdapter.setStoryParts(activeCreationId, creationParts);
+      await meAdapter.setStoryParts(activeCreationId, textParts);
 
       // Step 4: Generate images for each part
       const updatedParts: CreationPart[] = [];
-      for (const part of partsWithoutImages) {
+      for (const part of textPartsWithoutImages) {
         try {
-          const imageData = await imageAdapter.generateImage(part.text);
+          const imageData = await imageAdapter.generateImage(part.textJoined);
           updatedParts.push({ ...part, imageData });
         } catch (error) {
           Logger.error(`Failed to generate image: ${error}`);
@@ -302,9 +307,19 @@ export default function Editor() {
               {workflowState.creationParts.map((part, index) => (
                 <View key={index} className="my-4">
                   <ThemedText type="book" className="mb-2 text-xl font-bold opacity-50">
-                  Chapter {index + 1}
+                    Chapter {index + 1}
                   </ThemedText>
-                  <ThemedText type="book" className="mb-4">{part.text}</ThemedText>
+                  <ThemedText type="book" className="mb-4">{part.textJoined}</ThemedText>
+
+                  {part.textParts && part.textParts.length > 0 && (
+                    <View className="mb-4">
+                      {part.textParts.map((subPart, subIndex) => (
+                        <ThemedText key={subIndex} type="book" className="mb-2">
+                          {subPart}
+                        </ThemedText>
+                      ))}
+                    </View>
+                  )}
 
                   {workflowState.currStep === 'generating-images' && !part.imageData ? (
                     <View className="h-[512px] items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-800">

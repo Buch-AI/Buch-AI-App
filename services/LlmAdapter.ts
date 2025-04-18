@@ -5,7 +5,7 @@ import Logger from '@/utils/Logger';
 export interface LlmAdaptable {
   generateStoryString(prompt: string): Promise<string>;
   generateStoryStream(prompt: string): void;
-  splitStory(prompt: string): Promise<string[]>;
+  splitStory(prompt: string): Promise<string[][]>;
 }
 
 export class LlmAdapter implements LlmAdaptable {
@@ -63,7 +63,7 @@ export class LlmAdapter implements LlmAdaptable {
     }
   }
 
-  async splitStory(prompt: string): Promise<string[]> {
+  async splitStory(prompt: string): Promise<string[][]> {
     try {
       Logger.info(`Sending request to: ${BUCHAI_SERVER_URL}/llm/split_story`);
       const response = await axios.post(`${BUCHAI_SERVER_URL}/llm/split_story`, {
