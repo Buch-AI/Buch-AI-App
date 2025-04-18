@@ -7,7 +7,7 @@
  */
 
 const tintColorLight = '#7cb490';
-const tintColorDark = '#fff';
+const tintColorDark = '#fff'; // TODO: Change this to the dark mode tint color.
 
 export const Colors = {
   light: {

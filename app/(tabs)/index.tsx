@@ -4,6 +4,7 @@ import { Link } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { View, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { SafeAreaScrollView } from '@/components/ui-custom/SafeAreaScrollView';
+import { ThemedBackgroundView } from '@/components/ui-custom/ThemedBackgroundView';
 import { ThemedButton } from '@/components/ui-custom/ThemedButton';
 import { ThemedContainerView } from '@/components/ui-custom/ThemedContainerView';
 import { ThemedModal } from '@/components/ui-custom/ThemedModal';
@@ -189,121 +190,123 @@ export default function Home() {
   );
 
   return (
-    <SafeAreaScrollView>
-      <ThemedContainerView className="flex-1 p-4">
-        <View className="mb-6 flex-row items-center justify-between">
+    <ThemedBackgroundView>
+      <ThemedContainerView className="flex-1">
+        <View className="my-4">
           <ThemedText type="title">Your Stories</ThemedText>
         </View>
 
-        <View className="mb-6">
-          <Link href={{ pathname: '../editor', params: { id: undefined } }} asChild>
-            <ThemedButton title="Create a New Story" onPress={() => {}} />
-          </Link>
-        </View>
-
-        <View className="mb-4 flex-row items-center justify-between">
-          <ThemedButton
-            onPress={toggleSelectMode}
-            title={isSelecting ? 'Cancel Selection' : 'Select Stories'}
-            className="!mr-2 !flex-1 !rounded-full !bg-gray-400 dark:!bg-gray-800"
-            textClassName="!text-sm"
-            disabled={isLoading || creations.length === 0}
-            leadingIcon={
-              <Ionicons
-                name={isSelecting ? 'close-circle-outline' : 'checkbox-outline'}
-                size={20}
-                color="white"
-              />
-            }
-          />
-
-          <ThemedButton
-            onPress={loadCreations}
-            title="Refresh Stories"
-            loading={isLoading}
-            disabled={isLoading}
-            className="!ml-2 !flex-1 !rounded-full !bg-gray-400 dark:!bg-gray-800"
-            textClassName="!text-sm"
-            leadingIcon={
-              <Ionicons
-                name="refresh-outline"
-                size={20}
-                color="white"
-              />
-            }
-          />
-        </View>
-
-        {isSelecting && (
-          <View className="mb-4 flex-row items-center justify-between">
-            <View className="flex-row space-x-2">
-              <TouchableOpacity
-                onPress={selectAll}
-                className="rounded-full bg-gray-200 px-3 py-1 dark:bg-gray-800"
-              >
-                <ThemedText className="text-sm">Select All</ThemedText>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={deselectAll}
-                className="rounded-full bg-gray-200 px-3 py-1 dark:bg-gray-800"
-              >
-                <ThemedText className="text-sm">Deselect All</ThemedText>
-              </TouchableOpacity>
-            </View>
-            {selectedCreationIds.size > 0 && (
-              <TouchableOpacity
-                onPress={handleBulkDeletePress}
-                className="rounded-full bg-red-500 px-3 py-1"
-              >
-                <ThemedText className="text-sm text-white">
-                      Delete Selected ({selectedCreationIds.size})
-                </ThemedText>
-              </TouchableOpacity>
-            )}
+        <SafeAreaScrollView>
+          <View className="mb-6">
+            <Link href={{ pathname: '../editor', params: { id: undefined } }} asChild>
+              <ThemedButton title="Create a New Story" onPress={() => {}} />
+            </Link>
           </View>
-        )}
 
-        {isLoading ? (
-          <></>
-        ) : error ? (
-          <View className="rounded-lg bg-red-100 p-4 dark:bg-red-900">
-            <ThemedText className="text-red-800 dark:text-red-200">
-              {error}
-            </ThemedText>
+          <View className="mb-4 flex-row items-center justify-between">
             <ThemedButton
-              className="mt-4"
-              title="Try Again"
+              onPress={toggleSelectMode}
+              title={isSelecting ? 'Cancel Selection' : 'Select Stories'}
+              className="!mr-2 !flex-1 !rounded-full !bg-gray-400 dark:!bg-gray-800"
+              textClassName="!text-sm"
+              disabled={isLoading || creations.length === 0}
+              leadingIcon={
+                <Ionicons
+                  name={isSelecting ? 'close-circle-outline' : 'checkbox-outline'}
+                  size={20}
+                  color="white"
+                />
+              }
+            />
+
+            <ThemedButton
               onPress={loadCreations}
+              title="Refresh Stories"
+              loading={isLoading}
+              disabled={isLoading}
+              className="!ml-2 !flex-1 !rounded-full !bg-gray-400 dark:!bg-gray-800"
+              textClassName="!text-sm"
+              leadingIcon={
+                <Ionicons
+                  name="refresh-outline"
+                  size={20}
+                  color="white"
+                />
+              }
             />
           </View>
-        ) : creations.length === 0 ? (
-          <View className="items-center justify-center py-8">
-            <ThemedText className="mb-4 text-center opacity-70">
-              You haven't created any stories yet.
-            </ThemedText>
-          </View>
-        ) : (
-          <FlatList
-            data={creations}
-            renderItem={renderCreationItem}
-            keyExtractor={(item) => item.creation_id}
-            contentContainerStyle={{ padding: 20 }}
-          />
-        )}
 
-        <ThemedModal
-          visible={deleteModalVisible}
-          onClose={() => setDeleteModalVisible(false)}
-          title={'Delete Stories'}
-          message={`Are you sure you want to delete ${selectedCreationIds.size} ${selectedCreationIds.size === 1 ? 'story' : 'stories'}? This action cannot be undone.`}
-          primaryButton={{
-            title: 'Delete',
-            onPress: handleDeleteConfirm,
-            loading: isDeleting,
-            variant: 'danger',
-          }}
-        />
+          {isSelecting && (
+            <View className="mb-4 flex-row items-center justify-between">
+              <View className="flex-row space-x-2">
+                <TouchableOpacity
+                  onPress={selectAll}
+                  className="rounded-full bg-gray-200 px-3 py-1 dark:bg-gray-800"
+                >
+                  <ThemedText className="text-sm">Select All</ThemedText>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={deselectAll}
+                  className="rounded-full bg-gray-200 px-3 py-1 dark:bg-gray-800"
+                >
+                  <ThemedText className="text-sm">Deselect All</ThemedText>
+                </TouchableOpacity>
+              </View>
+              {selectedCreationIds.size > 0 && (
+                <TouchableOpacity
+                  onPress={handleBulkDeletePress}
+                  className="rounded-full bg-red-500 px-3 py-1"
+                >
+                  <ThemedText className="text-sm text-white">
+                      Delete Selected ({selectedCreationIds.size})
+                  </ThemedText>
+                </TouchableOpacity>
+              )}
+            </View>
+          )}
+
+          {isLoading ? (
+            <></>
+          ) : error ? (
+            <View className="rounded-lg bg-red-100 p-4 dark:bg-red-900">
+              <ThemedText className="text-red-800 dark:text-red-200">
+                {error}
+              </ThemedText>
+              <ThemedButton
+                className="mt-4"
+                title="Try Again"
+                onPress={loadCreations}
+              />
+            </View>
+          ) : creations.length === 0 ? (
+            <View className="items-center justify-center py-8">
+              <ThemedText className="mb-4 text-center opacity-70">
+              You haven't created any stories yet.
+              </ThemedText>
+            </View>
+          ) : (
+            <FlatList
+              data={creations}
+              renderItem={renderCreationItem}
+              keyExtractor={(item) => item.creation_id}
+              contentContainerStyle={{ padding: 20 }}
+            />
+          )}
+
+          <ThemedModal
+            visible={deleteModalVisible}
+            onClose={() => setDeleteModalVisible(false)}
+            title={'Delete Stories'}
+            message={`Are you sure you want to delete ${selectedCreationIds.size} ${selectedCreationIds.size === 1 ? 'story' : 'stories'}? This action cannot be undone.`}
+            primaryButton={{
+              title: 'Delete',
+              onPress: handleDeleteConfirm,
+              loading: isDeleting,
+              variant: 'danger',
+            }}
+          />
+        </SafeAreaScrollView>
       </ThemedContainerView>
-    </SafeAreaScrollView>
+    </ThemedBackgroundView>
   );
 }

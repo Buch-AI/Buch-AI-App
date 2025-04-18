@@ -1,15 +1,14 @@
-import { ScrollView, ScrollViewProps, View, StyleSheet } from 'react-native';
+import { ScrollView, ScrollViewProps, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useThemeColor } from '@/hooks/useThemeColor';
 
 export function SafeAreaScrollView(props: ScrollViewProps) {
   const { children, style, ...otherProps } = props;
-  const backgroundColor = useThemeColor({}, 'background');
 
   return (
-    <SafeAreaView style={[{ flex: 1, backgroundColor }, style]}>
-      <ScrollView {...otherProps} contentContainerStyle={[{ backgroundColor }, StyleSheet.flatten(otherProps.contentContainerStyle)]}>
-        <View style={{ flex: 1 }}>{children}</View>
+    <SafeAreaView style={[{ flex: 1 }, style]}>
+      <ScrollView {...otherProps}>
+        {/* Added padding to prevent shadow effects of child componentsfrom being cut off */}
+        <View style={{ flex: 1 }} className="p-4">{children}</View>
       </ScrollView>
     </SafeAreaView>
   );

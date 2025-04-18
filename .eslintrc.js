@@ -15,6 +15,7 @@ module.exports = {
     'quote-props': ['error', 'consistent'],
     'no-unused-vars': 'off',
     '@typescript-eslint/no-unused-vars': ['error'],
+    'import/newline-after-import': ['error', { 'count': 1 }],
     'import/order': [
       1,
       {

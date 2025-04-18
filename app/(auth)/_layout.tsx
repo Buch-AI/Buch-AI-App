@@ -2,6 +2,7 @@ import { Stack } from 'expo-router/stack';
 
 // Define auth route type
 type AuthStackParamList = {
+  index: undefined;
   login: undefined;
   'sign-up': undefined;
 };

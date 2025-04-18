@@ -3,6 +3,7 @@ import { useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { View, Image, ActivityIndicator, Platform } from 'react-native';
 import { SafeAreaScrollView } from '@/components/ui-custom/SafeAreaScrollView';
+import { ThemedBackgroundView } from '@/components/ui-custom/ThemedBackgroundView';
 import { ThemedButton } from '@/components/ui-custom/ThemedButton';
 import { ThemedContainerView } from '@/components/ui-custom/ThemedContainerView';
 import { ThemedText } from '@/components/ui-custom/ThemedText';
@@ -255,86 +256,90 @@ export default function Editor() {
   const isGenerating = workflowState.currStep !== 'idle' && workflowState.currStep !== 'completed';
 
   return (
-    <SafeAreaScrollView>
-      <ThemedContainerView className="flex-1 p-4">
-        <ThemedText type="title">Create Your Story</ThemedText>
+    <ThemedBackgroundView>
+      <ThemedContainerView className="flex-1">
+        <View className="my-4">
+          <ThemedText type="title">Create Your Story</ThemedText>
+        </View>
 
-        <ThemedTextInput
-          label="What is your story about?"
-          value={prompt}
-          onChangeText={setPrompt}
-          multiline
-          className="my-4 h-24 rounded-lg"
-          editable={!isGenerating}
-          maxLength={1000}
-        />
+        <SafeAreaScrollView>
+          <ThemedTextInput
+            label="What is your story about?"
+            value={prompt}
+            onChangeText={setPrompt}
+            multiline
+            className="mb-4 h-24 rounded-lg"
+            editable={!isGenerating}
+            maxLength={1000}
+          />
 
-        <ThemedButton
-          onPress={startWorkflow}
-          disabled={isGenerating || !prompt.trim()}
-          loading={isGenerating}
-          title={isGenerating ? 'Generating...' : 'Generate Story'}
-        />
+          <ThemedButton
+            onPress={startWorkflow}
+            disabled={isGenerating || !prompt.trim()}
+            loading={isGenerating}
+            title={isGenerating ? 'Generating...' : 'Generate Story'}
+          />
 
-        <WorkflowStatusBox
-          workflowState={workflowState}
-          workflowStatusMessages={workflowStatusMessages}
-        />
+          <WorkflowStatusBox
+            workflowState={workflowState}
+            workflowStatusMessages={workflowStatusMessages}
+          />
 
-        {workflowState.error && (
-          <ThemedText className="mt-2 text-red-500">{workflowState.error}</ThemedText>
-        )}
+          {workflowState.error && (
+            <ThemedText className="mt-2 text-red-500">{workflowState.error}</ThemedText>
+          )}
 
-        {isLoadingCreation ? (
-          <View className="my-6 items-center justify-center py-8">
-            <ActivityIndicator size="large" />
-            <ThemedText className="mt-4">Loading creation...</ThemedText>
-          </View>
-        ) : workflowState.creationParts.length > 0 && (
-          <>
-            <View className="my-6 h-px bg-gray-200 dark:bg-gray-700" />
-            <ThemedText type="title">Creation Parts</ThemedText>
+          {isLoadingCreation ? (
+            <View className="my-6 items-center justify-center py-8">
+              <ActivityIndicator size="large" />
+              <ThemedText className="mt-4">Loading creation...</ThemedText>
+            </View>
+          ) : workflowState.creationParts.length > 0 && (
+            <>
+              <View className="my-6 h-px bg-gray-200 dark:bg-gray-700" />
+              <ThemedText type="title">Creation Parts</ThemedText>
 
-            {workflowState.creationParts.map((part, index) => (
-              <View key={index} className="my-4">
-                <ThemedText type="book" className="mb-2 text-xl font-bold opacity-50">
+              {workflowState.creationParts.map((part, index) => (
+                <View key={index} className="my-4">
+                  <ThemedText type="book" className="mb-2 text-xl font-bold opacity-50">
                   Chapter {index + 1}
-                </ThemedText>
-                <ThemedText type="book" className="mb-4">{part.text}</ThemedText>
+                  </ThemedText>
+                  <ThemedText type="book" className="mb-4">{part.text}</ThemedText>
 
-                {workflowState.currStep === 'generating-images' && !part.imageData ? (
-                  <View className="h-[512px] items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-800">
-                    <ThemedText>Generating image...</ThemedText>
-                  </View>
-                ) : part.imageData ? (
-                  <View className="h-[512px] w-full overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-800">
-                    <Image
-                      source={{ uri: part.imageData }}
-                      className="size-full"
-                      style={{ width: '100%', height: '100%' }}
-                      resizeMode="contain"
-                    />
-                  </View>
-                ) : (
-                  <View className="h-[512px] items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-800">
-                    <ThemedText>Failed to generate image</ThemedText>
-                  </View>
-                )}
-              </View>
-            ))}
-
-            {workflowState.creationVideoUrl && (
-              <>
-                <View className="my-6 h-px bg-gray-200 dark:bg-gray-700" />
-                <ThemedText type="title" className="mb-4">Story Video</ThemedText>
-                <View className="h-[512px] w-full overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-800">
-                  <VideoPlayer base64DataUrl={workflowState.creationVideoUrl} />
+                  {workflowState.currStep === 'generating-images' && !part.imageData ? (
+                    <View className="h-[512px] items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-800">
+                      <ThemedText>Generating image...</ThemedText>
+                    </View>
+                  ) : part.imageData ? (
+                    <View className="h-[512px] w-full overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-800">
+                      <Image
+                        source={{ uri: part.imageData }}
+                        className="size-full"
+                        style={{ width: '100%', height: '100%' }}
+                        resizeMode="contain"
+                      />
+                    </View>
+                  ) : (
+                    <View className="h-[512px] items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-800">
+                      <ThemedText>Failed to generate image</ThemedText>
+                    </View>
+                  )}
                 </View>
-              </>
-            )}
-          </>
-        )}
+              ))}
+
+              {workflowState.creationVideoUrl && (
+                <>
+                  <View className="my-6 h-px bg-gray-200 dark:bg-gray-700" />
+                  <ThemedText type="title" className="mb-4">Story Video</ThemedText>
+                  <View className="h-[512px] w-full overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-800">
+                    <VideoPlayer base64DataUrl={workflowState.creationVideoUrl} />
+                  </View>
+                </>
+              )}
+            </>
+          )}
+        </SafeAreaScrollView>
       </ThemedContainerView>
-    </SafeAreaScrollView>
+    </ThemedBackgroundView>
   );
 }

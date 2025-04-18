@@ -4,12 +4,10 @@ import { Stack } from 'expo-router/stack';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { createContext, useContext, useEffect, useState } from 'react';
-import { View } from 'react-native';
 import 'react-native-reanimated';
-import { Colors } from '@/constants/Colors';
+import { View } from 'react-native';
 import { StorageKeys } from '@/constants/Storage';
 import { StoryProvider } from '@/contexts/StoryContext';
-import { useColorScheme } from '@/hooks/useColorScheme';
 import { getCurrentUser } from '@/services/AuthAdapter';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Logger from '@/utils/Logger';
@@ -35,7 +33,6 @@ export function useAuth() {
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
   const pathname = usePathname();
   const [fontsLoaded] = useFonts({
     'IndieFlower': require('../assets/fonts/IndieFlower-Regular.ttf'),
@@ -86,7 +83,7 @@ export default function RootLayout() {
   return (
     <AuthContext.Provider value={{ isAuthenticated, setAuthenticated }}>
       <StoryProvider>
-        <View style={{ flex: 1, backgroundColor: Colors[colorScheme ?? 'light'].background }}>
+        <View style={{ flex: 1 }}>
           <Stack screenOptions={{ headerShown: false }}>
             <Stack.Screen
               name="(auth)"
