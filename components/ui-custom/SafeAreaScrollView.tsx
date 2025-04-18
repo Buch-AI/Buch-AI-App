@@ -8,7 +8,7 @@ export function SafeAreaScrollView(props: ScrollViewProps) {
     <SafeAreaView style={[{ flex: 1 }, style]}>
       <ScrollView {...otherProps}>
         {/* Added padding to prevent shadow effects of child componentsfrom being cut off */}
-        <View style={{ flex: 1 }} className="p-4">{children}</View>
+        <View style={{ flex: 1 }} className="w-full p-4">{children}</View>
       </ScrollView>
     </SafeAreaView>
   );

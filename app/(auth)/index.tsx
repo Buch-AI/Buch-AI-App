@@ -12,9 +12,9 @@ export default function AuthIndex() {
 
   return (
     <ThemedBackgroundView>
-      <ThemedContainerView className="flex-1 items-center justify-center p-6">
+      <ThemedContainerView className="flex-1 p-6">
         <SafeAreaScrollView>
-          <View pointerEvents="none" className="mb-8">
+          <View pointerEvents="none" className="mb-8 w-full items-center">
             <Image
               source={require('@/assets/images/illustration-sample-1.png')}
               style={{

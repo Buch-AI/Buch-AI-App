@@ -56,9 +56,9 @@ export default function SignUpScreen() {
 
   return (
     <ThemedBackgroundView>
-      <ThemedContainerView className="flex-1 items-center justify-center p-6">
+      <ThemedContainerView className="flex-1 p-6">
         <SafeAreaScrollView>
-          <View pointerEvents="none">
+          <View pointerEvents="none" className="w-full items-center">
             <Image
               source={require('@/assets/images/illustration-sample-1.png')}
               style={{
