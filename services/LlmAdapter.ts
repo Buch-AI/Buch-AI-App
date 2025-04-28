@@ -6,6 +6,8 @@ export interface LlmAdaptable {
   generateStoryString(prompt: string): Promise<string>;
   generateStoryStream(prompt: string): void;
   splitStory(prompt: string): Promise<string[][]>;
+  summariseStory(story: string): Promise<string>;
+  generateImagePrompts(storySummary: string, storyParts: string[]): Promise<string[]>;
 }
 
 export class LlmAdapter implements LlmAdaptable {
@@ -82,6 +84,49 @@ export class LlmAdapter implements LlmAdaptable {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
       Logger.error(`Failed to split story: ${errorMessage}`);
       throw new Error(`Story splitting failed: ${errorMessage}`);
+    }
+  }
+
+  async summariseStory(story: string): Promise<string> {
+    try {
+      Logger.info(`Sending request to: ${BUCHAI_SERVER_URL}/llm/summarise_story`);
+      const response = await axios.post(`${BUCHAI_SERVER_URL}/llm/summarise_story`, {
+        story: story,
+        model_type: 'lite',
+      });
+
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        const errorMessage = error.response.data?.detail || error.response.statusText;
+        Logger.error(`Failed to summarize story: ${errorMessage}`);
+        throw new Error(`Story summarization failed: ${error.response.status} ${errorMessage}`);
+      }
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      Logger.error(`Failed to summarize story: ${errorMessage}`);
+      throw new Error(`Story summarization failed: ${errorMessage}`);
+    }
+  }
+
+  async generateImagePrompts(storySummary: string, storyParts: string[]): Promise<string[]> {
+    try {
+      Logger.info(`Sending request to: ${BUCHAI_SERVER_URL}/llm/generate_image_prompts`);
+      const response = await axios.post(`${BUCHAI_SERVER_URL}/llm/generate_image_prompts`, {
+        story_summary: storySummary,
+        story_parts: storyParts,
+        model_type: 'lite',
+      });
+
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        const errorMessage = error.response.data?.detail || error.response.statusText;
+        Logger.error(`Failed to generate image prompts: ${errorMessage}`);
+        throw new Error(`Image prompt generation failed: ${error.response.status} ${errorMessage}`);
+      }
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      Logger.error(`Failed to generate image prompts: ${errorMessage}`);
+      throw new Error(`Image prompt generation failed: ${errorMessage}`);
     }
   }
 }

@@ -20,10 +20,12 @@ import Logger from '@/utils/Logger';
 interface CreationPart {
   textJoined: string;
   textParts: string[];
+  imagePrompt?: string;
   imageData?: string;
 }
 
 interface CreationWorkflowState extends WorkflowState {
+  storySummary?: string;
   creationParts: CreationPart[];
   creationVideoUrl?: string;
 }
@@ -32,6 +34,8 @@ interface CreationWorkflowState extends WorkflowState {
 const workflowStatusMessages: Record<WorkflowState['currStep'], string> = {
   'idle': 'Ready to generate your story.',
   'generating-story': 'Drafting your story with AI...',
+  'summarizing-story': 'Summarizing your story...',
+  'generating-image-prompts': 'Creating image prompts...',
   'generating-images': 'Generating illustrations...',
   'generating-video': 'Generating the video...',
   'completed': 'Your story has been created!',
@@ -43,6 +47,7 @@ const initialWorkflowState: CreationWorkflowState = {
   error: null,
   creationParts: [],
   creationVideoUrl: undefined,
+  storySummary: undefined,
 };
 
 export default function Editor() {
@@ -187,25 +192,48 @@ export default function Editor() {
         generatedText += token;
       }
 
-      // Step 3: Split story into parts
+      // Split story into parts as part of the story generation step
       const textParts = await llmAdapter.splitStory(generatedText);
       const textPartsWithoutImages = textParts.map((part) => ({
         textJoined: part.join('\n\n'), // Join all sub-parts as the main text
         textParts: part, // Keep the original sub-parts array
       }));
-      updateWorkflowState({
-        creationParts: textPartsWithoutImages,
-        currStep: 'generating-images',
-      });
-
+      
       // Save story parts to backend
       await meAdapter.setStoryParts(activeCreationId, textParts);
 
-      // Step 4: Generate images for each part
+      // Step 3: Summarize story
+      updateWorkflowState({ currStep: 'summarizing-story' });
+      const storySummary = await llmAdapter.summariseStory(generatedText);
+      updateWorkflowState({ storySummary: storySummary });
+
+      // Step 4: Generate image prompts
+      updateWorkflowState({
+        creationParts: textPartsWithoutImages,
+        currStep: 'generating-image-prompts'
+      });
+      
+      // Create array of joined text parts for image prompt generation
+      const imagePrompts = await llmAdapter.generateImagePrompts(storySummary, textPartsWithoutImages.map(part => part.textJoined));
+      
+      // Add image prompts to creation parts
+      const partsWithPrompts = textPartsWithoutImages.map((part, index) => ({
+        ...part,
+        imagePrompt: imagePrompts[index]
+      }));
+      
+      updateWorkflowState({
+        creationParts: partsWithPrompts,
+        currStep: 'generating-images'
+      });
+
+      // Step 5: Generate images for each part
       const updatedParts: CreationPart[] = [];
-      for (const part of textPartsWithoutImages) {
+      for (const part of partsWithPrompts) {
         try {
-          const imageData = await imageAdapter.generateImage(part.textJoined);
+          // Use the generated image prompt if available, fallback to text
+          const promptText = part.imagePrompt || part.textJoined;
+          const imageData = await imageAdapter.generateImage(promptText);
           updatedParts.push({ ...part, imageData });
         } catch (error) {
           Logger.error(`Failed to generate image: ${error}`);
@@ -219,7 +247,7 @@ export default function Editor() {
         .filter((img): img is string => Boolean(img));
       await meAdapter.setImages(activeCreationId, images);
 
-      // Step 5: Generate video
+      // Step 6: Generate video
       updateWorkflowState({
         creationParts: updatedParts,
         currStep: 'generating-video',
@@ -273,7 +301,9 @@ export default function Editor() {
         />
 
         {workflowState.error && (
-          <ThemedText className="mt-2 text-red-500">{workflowState.error}</ThemedText>
+          <View className={`mt-2 rounded-lg p-4 bg-red-200/40 dark:bg-red-800/40`}>
+            <ThemedText type="body">{workflowState.error}</ThemedText>
+          </View>
         )}
 
         <SafeAreaScrollView>
