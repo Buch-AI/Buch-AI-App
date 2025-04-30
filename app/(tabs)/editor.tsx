@@ -95,7 +95,7 @@ export default function Editor() {
 
       // Create creation parts by combining text and images
       const creationParts = storyParts.map((part, index) => ({
-        textJoined: part.join('\n\n'), // Join all sub-parts as the main text
+        textJoined: part.join('\n'), // Join all sub-parts as the main text
         textParts: part, // Keep the original sub-parts array
         imageData: images[index],
       }));
@@ -195,7 +195,7 @@ export default function Editor() {
       // Split story into parts as part of the story generation step
       const textParts = await llmAdapter.splitStory(generatedText);
       const textPartsWithoutImages = textParts.map((part) => ({
-        textJoined: part.join('\n\n'), // Join all sub-parts as the main text
+        textJoined: part.join('\n'), // Join all sub-parts as the main text
         textParts: part, // Keep the original sub-parts array
       }));
       
@@ -339,17 +339,9 @@ export default function Editor() {
                   <ThemedText type="book" className="mb-2 text-xl font-bold opacity-50">
                     Chapter {index + 1}
                   </ThemedText>
-                  <ThemedText type="book" className="mb-4">{part.textJoined}</ThemedText>
-
-                  {part.textParts && part.textParts.length > 0 && (
-                    <View className="mb-4">
-                      {part.textParts.map((subPart, subIndex) => (
-                        <ThemedText key={subIndex} type="book" className="mb-2">
-                          {subPart}
-                        </ThemedText>
-                      ))}
-                    </View>
-                  )}
+                  <ThemedText type="book" className="mb-4">
+                    {part.textJoined}
+                  </ThemedText>
 
                   {workflowState.currStep === 'generating-images' && !part.imageData ? (
                     <View className="h-[512px] items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-800">
