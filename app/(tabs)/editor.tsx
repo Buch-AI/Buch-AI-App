@@ -95,7 +95,7 @@ export default function Editor() {
 
       // Create creation parts by combining text and images
       const creationParts = storyParts.map((part, index) => ({
-        textJoined: part.join('\n'), // Join all sub-parts as the main text
+        textJoined: part.join(' '), // Join all sub-parts as the main text
         textParts: part, // Keep the original sub-parts array
         imageData: images[index],
       }));
@@ -195,7 +195,7 @@ export default function Editor() {
       // Split story into parts as part of the story generation step
       const textParts = await llmAdapter.splitStory(generatedText);
       const textPartsWithoutImages = textParts.map((part) => ({
-        textJoined: part.join('\n'), // Join all sub-parts as the main text
+        textJoined: part.join(' '), // Join all sub-parts as the main text
         textParts: part, // Keep the original sub-parts array
       }));
       
