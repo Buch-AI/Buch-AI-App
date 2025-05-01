@@ -60,7 +60,7 @@ export default function SignUpScreen() {
         <SafeAreaScrollView>
           <View pointerEvents="none" className="w-full items-center">
             <Image
-              source={require('@/assets/images/illustration-sample-1.png')}
+              source={require('@/assets/images/illustration-sample-1@2000.png')}
               style={{
                 width: illustrationSize,
                 height: illustrationSize * 0.75,

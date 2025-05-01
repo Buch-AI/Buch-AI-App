@@ -1,5 +1,4 @@
 import { Ionicons } from '@expo/vector-icons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Link } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { View, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native';
@@ -9,7 +8,7 @@ import { ThemedButton } from '@/components/ui-custom/ThemedButton';
 import { ThemedContainerView } from '@/components/ui-custom/ThemedContainerView';
 import { ThemedModal } from '@/components/ui-custom/ThemedModal';
 import { ThemedText } from '@/components/ui-custom/ThemedText';
-import { StorageKeys } from '@/constants/Storage';
+import { useAuth } from '@/contexts/AuthContext';
 import { MeAdapter } from '@/services/MeAdapter';
 import Logger from '@/utils/Logger';
 
@@ -23,6 +22,7 @@ interface Creation {
 }
 
 export default function Home() {
+  const { jsonWebToken } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -43,12 +43,11 @@ export default function Home() {
       setIsLoading(true);
       setError(null);
 
-      const token = await AsyncStorage.getItem(StorageKeys.AUTH_JWT);
-      if (!token) {
+      if (!jsonWebToken) {
         throw new Error('Unauthorized');
       }
 
-      const meAdapter = new MeAdapter(token);
+      const meAdapter = new MeAdapter(jsonWebToken);
       const creationProfiles = await meAdapter.getUserCreations();
       setCreations(creationProfiles.map((profile) => ({
         creation_id: profile.creation_id,
@@ -71,16 +70,15 @@ export default function Home() {
     }
   };
 
-
   const handleDeleteConfirm = async () => {
     try {
       setIsDeleting(true);
-      const token = await AsyncStorage.getItem(StorageKeys.AUTH_JWT);
-      if (!token) {
+      
+      if (!jsonWebToken) {
         throw new Error('Unauthorized');
       }
 
-      const meAdapter = new MeAdapter(token);
+      const meAdapter = new MeAdapter(jsonWebToken);
 
       // Determine which IDs to delete
       const idsToDelete = Array.from(selectedCreationIds);

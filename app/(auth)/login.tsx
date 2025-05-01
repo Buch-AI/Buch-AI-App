@@ -1,4 +1,3 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Link } from 'expo-router';
 import React, { useState } from 'react';
 import { Image, Pressable, View } from 'react-native';
@@ -10,13 +9,11 @@ import { ThemedContainerView } from '@/components/ui-custom/ThemedContainerView'
 import { ThemedModal } from '@/components/ui-custom/ThemedModal';
 import { ThemedText } from '@/components/ui-custom/ThemedText';
 import { ThemedTextInput } from '@/components/ui-custom/ThemedTextInput';
-import { StorageKeys } from '@/constants/Storage';
-import { login } from '@/services/AuthAdapter';
 import Logger from '@/utils/Logger';
-import { useAuth } from '../_layout';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function LoginScreen() {
-  const { setAuthenticated } = useAuth();
+  const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
@@ -26,15 +23,7 @@ export default function LoginScreen() {
   const handleLogin = async () => {
     setLoading(true);
     try {
-      const tokenResponse = await login(email, password);
-      const token = tokenResponse.access_token;
-
-      if (token) {
-        await AsyncStorage.setItem(StorageKeys.AUTH_JWT, token);
-        setAuthenticated(true);
-      } else {
-        throw new Error('No token received');
-      }
+      await login(email, password);
     } catch (error: any) {
       Logger.error(`Login failed: ${error}`);
       setErrorMessage('An error occurred during sign in.');
@@ -52,7 +41,7 @@ export default function LoginScreen() {
         <SafeAreaScrollView>
           <View pointerEvents="none" className="w-full items-center">
             <Image
-              source={require('@/assets/images/illustration-sample-1.png')}
+              source={require('@/assets/images/illustration-sample-1@2000.png')}
               style={{
                 width: illustrationSize,
                 height: illustrationSize * 0.75,

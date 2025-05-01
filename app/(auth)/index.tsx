@@ -16,7 +16,7 @@ export default function AuthIndex() {
         <SafeAreaScrollView>
           <View pointerEvents="none" className="mb-8 w-full items-center">
             <Image
-              source={require('@/assets/images/illustration-sample-1.png')}
+              source={require('@/assets/images/illustration-sample-1@2000.png')}
               style={{
                 width: illustrationSize,
                 height: illustrationSize * 0.75,

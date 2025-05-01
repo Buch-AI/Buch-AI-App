@@ -1,4 +1,3 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { View, Image, ActivityIndicator, Platform } from 'react-native';
@@ -10,7 +9,7 @@ import { ThemedText } from '@/components/ui-custom/ThemedText';
 import { ThemedTextInput } from '@/components/ui-custom/ThemedTextInput';
 import { VideoPlayer } from '@/components/ui-custom/VideoPlayer';
 import { WorkflowStatusBox, WorkflowState } from '@/components/ui-custom/WorkflowStatusBox';
-import { StorageKeys } from '@/constants/Storage';
+import { useAuth } from '@/contexts/AuthContext';
 import { useStory } from '@/contexts/StoryContext';
 import { ImageAdapter } from '@/services/ImageAdapter';
 import { LlmAdapter } from '@/services/LlmAdapter';
@@ -55,6 +54,7 @@ export default function Editor() {
   const router = useRouter();
   const [prompt, setPrompt] = useState('');
   const { dispatch } = useStory();
+  const { jsonWebToken } = useAuth();
   const [workflowState, setWorkflowState] = useState<CreationWorkflowState>(initialWorkflowState);
   const [isLoadingCreation, setIsLoadingCreation] = useState(false);
 
@@ -77,14 +77,6 @@ export default function Editor() {
       dispatch({ type: 'SET_CURRENT_STORY', payload: null });
     }
   }, []);
-
-  const getMeAdapterToken = async () => {
-    const token = await AsyncStorage.getItem(StorageKeys.AUTH_JWT);
-    if (!token) {
-      throw new Error('Unauthorized');
-    }
-    return token;
-  };
 
   const updateWorkflowState = (updates: Partial<CreationWorkflowState>) => {
     setWorkflowState((current) => ({ ...current, ...updates }));
@@ -146,7 +138,11 @@ export default function Editor() {
         currStep: 'generating-story',
       });
 
-      const meAdapter = new MeAdapter(await getMeAdapterToken());
+      if (!jsonWebToken) {
+        throw new Error('Unauthorized');
+      }
+
+      const meAdapter = new MeAdapter(jsonWebToken);
 
       // Get story parts
       const storyParts = await meAdapter.getStoryParts(id);
@@ -200,8 +196,12 @@ export default function Editor() {
       });
       dispatch({ type: 'SET_ERROR', payload: null });
 
+      if (!jsonWebToken) {
+        throw new Error('Unauthorized');
+      }
+
       // Initialize adapters
-      const meAdapter = new MeAdapter(await getMeAdapterToken());
+      const meAdapter = new MeAdapter(jsonWebToken);
       const llmAdapter = new LlmAdapter();
       const imageAdapter = new ImageAdapter();
 

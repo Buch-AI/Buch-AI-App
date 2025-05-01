@@ -7,6 +7,10 @@
   "scheme": "myapp",
   "userInterfaceStyle": "automatic",
   "newArchEnabled": true,
+  "splash": {
+    "image": "./assets/images/illustration-sample-1@512.png",
+    "resizeMode": "contain"
+  },
   "ios": {
     "supportsTablet": true
   },
@@ -23,15 +27,7 @@
   },
   "plugins": [
     "expo-router",
-    [
-      "expo-splash-screen",
-      {
-        "image": "./assets/images/splash-icon.png",
-        "imageWidth": 200,
-        "resizeMode": "contain",
-        "backgroundColor": "#ffffff"
-      }
-    ]
+    "expo-splash-screen"
   ],
   "experiments": {
     "baseUrl": "/Buch-AI-App",
