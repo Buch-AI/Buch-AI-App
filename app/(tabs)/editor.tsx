@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { View, Image, ActivityIndicator, Platform } from 'react-native';
 import { SafeAreaScrollView } from '@/components/ui-custom/SafeAreaScrollView';
@@ -51,7 +51,8 @@ const initialWorkflowState: CreationWorkflowState = {
 };
 
 export default function Editor() {
-  const { id: creationId } = useLocalSearchParams<{ id?: string }>();
+  const { id: urlCreationId } = useLocalSearchParams<{ id?: string }>();
+  const router = useRouter();
   const [prompt, setPrompt] = useState('');
   const { dispatch } = useStory();
   const [workflowState, setWorkflowState] = useState<CreationWorkflowState>(initialWorkflowState);
@@ -67,26 +68,35 @@ export default function Editor() {
   }, [workflowState.creationVideoUrl]);
 
   useEffect(() => {
-    if (creationId) {
-      loadExistingCreation(creationId);
+    if (urlCreationId) {
+      loadExistingCreation(urlCreationId);
     } else {
       // Clear state when there's no creation ID
       setPrompt('');
       setWorkflowState(initialWorkflowState);
       dispatch({ type: 'SET_CURRENT_STORY', payload: null });
     }
-  }, [creationId]);
+  }, []);
+
+  const getMeAdapterToken = async () => {
+    const token = await AsyncStorage.getItem(StorageKeys.AUTH_JWT);
+    if (!token) {
+      throw new Error('Unauthorized');
+    }
+    return token;
+  };
 
   const loadExistingCreation = async (id: string) => {
     try {
       setIsLoadingCreation(true);
 
-      const token = await AsyncStorage.getItem(StorageKeys.AUTH_JWT);
-      if (!token) {
-        throw new Error('Unauthorized');
-      }
+      updateWorkflowState({
+        ...initialWorkflowState,
+        creationId: id,
+        currStep: 'generating-story',
+      });
 
-      const meAdapter = new MeAdapter(token);
+      const meAdapter = new MeAdapter(await getMeAdapterToken());
 
       // Get story parts
       const storyParts = await meAdapter.getStoryParts(id);
@@ -117,6 +127,12 @@ export default function Editor() {
 
   const updateWorkflowState = (updates: Partial<CreationWorkflowState>) => {
     setWorkflowState((current) => ({ ...current, ...updates }));
+
+    // If creationId is being updated and it's different from the URL parameter,
+    // update the URL to include the new creationId
+    if (updates.creationId && updates.creationId !== urlCreationId) {
+      router.setParams({ id: updates.creationId });
+    }
   };
 
   const handleError = (error: unknown, step: string) => {
@@ -160,29 +176,24 @@ export default function Editor() {
   };
 
   async function startWorkflow() {
-    const token = await AsyncStorage.getItem(StorageKeys.AUTH_JWT);
-    if (!token) {
-      throw new Error('Unauthorized');
-    }
-
     if (!prompt.trim()) return;
 
     try {
       // Reset state but preserve creationId if it exists
       updateWorkflowState({
         ...initialWorkflowState,
-        creationId: creationId || null,
+        creationId: urlCreationId || null,
         currStep: 'generating-story',
       });
       dispatch({ type: 'SET_ERROR', payload: null });
 
       // Initialize adapters
-      const meAdapter = new MeAdapter(token);
+      const meAdapter = new MeAdapter(await getMeAdapterToken());
       const llmAdapter = new LlmAdapter();
       const imageAdapter = new ImageAdapter();
 
       // Step 1: Use existing creation ID or generate a new one
-      const activeCreationId = creationId || await meAdapter.generateCreation();
+      const activeCreationId = urlCreationId || await meAdapter.generateCreation();
       updateWorkflowState({ creationId: activeCreationId });
 
       // Step 2: Generate story
@@ -198,7 +209,7 @@ export default function Editor() {
         textJoined: part.join(' '), // Join all sub-parts as the main text
         textParts: part, // Keep the original sub-parts array
       }));
-      
+
       // Save story parts to backend
       await meAdapter.setStoryParts(activeCreationId, textParts);
 
@@ -210,21 +221,21 @@ export default function Editor() {
       // Step 4: Generate image prompts
       updateWorkflowState({
         creationParts: textPartsWithoutImages,
-        currStep: 'generating-image-prompts'
+        currStep: 'generating-image-prompts',
       });
-      
+
       // Create array of joined text parts for image prompt generation
-      const imagePrompts = await llmAdapter.generateImagePrompts(storySummary, textPartsWithoutImages.map(part => part.textJoined));
-      
+      const imagePrompts = await llmAdapter.generateImagePrompts(storySummary, textPartsWithoutImages.map((part) => part.textJoined));
+
       // Add image prompts to creation parts
       const partsWithPrompts = textPartsWithoutImages.map((part, index) => ({
         ...part,
-        imagePrompt: imagePrompts[index]
+        imagePrompt: imagePrompts[index],
       }));
-      
+
       updateWorkflowState({
         creationParts: partsWithPrompts,
-        currStep: 'generating-images'
+        currStep: 'generating-images',
       });
 
       // Step 5: Generate images for each part
@@ -301,7 +312,7 @@ export default function Editor() {
         />
 
         {workflowState.error && (
-          <View className={`mt-2 rounded-lg p-4 bg-red-200/40 dark:bg-red-800/40`}>
+          <View className={`mt-2 rounded-lg bg-red-200/40 p-4 dark:bg-red-800/40`}>
             <ThemedText type="body">{workflowState.error}</ThemedText>
           </View>
         )}

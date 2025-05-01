@@ -69,7 +69,7 @@ export function WorkflowStatusBox({ workflowState, workflowStatusMessages }: Wor
 
       {isInProgress && (
         <View className="mt-2 flex-row items-center">
-          <View className="flex-1 h-2 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
+          <View className="h-2 flex-1 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
             <View
               className="h-full bg-blue-500 dark:bg-blue-400"
               style={{ width: `${getProgress(currStep, workflowStatusMessages)}%` }}
@@ -84,7 +84,7 @@ export function WorkflowStatusBox({ workflowState, workflowStatusMessages }: Wor
       )}
 
       {/* Toggle Details Button */}
-      <TouchableOpacity 
+      <TouchableOpacity
         onPress={() => setShowDetails(!showDetails)}
         className="mt-1"
       >
