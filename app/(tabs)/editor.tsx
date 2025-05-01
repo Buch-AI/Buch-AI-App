@@ -69,7 +69,7 @@ export default function Editor() {
 
   useEffect(() => {
     if (urlCreationId) {
-      loadExistingCreation(urlCreationId);
+      startLoadCreationWorkflow(urlCreationId);
     } else {
       // Clear state when there's no creation ID
       setPrompt('');
@@ -84,45 +84,6 @@ export default function Editor() {
       throw new Error('Unauthorized');
     }
     return token;
-  };
-
-  const loadExistingCreation = async (id: string) => {
-    try {
-      setIsLoadingCreation(true);
-
-      updateWorkflowState({
-        ...initialWorkflowState,
-        creationId: id,
-        currStep: 'generating-story',
-      });
-
-      const meAdapter = new MeAdapter(await getMeAdapterToken());
-
-      // Get story parts
-      const storyParts = await meAdapter.getStoryParts(id);
-      const images = await meAdapter.getImages(id);
-      const video = await meAdapter.getVideo(id);
-
-      // Create creation parts by combining text and images
-      const creationParts = storyParts.map((part, index) => ({
-        textJoined: part.join(' '), // Join all sub-parts as the main text
-        textParts: part, // Keep the original sub-parts array
-        imageData: images[index],
-      }));
-
-      // Update state
-      setWorkflowState({
-        ...initialWorkflowState,
-        creationId: id,
-        currStep: 'completed',
-        creationParts,
-        creationVideoUrl: video,
-      });
-    } catch (error) {
-      handleError(error, 'loading-existing-creation');
-    } finally {
-      setIsLoadingCreation(false);
-    }
   };
 
   const updateWorkflowState = (updates: Partial<CreationWorkflowState>) => {
@@ -175,7 +136,59 @@ export default function Editor() {
     throw new Error('Video generation timed out');
   };
 
-  async function startWorkflow() {
+  const startLoadCreationWorkflow = async (id: string) => {
+    try {
+      setIsLoadingCreation(true);
+
+      updateWorkflowState({
+        ...initialWorkflowState,
+        creationId: id,
+        currStep: 'generating-story',
+      });
+
+      const meAdapter = new MeAdapter(await getMeAdapterToken());
+
+      // Get story parts
+      const storyParts = await meAdapter.getStoryParts(id);
+      const images = await meAdapter.getImages(id);
+      const video = await meAdapter.getVideo(id);
+
+      // Create creation parts by combining text and images
+      const creationParts = storyParts.map((part, index) => ({
+        textJoined: part.join(' '), // Join all sub-parts as the main text
+        textParts: part, // Keep the original sub-parts array
+        imageData: images[index],
+      }));
+
+      // Update state
+      setWorkflowState({
+        ...initialWorkflowState,
+        creationId: id,
+        currStep: 'completed',
+        creationParts,
+        creationVideoUrl: video,
+      });
+
+      // Update story context
+      dispatch({
+        type: 'SET_CURRENT_STORY',
+        payload: {
+          id,
+          prompt: '',
+          content: creationParts.map(part => part.textJoined).join('\n\n'),
+          authorId: 'current-user',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      });
+    } catch (error) {
+      handleError(error, 'loading-existing-creation');
+    } finally {
+      setIsLoadingCreation(false);
+    }
+  };
+
+  const startGenerateCreationWorkflow = async () => {
     if (!prompt.trim()) return;
 
     try {
@@ -329,7 +342,7 @@ export default function Editor() {
           />
 
           <ThemedButton
-            onPress={startWorkflow}
+            onPress={startGenerateCreationWorkflow}
             disabled={isGenerating || !prompt.trim()}
             loading={isGenerating}
             title={isGenerating ? 'Generating...' : 'Generate Story'}
