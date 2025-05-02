@@ -11,6 +11,7 @@ export interface WorkflowState {
 interface WorkflowStatusBoxProps {
   workflowState: WorkflowState;
   workflowStatusMessages: Record<WorkflowState['currStep'], string>;
+  className?: string;
 }
 
 function isInitialStep(step: string): boolean {
@@ -54,13 +55,13 @@ function getProgress<T extends string>(currStep: T, allSteps: Record<T, string>)
   return Math.round((currStepIndex / totalSteps) * 100);
 }
 
-export function WorkflowStatusBox({ workflowState, workflowStatusMessages }: WorkflowStatusBoxProps) {
+export function WorkflowStatusBox({ workflowState, workflowStatusMessages, className }: WorkflowStatusBoxProps) {
   const { currStep, creationId } = workflowState;
   const isInProgress = !isInitialStep(currStep) && !isTerminalStep(currStep);
   const [showDetails, setShowDetails] = useState(false);
 
   return (
-    <View className={`rounded-lg p-4 ${getStatusColor(currStep)}`}>
+    <View className={`rounded-lg p-4 ${getStatusColor(currStep)} shadow-custom ${className}`}>
       <View>
         <ThemedText className="w-full text-left font-medium">
           Status: {workflowStatusMessages[currStep]}
@@ -69,7 +70,7 @@ export function WorkflowStatusBox({ workflowState, workflowStatusMessages }: Wor
 
       {isInProgress && (
         <View className="mt-2 flex-row items-center">
-          <View className="h-2 flex-1 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
+          <View className="h-2 flex-1 overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-700">
             <View
               className="h-full bg-blue-500 dark:bg-blue-400"
               style={{ width: `${getProgress(currStep, workflowStatusMessages)}%` }}

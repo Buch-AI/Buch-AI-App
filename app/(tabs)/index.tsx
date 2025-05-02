@@ -150,7 +150,7 @@ export default function Home() {
         {isSelecting && (
           <TouchableOpacity
             onPress={() => toggleSelection(item.creation_id)}
-            className="mr-3 mt-1 size-6 items-center justify-center rounded-md border border-gray-300"
+            className="mr-3 mt-1 size-6 items-center justify-center rounded-lg border border-gray-300"
             style={{ backgroundColor: selectedCreationIds.has(item.creation_id) ? '#4F46E5' : 'transparent' }}
           >
             {selectedCreationIds.has(item.creation_id) && (

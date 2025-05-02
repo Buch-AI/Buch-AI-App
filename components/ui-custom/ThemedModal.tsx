@@ -31,7 +31,7 @@ export function ThemedModal({
       onRequestClose={onClose}
     >
       <View className="flex-1 items-center justify-center bg-black/50">
-        <View className="m-5 w-[90%] max-w-md rounded-2xl bg-white p-8 shadow-xl">
+        <View className="m-5 w-[90%] max-w-md rounded-2xl bg-white p-8 shadow-custom">
           <ThemedText className="mb-4 text-xl font-bold">{title}</ThemedText>
           <ThemedText className="mb-6">{message}</ThemedText>
           <View className="flex-row justify-end space-x-4">

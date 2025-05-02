@@ -39,7 +39,7 @@ export const ThemedButton: React.FC<ThemedButtonProps> = ({
   return (
     <TouchableOpacity
       onPress={onPress}
-      className={`flex flex-row items-center justify-center rounded-lg p-3 ${transparent ? 'bg-transparent' : ''} ${className}`}
+      className={`flex flex-row items-center justify-center rounded-lg p-3 shadow-custom ${transparent ? 'bg-transparent' : ''} ${className}`}
       style={{
         backgroundColor: transparent ? 'transparent' : tintColor,
         opacity: (disabled || loading) ? 0.5 : 1,

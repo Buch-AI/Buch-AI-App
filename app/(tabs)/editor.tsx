@@ -57,6 +57,7 @@ export default function Editor() {
   const { jsonWebToken } = useAuth();
   const [workflowState, setWorkflowState] = useState<CreationWorkflowState>(initialWorkflowState);
   const [isLoadingCreation, setIsLoadingCreation] = useState(false);
+  const [isGenningCreation, setIsGenningCreation] = useState(false);
 
   // Cleanup Blob URL on unmount or when video URL changes
   useEffect(() => {
@@ -68,6 +69,9 @@ export default function Editor() {
   }, [workflowState.creationVideoUrl]);
 
   useEffect(() => {
+    if (isGenningCreation)
+      return;
+
     if (urlCreationId) {
       startLoadCreationWorkflow(urlCreationId);
     } else {
@@ -76,7 +80,7 @@ export default function Editor() {
       setWorkflowState(initialWorkflowState);
       dispatch({ type: 'SET_CURRENT_STORY', payload: null });
     }
-  }, []);
+  }, [urlCreationId]);
 
   const updateWorkflowState = (updates: Partial<CreationWorkflowState>) => {
     setWorkflowState((current) => ({ ...current, ...updates }));
@@ -188,6 +192,8 @@ export default function Editor() {
     if (!prompt.trim()) return;
 
     try {
+      setIsGenningCreation(true);
+
       // Reset state but preserve creationId if it exists
       updateWorkflowState({
         ...initialWorkflowState,
@@ -307,6 +313,8 @@ export default function Editor() {
       });
     } catch (error) {
       handleError(error, workflowState.currStep);
+    } finally {
+      setIsGenningCreation(false);
     }
   }
 
@@ -322,10 +330,11 @@ export default function Editor() {
         <WorkflowStatusBox
           workflowState={workflowState}
           workflowStatusMessages={workflowStatusMessages}
+          className="z-10"
         />
 
         {workflowState.error && (
-          <View className={`mt-2 rounded-lg bg-red-200/40 p-4 dark:bg-red-800/40`}>
+          <View className={`mt-2 rounded-lg bg-red-200/40 p-4 dark:bg-red-800/40 shadow-custom z-10`}>
             <ThemedText type="body">{workflowState.error}</ThemedText>
           </View>
         )}

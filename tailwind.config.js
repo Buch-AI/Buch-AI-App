@@ -14,6 +14,12 @@ module.exports = {
         body: ['SpaceGrotesk', 'system-ui', 'sans-serif'],
         book: ['EBGaramond', 'serif'],
       },
+      boxShadow: {
+        'custom': '2px 2px 0px 0px rgba(0, 0, 0, 0.6)',
+        'custom-focused': '4px 4px 0px 0px rgba(0, 0, 0, 0.6)',
+        'custom-dark': '2px 2px 0px 0px rgba(255, 255, 255, 0.6)',
+        'custom-focused-dark': '4px 4px 0px 0px rgba(255, 255, 255, 0.6)',
+      },
     },
   },
   plugins: [],
