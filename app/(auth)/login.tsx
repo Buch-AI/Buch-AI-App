@@ -18,18 +18,24 @@ export default function LoginScreen() {
   const [password, setPassword] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleLogin = async () => {
-    setLoading(true);
+    setIsLoading(true);
     try {
+      // NOTE: Perform login - AuthContext will keep isLoading true during the transition
+      // NOTE: _layout.tsx will handle navigation and setting isLoading to false
       await login(email, password);
+      
+      // NOTE: We don't set loading to false on success because 
+      // NOTE: AuthContext keeps isLoading true during navigation
     } catch (error: any) {
       Logger.error(`Login failed: ${error}`);
       setErrorMessage('An error occurred during sign in.');
       setModalVisible(true);
-    } finally {
-      setLoading(false);
+      
+      // NOTE: Only terminate the local loading state, not the AuthContext loading state
+      setIsLoading(false);
     }
   };
 
@@ -65,7 +71,7 @@ export default function LoginScreen() {
             secureTextEntry
             className="mb-4 w-full"
           />
-          <ThemedButton title="Log In" onPress={handleLogin} loading={loading} />
+          <ThemedButton title="Log In" onPress={handleLogin} loading={isLoading} />
           <Link href="/(auth)/sign-up" asChild>
             <Pressable>
               <ThemedText className="mt-4 text-center text-blue-600">

@@ -1,6 +1,6 @@
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router/stack';
-import { usePathname } from 'expo-router';
+import { usePathname, useRouter } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useCallback, useEffect, useState } from 'react';
@@ -17,8 +17,8 @@ SplashScreen.preventAutoHideAsync();
 
 function RootLayoutRoutes() {
   const pathname = usePathname();
-
-  const { isAuthenticated, isLoading, signOut } = useAuth();
+  const router = useRouter();
+  const { isAuthenticated, isLoading, signOut, setAuthenticated, setIsLoading } = useAuth();
   
   // Sign out current user when they navigate to sign-up route.
   useEffect(() => {
@@ -28,8 +28,36 @@ function RootLayoutRoutes() {
     }
   }, [pathname, isAuthenticated, signOut]);
 
+  // Handle auth state changes and show splash screen during transitions
+  useEffect(() => {
+    const handleAuthTransition = async () => {
+      if (isAuthenticated && pathname.includes('login')) {
+        try {
+          // Small delay to ensure transition feels natural
+          await new Promise(resolve => setTimeout(resolve, 200));
+          
+          // Make sure SplashScreen is prevented from auto-hiding during transition
+          await SplashScreen.preventAutoHideAsync().catch(e => {
+            Logger.error(`Failed to prevent auto-hide of splash screen: ${e}`);
+          });
+        } finally {
+          // Hide splash after a short delay to ensure the new screen is ready
+          setTimeout(async () => {
+            await SplashScreen.hideAsync().catch(e => {
+              Logger.error(`Failed to hide splash screen: ${e}`);
+            });
+            // Set isLoading to false after navigation and splash screen handling
+            setIsLoading(false);
+          }, 500);
+        }
+      }
+    };
+    
+    handleAuthTransition();
+  }, [isAuthenticated, pathname, router, setIsLoading]);
+
   if (isLoading) {
-    return null;
+    return <SplashScreenComponent />;
   }
 
   return (

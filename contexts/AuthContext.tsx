@@ -13,6 +13,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
   setAuthenticated: (value: boolean) => void;
+  setIsLoading: (value: boolean) => void;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -52,6 +53,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = async (email: string, password: string) => {
     setIsLoading(true);
     setError(null);
+    
     try {
       const tokenResponse = await authAdapterLogin(email, password);
       const newToken = tokenResponse.access_token;
@@ -60,16 +62,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         await AsyncStorage.setItem(StorageKeys.AUTH_JWT, newToken);
         setJsonWebToken(newToken);
         setIsAuthenticated(true);
+        
+        // NOTE: Keep isLoading true through the transition
+        // NOTE: It will be set to false in _layout.tsx after navigation
       } else {
         throw new Error('No token received');
       }
     } catch (error: any) {
       Logger.error(`Login failed: ${error}`);
       setError('An error occurred during sign in.');
-      throw error;
-    } finally {
+      
+      // Terminate loading state on error
       setIsLoading(false);
+      
+      throw error;
     }
+    // NOTE: We're not setting isLoading to false in the finally block because we want to keep the loading state active during navigation
   };
 
   const signOut = async () => {
@@ -78,10 +86,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       await AsyncStorage.removeItem(StorageKeys.AUTH_JWT);
       setJsonWebToken(null);
       setIsAuthenticated(false);
-      router.replace('/login');
     } catch (error) {
-      Logger.error(`Logout failed: ${error}`);
-      setError('An error occurred during logout.');
+      Logger.error(`Sign-out failed: ${error}`);
+      setError(`Sign-out failed: ${error}`);
     } finally {
       setIsLoading(false);
     }
@@ -101,6 +108,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         login,
         signOut,
         setAuthenticated,
+        setIsLoading,
       }}
     >
       {children}
