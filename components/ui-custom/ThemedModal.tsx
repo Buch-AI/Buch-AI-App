@@ -55,7 +55,7 @@ export function ThemedModal({
                     {primaryButton.title}
                   </ThemedText>
                   {primaryButton.loading && (
-                    <ActivityIndicator size="small" color="white" />
+                    <ActivityIndicator size="small" color="#fff" />
                   )}
                 </View>
               </TouchableOpacity>

@@ -14,7 +14,7 @@ export function Button({ onPress, children, disabled, loading }: ButtonProps) {
       onPress={onPress}
       disabled={disabled || loading}>
       {loading ? (
-        <ActivityIndicator color="white" />
+        <ActivityIndicator color="#fff" />
       ) : (
         <Text className="text-lg font-semibold text-white">{children}</Text>
       )}
