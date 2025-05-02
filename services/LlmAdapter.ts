@@ -3,22 +3,23 @@ import { BUCHAI_SERVER_URL } from '@/constants/Config';
 import Logger from '@/utils/Logger';
 
 export interface LlmAdaptable {
-  generateStoryString(prompt: string): Promise<string>;
-  generateStoryStream(prompt: string): void;
-  splitStory(prompt: string): Promise<string[][]>;
-  summariseStory(story: string): Promise<string>;
-  generateImagePrompts(storySummary: string, storyParts: string[]): Promise<string[]>;
+  generateStoryString(prompt: string, costCentreId?: string): Promise<string>;
+  generateStoryStream(prompt: string, costCentreId?: string): void;
+  splitStory(prompt: string, costCentreId?: string): Promise<string[][]>;
+  summariseStory(story: string, costCentreId?: string): Promise<string>;
+  generateImagePrompts(storySummary: string, storyParts: string[], costCentreId?: string): Promise<string[]>;
 }
 
 export class LlmAdapter implements LlmAdaptable {
   constructor() {}
 
-  async generateStoryString(prompt: string): Promise<string> {
+  async generateStoryString(prompt: string, costCentreId?: string): Promise<string> {
     try {
       Logger.info(`Sending request to: ${BUCHAI_SERVER_URL}/llm/generate_story_string`);
       const response = await axios.post(`${BUCHAI_SERVER_URL}/llm/generate_story_string`, {
         prompt: prompt,
         model_type: 'lite',
+        cost_centre_id: costCentreId,
       });
 
       return response.data.story;
@@ -28,7 +29,7 @@ export class LlmAdapter implements LlmAdaptable {
     }
   }
 
-  async* generateStoryStream(prompt: string) {
+  async* generateStoryStream(prompt: string, costCentreId?: string) {
     try {
       Logger.info(`Sending request to: ${BUCHAI_SERVER_URL}/llm/generate_story_stream`);
       // Using fetch because axios doesn't support streaming
@@ -38,7 +39,11 @@ export class LlmAdapter implements LlmAdaptable {
           'Content-Type': 'application/json',
           'Accept': 'text/event-stream',
         },
-        body: JSON.stringify({ prompt: prompt, model_type: 'lite' }),
+        body: JSON.stringify({ 
+          prompt: prompt, 
+          model_type: 'lite',
+          cost_centre_id: costCentreId
+        }),
       });
 
       if (!response.ok) {
@@ -65,12 +70,13 @@ export class LlmAdapter implements LlmAdaptable {
     }
   }
 
-  async splitStory(prompt: string): Promise<string[][]> {
+  async splitStory(prompt: string, costCentreId?: string): Promise<string[][]> {
     try {
       Logger.info(`Sending request to: ${BUCHAI_SERVER_URL}/llm/split_story`);
       const response = await axios.post(`${BUCHAI_SERVER_URL}/llm/split_story`, {
         prompt: prompt,
         model_type: 'lite',
+        cost_centre_id: costCentreId,
       });
 
       return response.data;
@@ -87,12 +93,13 @@ export class LlmAdapter implements LlmAdaptable {
     }
   }
 
-  async summariseStory(story: string): Promise<string> {
+  async summariseStory(story: string, costCentreId?: string): Promise<string> {
     try {
       Logger.info(`Sending request to: ${BUCHAI_SERVER_URL}/llm/summarise_story`);
       const response = await axios.post(`${BUCHAI_SERVER_URL}/llm/summarise_story`, {
         story: story,
         model_type: 'lite',
+        cost_centre_id: costCentreId,
       });
 
       return response.data;
@@ -108,13 +115,14 @@ export class LlmAdapter implements LlmAdaptable {
     }
   }
 
-  async generateImagePrompts(storySummary: string, storyParts: string[]): Promise<string[]> {
+  async generateImagePrompts(storySummary: string, storyParts: string[], costCentreId?: string): Promise<string[]> {
     try {
       Logger.info(`Sending request to: ${BUCHAI_SERVER_URL}/llm/generate_image_prompts`);
       const response = await axios.post(`${BUCHAI_SERVER_URL}/llm/generate_image_prompts`, {
         story_summary: storySummary,
         story_parts: storyParts,
         model_type: 'lite',
+        cost_centre_id: costCentreId,
       });
 
       return response.data;

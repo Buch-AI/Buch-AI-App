@@ -58,6 +58,10 @@ interface CreationResponse {
   data: string;
 }
 
+interface CostCentreResponse {
+  data: string;
+}
+
 export class MeAdapter {
   private readonly baseUrl: string;
   private readonly headers: { Authorization: string };
@@ -192,6 +196,22 @@ export class MeAdapter {
       return response.data.data;
     } catch (error) {
       Logger.error(`Failed to generate creation: ${error}`);
+      throw error;
+    }
+  }
+
+
+  async generateCostCentre(creationId: string): Promise<string> {
+    try {
+      Logger.info(`Generating cost centre for creation: ${creationId}`);
+      const response = await axios.post<CostCentreResponse>(
+        `${this.baseUrl}/me/creation/${creationId}/cost_centre/generate`,
+        {}, // Empty body for POST request
+        { headers: this.headers },
+      );
+      return response.data.data;
+    } catch (error) {
+      Logger.error(`Failed to generate cost centre: ${error}`);
       throw error;
     }
   }

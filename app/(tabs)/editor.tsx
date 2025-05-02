@@ -232,6 +232,10 @@ export default function Editor() {
       const activeCreationId = urlCreationId || await meAdapter.generateCreation();
       updateWorkflowState({ creationId: activeCreationId });
 
+      // Generate a cost centre ID for tracking costs
+      const costCentreId = await meAdapter.generateCostCentre(activeCreationId);
+      Logger.info(`Generated cost centre ID ${costCentreId} for creation ID ${activeCreationId}`);
+
       // If this is a new creation, set a default title based on the prompt
       if (!urlCreationId) {
         const defaultTitle = activeCreationId;
@@ -243,13 +247,13 @@ export default function Editor() {
 
       // Step 2: Generate story
       let generatedText = '';
-      const streamGenerator = llmAdapter.generateStoryStream(prompt);
+      const streamGenerator = llmAdapter.generateStoryStream(prompt, costCentreId);
       for await (const token of streamGenerator) {
         generatedText += token;
       }
 
       // Split story into parts as part of the story generation step
-      const textParts = await llmAdapter.splitStory(generatedText);
+      const textParts = await llmAdapter.splitStory(generatedText, costCentreId);
       const textPartsWithoutImages = textParts.map((part) => ({
         textJoined: part.join(' '), // Join all sub-parts as the main text
         textParts: part, // Keep the original sub-parts array
@@ -260,7 +264,7 @@ export default function Editor() {
 
       // Step 3: Summarize story
       updateWorkflowState({ currStep: 'summarizing-story' });
-      const storySummary = await llmAdapter.summariseStory(generatedText);
+      const storySummary = await llmAdapter.summariseStory(generatedText, costCentreId);
       updateWorkflowState({ storySummary: storySummary });
 
       // Step 4: Generate image prompts
@@ -270,7 +274,11 @@ export default function Editor() {
       });
 
       // Create array of joined text parts for image prompt generation
-      const imagePrompts = await llmAdapter.generateImagePrompts(storySummary, textPartsWithoutImages.map((part) => part.textJoined));
+      const imagePrompts = await llmAdapter.generateImagePrompts(
+        storySummary, 
+        textPartsWithoutImages.map((part) => part.textJoined),
+        costCentreId
+      );
 
       // Add image prompts to creation parts
       const partsWithPrompts = textPartsWithoutImages.map((part, index) => ({
