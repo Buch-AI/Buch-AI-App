@@ -21,6 +21,14 @@ interface CreationProfile {
   is_active: boolean;
 }
 
+interface CreationProfileUpdate {
+  title?: string;
+  description?: string;
+  status?: string;
+  visibility?: string;
+  tags?: string[];
+}
+
 interface CreationsResponse {
   data: CreationProfile[];
 }
@@ -198,6 +206,21 @@ export class MeAdapter {
       return response.data.data;
     } catch (error) {
       Logger.error(`Failed to delete creation: ${error}`);
+      throw error;
+    }
+  }
+
+  async updateCreation(creationId: string, updateData: CreationProfileUpdate): Promise<string> {
+    try {
+      Logger.info(`Updating creation: ${creationId}`);
+      const response = await axios.patch<CreationResponse>(
+        `${this.baseUrl}/me/creation/${creationId}/update`,
+        updateData,
+        { headers: this.headers },
+      );
+      return response.data.data;
+    } catch (error) {
+      Logger.error(`Failed to update creation: ${error}`);
       throw error;
     }
   }

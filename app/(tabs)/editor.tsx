@@ -1,6 +1,6 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { View, Image, ActivityIndicator, Platform } from 'react-native';
+import { View, Image, ActivityIndicator, Platform, TouchableOpacity } from 'react-native';
 import { SafeAreaScrollView } from '@/components/ui-custom/SafeAreaScrollView';
 import { ThemedBackgroundView } from '@/components/ui-custom/ThemedBackgroundView';
 import { ThemedButton } from '@/components/ui-custom/ThemedButton';
@@ -15,6 +15,7 @@ import { ImageAdapter } from '@/services/ImageAdapter';
 import { LlmAdapter } from '@/services/LlmAdapter';
 import { MeAdapter } from '@/services/MeAdapter';
 import Logger from '@/utils/Logger';
+import { Ionicons } from '@expo/vector-icons';
 
 interface CreationPart {
   textJoined: string;
@@ -58,8 +59,19 @@ export default function Editor() {
   const [workflowState, setWorkflowState] = useState<CreationWorkflowState>(initialWorkflowState);
   const [isLoadingCreation, setIsLoadingCreation] = useState(false);
   const [isGenningCreation, setIsGenningCreation] = useState(false);
+  
+  // MeAdapter CreationProfileUpdate fields
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [isSavingTitle, setIsSavingTitle] = useState(false);
+  const [isSavingDescription, setIsSavingDescription] = useState(false);
+  const [unsavedTitle, setUnsavedTitle] = useState(false);
+  const [unsavedDescription, setUnsavedDescription] = useState(false);
 
-  // Cleanup Blob URL on unmount or when video URL changes
+  // MeAdapter CreationProfileUpdate loading state
+  const [isLoadingProfile, setIsLoadingProfile] = useState(false);
+
+  // Clean up Blob URL on unmount or when video URL changes
   useEffect(() => {
     return () => {
       if (Platform.OS === 'web' && workflowState.creationVideoUrl?.startsWith('blob:')) {
@@ -74,11 +86,16 @@ export default function Editor() {
 
     if (urlCreationId) {
       startLoadCreationWorkflow(urlCreationId);
+      loadCreationProfile(urlCreationId);
     } else {
       // Clear state when there's no creation ID
       setPrompt('');
       setWorkflowState(initialWorkflowState);
       dispatch({ type: 'SET_CURRENT_STORY', payload: null });
+
+      // Reset editable fields when there's no creation ID
+      setTitle('');
+      setDescription('');
     }
   }, [urlCreationId]);
 
@@ -215,6 +232,15 @@ export default function Editor() {
       const activeCreationId = urlCreationId || await meAdapter.generateCreation();
       updateWorkflowState({ creationId: activeCreationId });
 
+      // If this is a new creation, set a default title based on the prompt
+      if (!urlCreationId) {
+        const defaultTitle = activeCreationId;
+        setTitle(defaultTitle);
+        
+        // Save the default title
+        await meAdapter.updateCreation(activeCreationId, { title: defaultTitle });
+      }
+
       // Step 2: Generate story
       let generatedText = '';
       const streamGenerator = llmAdapter.generateStoryStream(prompt);
@@ -318,7 +344,82 @@ export default function Editor() {
     }
   }
 
-  const isGenerating = workflowState.currStep !== 'idle' && workflowState.currStep !== 'completed';
+  // Function to load creation profile fields
+  const loadCreationProfile = async (creationId: string) => {
+    if (!jsonWebToken) return;
+
+    try {
+      setIsLoadingProfile(true);
+      const meAdapter = new MeAdapter(jsonWebToken);
+      const creations = await meAdapter.getUserCreations();
+      const currCreation = creations.find(creation => creation.creation_id === creationId);
+      
+      if (currCreation) {
+        setTitle(currCreation.title || '');
+        setDescription(currCreation.description || '');
+      }
+    } catch (error) {
+      Logger.error(`Failed to load creation details: ${error}`);
+    } finally {
+      setIsLoadingProfile(false);
+    }
+  };
+
+  // Function to update creation title
+  const updateCreationTitle = async () => {
+    if (!workflowState.creationId || !jsonWebToken) {
+      return;
+    }
+
+    try {
+      setIsSavingTitle(true);
+      const meAdapter = new MeAdapter(jsonWebToken);
+      
+      await meAdapter.updateCreation(workflowState.creationId, { title });
+      
+      setUnsavedTitle(false);
+      Logger.info(`Updated creation title for: ${workflowState.creationId}`);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      Logger.error(`Error updating creation title: ${errorMessage}`);
+    } finally {
+      setIsSavingTitle(false);
+    }
+  };
+
+  // Function to update creation description
+  const updateCreationDescription = async () => {
+    if (!workflowState.creationId || !jsonWebToken) {
+      return;
+    }
+
+    try {
+      setIsSavingDescription(true);
+      const meAdapter = new MeAdapter(jsonWebToken);
+      
+      await meAdapter.updateCreation(workflowState.creationId, { description });
+      
+      setUnsavedDescription(false);
+      Logger.info(`Updated creation description for: ${workflowState.creationId}`);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      Logger.error(`Error updating creation description: ${errorMessage}`);
+    } finally {
+      setIsSavingDescription(false);
+    }
+  };
+
+  const handleTitleChange = (value: string) => {
+    setTitle(value);
+    setUnsavedTitle(true);
+  };
+
+  const handleDescriptionChange = (value: string) => {
+    setDescription(value);
+    setUnsavedDescription(true);
+  };
+
+  const hasActiveCreationId = !!workflowState.creationId;
 
   return (
     <ThemedBackgroundView>
@@ -340,32 +441,97 @@ export default function Editor() {
         )}
 
         <SafeAreaScrollView>
+          <View>
+            {isLoadingProfile ? (
+              <View className="py-2 items-center justify-center">
+                <ActivityIndicator size="small" />
+                <ThemedText className="mt-2">Loading creation profile...</ThemedText>
+              </View>
+            ) : (
+              <>
+                <View className="mb-4">
+                  <View className="flex-row">
+                    <View className="flex-1 mr-2">
+                      <ThemedTextInput
+                        label="Title"
+                        value={title}
+                        onChangeText={handleTitleChange}
+                        className="rounded-lg"
+                        editable={hasActiveCreationId && !isGenningCreation && !isSavingTitle}
+                      />
+                    </View>
+                    <View className="justify-center">
+                      <TouchableOpacity
+                        className={`px-3 py-2 rounded-md ${unsavedTitle ? 'bg-indigo-400' : 'bg-gray-200 dark:bg-gray-800'}`}
+                        onPress={updateCreationTitle}
+                        disabled={!unsavedTitle || isSavingTitle || isGenningCreation}
+                      >
+                        {isSavingTitle ? (
+                          <ActivityIndicator size="small" color="#fff" />
+                        ) : (
+                          <Ionicons name="save-outline" size={20} color={unsavedTitle ? "#fff" : "#888"} />
+                        )}
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </View>
+                
+                <View className="mb-4">
+                  <View className="flex-row">
+                    <View className="flex-1 mr-2">
+                      <ThemedTextInput
+                        label="Description"
+                        value={description}
+                        onChangeText={handleDescriptionChange}
+                        multiline
+                        className="h-20 rounded-lg"
+                        editable={hasActiveCreationId && !isGenningCreation && !isSavingDescription}
+                      />
+                    </View>
+                    <View className="justify-center">
+                      <TouchableOpacity
+                        className={`px-3 py-2 rounded-md ${unsavedDescription ? 'bg-indigo-400' : 'bg-gray-200 dark:bg-gray-800'}`}
+                        onPress={updateCreationDescription}
+                        disabled={!unsavedDescription || isSavingDescription || isGenningCreation}
+                      >
+                        {isSavingDescription ? (
+                          <ActivityIndicator size="small" color="#fff" />
+                        ) : (
+                          <Ionicons name="save-outline" size={20} color={unsavedDescription ? "#fff" : "#888"} />
+                        )}
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </View>
+              </>
+            )}
+          </View>
+
           <ThemedTextInput
             label="What is your story about?"
             value={prompt}
             onChangeText={setPrompt}
             multiline
-            className="mt-2 h-24 rounded-lg"
-            editable={!isGenerating}
+            className="h-24 rounded-lg"
+            editable={!isGenningCreation}
             maxLength={1000}
           />
 
           <ThemedButton
             onPress={startGenerateCreationWorkflow}
-            disabled={isGenerating || !prompt.trim()}
-            loading={isGenerating}
-            title={isGenerating ? 'Generating...' : 'Generate Story'}
+            disabled={isGenningCreation || !prompt.trim()}
+            loading={isGenningCreation}
+            title={isGenningCreation ? 'Generating...' : 'Generate Story'}
           />
 
           {isLoadingCreation ? (
             <View className="my-6 items-center justify-center py-8">
-              <ActivityIndicator size="large" />
-              <ThemedText className="mt-4">Loading creation...</ThemedText>
+              <ActivityIndicator size="small" />
+              <ThemedText className="mt-2">Loading creation assets...</ThemedText>
             </View>
           ) : workflowState.creationParts.length > 0 && (
             <>
-              <View className="my-6 h-px bg-gray-200 dark:bg-gray-700" />
-              <ThemedText type="title">Creation Parts</ThemedText>
+              <View className="my-6 h-px bg-gray-200 dark:bg-gray-800" />
 
               {workflowState.creationParts.map((part, index) => (
                 <View key={index} className="my-4">
@@ -399,8 +565,7 @@ export default function Editor() {
 
               {workflowState.creationVideoUrl && (
                 <>
-                  <View className="my-6 h-px bg-gray-200 dark:bg-gray-700" />
-                  <ThemedText type="title" className="mb-4">Story Video</ThemedText>
+                  <View className="my-6 h-px bg-gray-200 dark:bg-gray-800" />
                   <View className="h-[512px] w-full overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-800">
                     <VideoPlayer base64DataUrl={workflowState.creationVideoUrl} />
                   </View>
