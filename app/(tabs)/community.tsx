@@ -2,7 +2,7 @@ import { View } from 'react-native';
 import { ThemedBackgroundView } from '@/components/ui-custom/ThemedBackgroundView';
 import { ThemedContainerView } from '@/components/ui-custom/ThemedContainerView';
 import { ThemedText } from '@/components/ui-custom/ThemedText';
-import { IconSymbol } from '@/components/ui-default/IconSymbol';
+import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 
@@ -17,8 +17,8 @@ export default function CommunityScreen() {
         </View>
 
         <View className="flex-1 items-center justify-center">
-          <IconSymbol
-            name="person.2.fill"
+          <Ionicons
+            name="people"
             size={64}
             color={Colors[colorScheme ?? 'light'].tint}
           />
