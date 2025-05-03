@@ -471,17 +471,16 @@ export default function Editor() {
                       />
                     </View>
                     <View className="justify-center">
-                      <TouchableOpacity
-                        className={`px-3 py-2 rounded-md ${unsavedTitle ? 'bg-indigo-400' : 'bg-gray-200 dark:bg-gray-800'}`}
+                      <ThemedButton
+                        iconOnly
+                        icon={<Ionicons name="save-outline" size={20} color={unsavedTitle ? "#fff" : "#888"} />}
                         onPress={updateCreationTitle}
+                        variant={unsavedTitle ? 'primary' : 'secondary'}
                         disabled={!unsavedTitle || isSavingTitle || isGenningCreation}
-                      >
-                        {isSavingTitle ? (
-                          <ActivityIndicator size="small" color="#fff" />
-                        ) : (
-                          <Ionicons name="save-outline" size={20} color={unsavedTitle ? "#fff" : "#888"} />
-                        )}
-                      </TouchableOpacity>
+                        loading={isSavingTitle}
+                        size="sm"
+                        style={{ borderRadius: 6 }}
+                      />
                     </View>
                   </View>
                 </View>
@@ -498,17 +497,16 @@ export default function Editor() {
                       />
                     </View>
                     <View className="justify-center">
-                      <TouchableOpacity
-                        className={`px-3 py-2 rounded-md ${unsavedDescription ? 'bg-indigo-400' : 'bg-gray-200 dark:bg-gray-800'}`}
+                      <ThemedButton
+                        iconOnly
+                        icon={<Ionicons name="save-outline" size={20} color={unsavedDescription ? "#fff" : "#888"} />}
                         onPress={updateCreationDescription}
+                        variant={unsavedDescription ? 'primary' : 'secondary'}
                         disabled={!unsavedDescription || isSavingDescription || isGenningCreation}
-                      >
-                        {isSavingDescription ? (
-                          <ActivityIndicator size="small" color="#fff" />
-                        ) : (
-                          <Ionicons name="save-outline" size={20} color={unsavedDescription ? "#fff" : "#888"} />
-                        )}
-                      </TouchableOpacity>
+                        loading={isSavingDescription}
+                        size="sm"
+                        style={{ borderRadius: 6 }}
+                      />
                     </View>
                   </View>
                 </View>

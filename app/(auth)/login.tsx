@@ -66,11 +66,12 @@ export default function LoginScreen() {
           />
           <ThemedButton title="Log In" onPress={handleLogin} loading={isLoading} />
           <Link href="/(auth)/sign-up" asChild>
-            <Pressable>
-              <ThemedText className="mt-4 text-center text-blue-600">
-                Don't have an account? Sign up.
-              </ThemedText>
-            </Pressable>
+            <ThemedButton 
+              title="Don't have an account? Sign up." 
+              onPress={() => {}} 
+              variant="text" 
+              className="mt-4"
+            />
           </Link>
         </SafeAreaScrollView>
       </ThemedContainerView>

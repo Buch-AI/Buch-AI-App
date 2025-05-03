@@ -11,6 +11,8 @@ import { ThemedText } from '@/components/ui-custom/ThemedText';
 import { useAuth } from '@/contexts/AuthContext';
 import { MeAdapter } from '@/services/MeAdapter';
 import Logger from '@/utils/Logger';
+import { useColorScheme } from '@/hooks/useColorScheme';
+import { ThemedCheckbox } from '@/components/ui-custom/ThemedCheckbox';
 
 interface Creation {
   creation_id: string;
@@ -25,14 +27,13 @@ export default function Home() {
   const { jsonWebToken } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
   const [creations, setCreations] = useState<Creation[]>([]);
-
   const [isSelecting, setIsSelecting] = useState(false);
   const [selectedCreationIds, setSelectedCreationIds] = useState<Set<string>>(new Set());
-
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
 
   useEffect(() => {
     loadCreations();
@@ -148,15 +149,11 @@ export default function Home() {
     <View className="mb-4 rounded-lg !bg-white/60 p-4">
       <View className="flex-row items-start justify-between">
         {isSelecting && (
-          <TouchableOpacity
+          <ThemedCheckbox
+            checked={selectedCreationIds.has(item.creation_id)}
             onPress={() => toggleSelection(item.creation_id)}
-            className="mr-3 mt-1 size-6 items-center justify-center rounded-lg border border-gray-300"
-            style={{ backgroundColor: selectedCreationIds.has(item.creation_id) ? '#4F46E5' : 'transparent' }}
-          >
-            {selectedCreationIds.has(item.creation_id) && (
-              <Ionicons name="checkmark" size={16} color="#FFFFFF" />
-            )}
-          </TouchableOpacity>
+            className="mr-3 mt-1"
+          />
         )}
 
         <Link
@@ -204,14 +201,16 @@ export default function Home() {
           <ThemedButton
             onPress={toggleSelectMode}
             title={isSelecting ? 'Cancel Selection' : 'Select Stories'}
-            className="!mr-2 !flex-1 !rounded-full !bg-gray-400 dark:!bg-gray-800"
-            textClassName="!text-sm"
+            variant="secondary"
+            size="sm"
+            pill
+            className="mr-2 flex-1"
             disabled={isLoading || creations.length === 0}
-            leadingIcon={
+            icon={
               <Ionicons
                 name={isSelecting ? 'close-circle-outline' : 'checkbox-outline'}
                 size={20}
-                color="white"
+                color={isDark ? 'white' : '#374151'}
               />
             }
           />
@@ -221,13 +220,15 @@ export default function Home() {
             title="Refresh"
             loading={isLoading}
             disabled={isLoading}
-            className="!ml-2 !flex-1 !rounded-full !bg-gray-400 dark:!bg-gray-800"
-            textClassName="!text-sm"
-            leadingIcon={
+            variant="secondary"
+            size="sm"
+            pill
+            className="ml-2 flex-1"
+            icon={
               <Ionicons
                 name="refresh-outline"
                 size={20}
-                color="white"
+                color={isDark ? 'white' : '#374151'}
               />
             }
           />
@@ -236,28 +237,29 @@ export default function Home() {
         {isSelecting && (
           <View className="mb-4 flex-row items-center justify-between">
             <View className="flex-row space-x-2">
-              <TouchableOpacity
+              <ThemedButton
+                title="Select All"
                 onPress={selectAll}
-                className="rounded-full bg-gray-200 px-3 py-1 dark:bg-gray-800"
-              >
-                <ThemedText className="text-sm">Select All</ThemedText>
-              </TouchableOpacity>
-              <TouchableOpacity
+                variant="secondary"
+                size="xs"
+                pill
+              />
+              <ThemedButton
+                title="Deselect All"
                 onPress={deselectAll}
-                className="rounded-full bg-gray-200 px-3 py-1 dark:bg-gray-800"
-              >
-                <ThemedText className="text-sm">Deselect All</ThemedText>
-              </TouchableOpacity>
+                variant="secondary"
+                size="xs"
+                pill
+              />
             </View>
             {selectedCreationIds.size > 0 && (
-              <TouchableOpacity
+              <ThemedButton
+                title={`Delete Selected (${selectedCreationIds.size})`}
                 onPress={handleBulkDeletePress}
-                className="rounded-full bg-red-500 px-3 py-1"
-              >
-                <ThemedText className="text-sm text-white">
-                    Delete Selected ({selectedCreationIds.size})
-                </ThemedText>
-              </TouchableOpacity>
+                variant="danger"
+                size="xs"
+                pill
+              />
             )}
           </View>
         )}

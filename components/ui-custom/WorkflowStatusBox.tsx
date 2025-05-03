@@ -98,12 +98,12 @@ export function WorkflowStatusBox({ workflowState, workflowStatusMessages, class
         <View className="mt-1">
           <View className="flex-row items-center justify-between">
             <ThemedText className="w-full text-left font-mono text-xs opacity-50">
-              workflowState.creationId = "{creationId}"
+              creationId = "{creationId}"
             </ThemedText>
           </View>
           <View className="flex-row items-center justify-between">
             <ThemedText className="w-full text-left font-mono text-xs opacity-50">
-              workflowState.currStep   = "{currStep}"
+              currStep   = "{currStep}"
             </ThemedText>
           </View>
         </View>

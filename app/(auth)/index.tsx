@@ -42,7 +42,7 @@ export default function AuthIndex() {
               title="I already have an account"
               onPress={() => router.push('/login')}
               className="my-2"
-              transparent
+              variant="text"
             />
           </View>
         </SafeAreaScrollView>
