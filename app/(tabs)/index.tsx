@@ -10,6 +10,7 @@ import { ThemedModal } from '@/components/ui-custom/ThemedModal';
 import { ThemedText } from '@/components/ui-custom/ThemedText';
 import { useAuth } from '@/contexts/AuthContext';
 import { MeAdapter } from '@/services/MeAdapter';
+import { CreationAdapter } from '@/services/CreationAdapter';
 import Logger from '@/utils/Logger';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { ThemedCheckbox } from '@/components/ui-custom/ThemedCheckbox';
@@ -79,7 +80,7 @@ export default function Home() {
         throw new Error('Unauthorized');
       }
 
-      const meAdapter = new MeAdapter(jsonWebToken);
+      const creationAdapter = new CreationAdapter(jsonWebToken);
 
       // Determine which IDs to delete
       const idsToDelete = Array.from(selectedCreationIds);
@@ -88,7 +89,7 @@ export default function Home() {
 
       // Delete all selected creations
       const deletePromises = idsToDelete.map((id) => {
-        return meAdapter.deleteCreation(id);
+        return creationAdapter.deleteCreation(id);
       });
 
       await Promise.all(deletePromises);

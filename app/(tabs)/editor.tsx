@@ -14,6 +14,7 @@ import { useStory } from '@/contexts/StoryContext';
 import { ImageAdapter } from '@/services/ImageAdapter';
 import { LlmAdapter } from '@/services/LlmAdapter';
 import { MeAdapter } from '@/services/MeAdapter';
+import { CreationAdapter } from '@/services/CreationAdapter';
 import Logger from '@/utils/Logger';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedImage } from '@/components/ui-custom/ThemedImage';
@@ -122,7 +123,7 @@ export default function Editor() {
   };
 
   const pollGenerateVideoStatus = async (
-    meAdapter: MeAdapter,
+    creationAdapter: CreationAdapter,
     activeCreationId: string,
     maxAttempts = 60, // 10 minutes with 10-second intervals
     interval = 10,
@@ -131,11 +132,11 @@ export default function Editor() {
 
     while (attempts < maxAttempts) {
       try {
-        const status = await meAdapter.generateVideoStatus(activeCreationId);
+        const status = await creationAdapter.generateVideoStatus(activeCreationId);
 
         if (status.status === 'completed') {
           // Video is ready, get the URL
-          return await meAdapter.getVideo(activeCreationId);
+          return await creationAdapter.getVideo(activeCreationId);
         } else if (status.status === 'failed') {
           throw new Error(status.message || 'Video generation failed');
         }
@@ -165,12 +166,12 @@ export default function Editor() {
         throw new Error('Unauthorized');
       }
 
-      const meAdapter = new MeAdapter(jsonWebToken);
+      const creationAdapter = new CreationAdapter(jsonWebToken);
 
       // Get story parts
-      const storyParts = await meAdapter.getStoryParts(id);
-      const images = await meAdapter.getImages(id);
-      const video = await meAdapter.getVideo(id);
+      const storyParts = await creationAdapter.getStoryParts(id);
+      const images = await creationAdapter.getImages(id);
+      const video = await creationAdapter.getVideo(id);
 
       // Create creation parts by combining text and images
       const creationParts = storyParts.map((part, index) => ({
@@ -226,16 +227,16 @@ export default function Editor() {
       }
 
       // Initialize adapters
-      const meAdapter = new MeAdapter(jsonWebToken);
+      const creationAdapter = new CreationAdapter(jsonWebToken);
       const llmAdapter = new LlmAdapter();
       const imageAdapter = new ImageAdapter();
 
       // Step 1: Use existing creation ID or generate a new one
-      const activeCreationId = urlCreationId || await meAdapter.generateCreation();
+      const activeCreationId = urlCreationId || await creationAdapter.generateCreation();
       updateWorkflowState({ creationId: activeCreationId });
 
       // Generate a cost centre ID for tracking costs
-      const costCentreId = await meAdapter.generateCostCentre(activeCreationId);
+      const costCentreId = await creationAdapter.generateCostCentre(activeCreationId);
       Logger.info(`Generated cost centre ID ${costCentreId} for creation ID ${activeCreationId}`);
 
       // If this is a new creation, set a default title based on the prompt
@@ -244,7 +245,7 @@ export default function Editor() {
         setTitle(defaultTitle);
         
         // Save the default title
-        await meAdapter.updateCreation(activeCreationId, { title: defaultTitle });
+        await creationAdapter.updateCreation(activeCreationId, { title: defaultTitle });
       }
 
       // Step 2: Generate story
@@ -262,7 +263,7 @@ export default function Editor() {
       }));
 
       // Save story parts to backend
-      await meAdapter.setStoryParts(activeCreationId, textParts);
+      await creationAdapter.setStoryParts(activeCreationId, textParts);
 
       // Step 3: Summarize story
       updateWorkflowState({ currStep: 'summarizing-story' });
@@ -311,7 +312,7 @@ export default function Editor() {
       const images = updatedParts
         .map((part) => part.imageData)
         .filter((img): img is string => Boolean(img));
-      await meAdapter.setImages(activeCreationId, images);
+      await creationAdapter.setImages(activeCreationId, images);
 
       // Step 6: Generate video
       updateWorkflowState({
@@ -320,13 +321,13 @@ export default function Editor() {
       });
 
       // Start video generation
-      const videoGeneration = await meAdapter.generateVideo(activeCreationId);
+      const videoGeneration = await creationAdapter.generateVideo(activeCreationId);
       if (videoGeneration.status === 'failed') {
         throw new Error(videoGeneration.message || 'Failed to start video generation');
       }
 
       // Poll for video completion
-      const videoUrl = await pollGenerateVideoStatus(meAdapter, activeCreationId);
+      const videoUrl = await pollGenerateVideoStatus(creationAdapter, activeCreationId);
       Logger.info(`Received video URL: ${videoUrl}`);
 
       updateWorkflowState({
@@ -348,72 +349,75 @@ export default function Editor() {
         },
       });
     } catch (error) {
-      handleError(error, workflowState.currStep);
+      handleError(error, 'generating-creation');
     } finally {
       setIsGenningCreation(false);
     }
   }
 
-  // Function to load creation profile fields
   const loadCreationProfile = async (creationId: string) => {
-    if (!jsonWebToken) return;
-
     try {
       setIsLoadingProfile(true);
+      // This method could stay with MeAdapter or move to a more specialized adapter
+      // For simplicity, we'll assume it should continue to get the data from the MeAdapter
+      // since it's about user-specific operations
+      
+      if (!jsonWebToken) {
+        throw new Error('Unauthorized');
+      }
+
       const meAdapter = new MeAdapter(jsonWebToken);
       const creations = await meAdapter.getUserCreations();
-      const currCreation = creations.find(creation => creation.creation_id === creationId);
+      const creation = creations.find((c) => c.creation_id === creationId);
       
-      if (currCreation) {
-        setTitle(currCreation.title || '');
-        setDescription(currCreation.description || '');
+      if (creation) {
+        setTitle(creation.title);
+        setDescription(creation.description || '');
       }
     } catch (error) {
-      Logger.error(`Failed to load creation details: ${error}`);
+      Logger.error(`Failed to load creation profile: ${error}`);
     } finally {
       setIsLoadingProfile(false);
     }
   };
 
-  // Function to update creation title
   const updateCreationTitle = async () => {
-    if (!workflowState.creationId || !jsonWebToken) {
-      return;
-    }
-
     try {
+      if (!workflowState.creationId || !jsonWebToken) {
+        throw new Error('No creation or unauthorized');
+      }
+
       setIsSavingTitle(true);
-      const meAdapter = new MeAdapter(jsonWebToken);
-      
-      await meAdapter.updateCreation(workflowState.creationId, { title });
-      
+      const creationAdapter = new CreationAdapter(jsonWebToken);
+      await creationAdapter.updateCreation(workflowState.creationId, { title });
       setUnsavedTitle(false);
-      Logger.info(`Updated creation title for: ${workflowState.creationId}`);
+      
+      // Show success message or update UI as needed
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      Logger.error(`Error updating creation title: ${errorMessage}`);
+      const message = error instanceof Error ? error.message : String(error);
+      Logger.error(`Failed to update title: ${message}`);
+      // Show error message
     } finally {
       setIsSavingTitle(false);
     }
   };
 
-  // Function to update creation description
   const updateCreationDescription = async () => {
-    if (!workflowState.creationId || !jsonWebToken) {
-      return;
-    }
-
     try {
+      if (!workflowState.creationId || !jsonWebToken) {
+        throw new Error('No creation or unauthorized');
+      }
+
       setIsSavingDescription(true);
-      const meAdapter = new MeAdapter(jsonWebToken);
-      
-      await meAdapter.updateCreation(workflowState.creationId, { description });
-      
+      const creationAdapter = new CreationAdapter(jsonWebToken);
+      await creationAdapter.updateCreation(workflowState.creationId, { description });
       setUnsavedDescription(false);
-      Logger.info(`Updated creation description for: ${workflowState.creationId}`);
+      
+      // Show success message or update UI as needed
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      Logger.error(`Error updating creation description: ${errorMessage}`);
+      const message = error instanceof Error ? error.message : String(error);
+      Logger.error(`Failed to update description: ${message}`);
+      // Show error message
     } finally {
       setIsSavingDescription(false);
     }
