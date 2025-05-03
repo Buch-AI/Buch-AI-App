@@ -1,28 +1,20 @@
 import { router } from 'expo-router';
-import { Image, View } from 'react-native';
-import { RFValue } from 'react-native-responsive-fontsize';
+import { View } from 'react-native';
 import { SafeAreaScrollView } from '@/components/ui-custom/SafeAreaScrollView';
 import { ThemedBackgroundView } from '@/components/ui-custom/ThemedBackgroundView';
 import { ThemedButton } from '@/components/ui-custom/ThemedButton';
 import { ThemedContainerView } from '@/components/ui-custom/ThemedContainerView';
 import { ThemedText } from '@/components/ui-custom/ThemedText';
+import { ThemedImage } from '@/components/ui-custom/ThemedImage';
 
 export default function AuthIndex() {
-  const illustrationSize = RFValue(200); // Slightly larger for landing page
-
   return (
     <ThemedBackgroundView>
       <ThemedContainerView className="flex-1 p-6">
         <SafeAreaScrollView>
           <View pointerEvents="none" className="mb-8 w-full items-center">
-            <Image
+            <ThemedImage
               source={require('@/assets/images/illustration-sample-1@2000.png')}
-              style={{
-                width: illustrationSize,
-                height: illustrationSize * 0.75,
-                resizeMode: 'contain',
-              }}
-              accessible={false}
             />
           </View>
 

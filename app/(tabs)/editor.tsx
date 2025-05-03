@@ -16,6 +16,8 @@ import { LlmAdapter } from '@/services/LlmAdapter';
 import { MeAdapter } from '@/services/MeAdapter';
 import Logger from '@/utils/Logger';
 import { Ionicons } from '@expo/vector-icons';
+import { ThemedImage } from '@/components/ui-custom/ThemedImage';
+import { ThemedHorizontalRule } from '@/components/ui-custom/ThemedHorizontalRule';
 
 interface CreationPart {
   textJoined: string;
@@ -491,8 +493,7 @@ export default function Editor() {
                         label="Description"
                         value={description}
                         onChangeText={handleDescriptionChange}
-                        multiline
-                        className="h-20 rounded-lg"
+                        className="rounded-lg"
                         editable={hasActiveCreationId && !isGenningCreation && !isSavingDescription}
                       />
                     </View>
@@ -539,7 +540,7 @@ export default function Editor() {
             </View>
           ) : workflowState.creationParts.length > 0 && (
             <>
-              <View className="my-6 h-px bg-gray-200 dark:bg-gray-800" />
+              <ThemedHorizontalRule />
 
               {workflowState.creationParts.map((part, index) => (
                 <View key={index} className="my-4">
@@ -551,20 +552,18 @@ export default function Editor() {
                   </ThemedText>
 
                   {workflowState.currStep === 'generating-images' && !part.imageData ? (
-                    <View className="h-[512px] items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-800">
+                    <View className="h-[512px] items-center justify-center rounded-lg bg-gray-200 dark:bg-gray-800">
                       <ThemedText>Generating image...</ThemedText>
                     </View>
                   ) : part.imageData ? (
-                    <View className="h-[512px] w-full overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-800">
-                      <Image
+                    <View className="h-[512px] items-center justify-center rounded-lg">
+                      <ThemedImage
                         source={{ uri: part.imageData }}
-                        className="size-full"
-                        style={{ width: '100%', height: '100%' }}
-                        resizeMode="contain"
+                        className="rounded-lg"
                       />
                     </View>
                   ) : (
-                    <View className="h-[512px] items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-800">
+                    <View className="h-[512px] items-center justify-center rounded-lg bg-gray-200 dark:bg-gray-800">
                       <ThemedText>Failed to generate image</ThemedText>
                     </View>
                   )}
@@ -573,8 +572,9 @@ export default function Editor() {
 
               {workflowState.creationVideoUrl && (
                 <>
-                  <View className="my-6 h-px bg-gray-200 dark:bg-gray-800" />
+                  <ThemedHorizontalRule />
                   <View className="h-[512px] w-full overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-800">
+                    {/* TODO: This needs refining. */}
                     <VideoPlayer base64DataUrl={workflowState.creationVideoUrl} />
                   </View>
                 </>

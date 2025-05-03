@@ -11,7 +11,7 @@ export type ThemedTextInputProps = TextInputProps & {
 };
 
 export function ThemedTextInput(props: ThemedTextInputProps) {
-  const { style, lightColor, darkColor, className, label, value, onFocus, onBlur, secureTextEntry, ...otherProps } = props;
+  const { style, lightColor, darkColor, className, label, value, onFocus, onBlur, secureTextEntry, editable, ...otherProps } = props;
   const color = useThemeColor({ light: lightColor, dark: darkColor }, 'text');
   const backgroundColor = useThemeColor({}, 'background');
   const [isFocused, setIsFocused] = useState(false);
@@ -61,7 +61,7 @@ export function ThemedTextInput(props: ThemedTextInputProps) {
         </Animated.Text>
         <TextInput
           style={[{ color, backgroundColor }, style]}
-          className="w-full rounded-lg border border-gray-200 !bg-white/40 p-4 text-base shadow-custom backdrop-blur-sm transition-colors duration-200 focus:border-blue-500 focus:bg-white focus:shadow-custom-focused dark:border-gray-800 dark:bg-gray-800/80 dark:focus:border-blue-400 dark:focus:bg-gray-800"
+          className={`w-full rounded-lg border border-gray-200 ${editable ? '!bg-white/40' : '!bg-gray-400/40'} p-4 text-base shadow-custom backdrop-blur-sm transition-colors duration-200 focus:border-blue-500 focus:bg-white focus:shadow-custom-focused dark:border-gray-800 dark:bg-gray-800/80 dark:focus:border-blue-400 dark:focus:bg-gray-800`}
           value={value}
           onFocus={(e) => {
             setIsFocused(true);
@@ -72,6 +72,7 @@ export function ThemedTextInput(props: ThemedTextInputProps) {
             onBlur?.(e);
           }}
           secureTextEntry={secureTextEntry && !isPasswordVisible}
+          editable={editable}
           {...otherProps}
         />
         {secureTextEntry && (

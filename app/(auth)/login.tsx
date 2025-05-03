@@ -11,6 +11,7 @@ import { ThemedText } from '@/components/ui-custom/ThemedText';
 import { ThemedTextInput } from '@/components/ui-custom/ThemedTextInput';
 import Logger from '@/utils/Logger';
 import { useAuth } from '@/contexts/AuthContext';
+import { ThemedImage } from '@/components/ui-custom/ThemedImage';
 
 export default function LoginScreen() {
   const { login } = useAuth();
@@ -39,22 +40,14 @@ export default function LoginScreen() {
     }
   };
 
-  const illustrationSize = RFValue(160); // Base size for a 680px screen height
-
   return (
     <ThemedBackgroundView>
       <ThemedContainerView className="flex-1 p-6">
         <SafeAreaScrollView>
           <View pointerEvents="none" className="w-full items-center">
-            <Image
+            <ThemedImage
               source={require('@/assets/images/illustration-sample-1@2000.png')}
-              style={{
-                width: illustrationSize,
-                height: illustrationSize * 0.75,
-                resizeMode: 'contain',
-                marginBottom: RFValue(20),
-              }}
-              accessible={false}
+              rfSize={160}
             />
           </View>
           <ThemedText type="title" className="mb-6 font-bold">Log In</ThemedText>
