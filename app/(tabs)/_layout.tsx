@@ -17,6 +17,7 @@ export default function TabLayout() {
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
         headerShown: false,
         tabBarButton: HapticTab,
+        tabBarLabelPosition: 'below-icon',
         tabBarBackground: () => (
           <View className={`absolute inset-0 ${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-2xl shadow-custom-focused`} />
         ),
@@ -25,9 +26,10 @@ export default function TabLayout() {
           bottom: 20,
           left: 20,
           right: 20,
-          height: 70,
+          height: 60,
           elevation: 4,
           borderRadius: 20,
+          // NOTE: Add extra padding at the bottom for iOS to account for the home indicator area and to ensure content isn't too close to the bottom edge of the screen
           paddingBottom: Platform.OS === 'ios' ? 20 : 0,
           backgroundColor: 'transparent',
         },
@@ -36,11 +38,15 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Home',
-          tabBarIcon: ({ color }) => <Ionicons size={28} name="home" color={color} />,
+          tabBarIcon: ({ color }) => (
+            <View className="items-center">
+              <Ionicons size={28} name="home" color={color} />
+            </View>
+          ),
           tabBarLabel: ({ focused, color }) => (
             <ThemedText
               type="body"
-              className={`text-xs mx-2 ${focused ? 'opacity-100' : 'opacity-70'}`}
+              className={`text-xs text-center mt-1 ${focused ? 'opacity-100' : 'opacity-60'}`}
               style={{ color }}
             >
               Home
@@ -52,11 +58,15 @@ export default function TabLayout() {
         name="editor"
         options={{
           title: 'Create',
-          tabBarIcon: ({ color }) => <Ionicons size={28} name="create-outline" color={color} />,
+          tabBarIcon: ({ color }) => (
+            <View className="items-center">
+              <Ionicons size={28} name="create-outline" color={color} />
+            </View>
+          ),
           tabBarLabel: ({ focused, color }) => (
             <ThemedText
               type="body" 
-              className={`text-xs mx-2 ${focused ? 'opacity-100' : 'opacity-70'}`}
+              className={`text-xs text-center mt-1 ${focused ? 'opacity-100' : 'opacity-60'}`}
               style={{ color }}
             >
               Create
@@ -68,11 +78,15 @@ export default function TabLayout() {
         name="community"
         options={{
           title: 'Community',
-          tabBarIcon: ({ color }) => <Ionicons size={28} name="people" color={color} />,
+          tabBarIcon: ({ color }) => (
+            <View className="items-center">
+              <Ionicons size={28} name="people" color={color} />
+            </View>
+          ),
           tabBarLabel: ({ focused, color }) => (
             <ThemedText
               type="body"
-              className={`text-xs mx-2 ${focused ? 'opacity-100' : 'opacity-70'}`}
+              className={`text-xs text-center mt-1 ${focused ? 'opacity-100' : 'opacity-60'}`}
               style={{ color }}
             >
               Community
@@ -84,11 +98,15 @@ export default function TabLayout() {
         name="profile"
         options={{
           title: 'Profile',
-          tabBarIcon: ({ color }) => <Ionicons size={28} name="person-circle" color={color} />,
+          tabBarIcon: ({ color }) => (
+            <View className="items-center">
+              <Ionicons size={28} name="person-circle" color={color} />
+            </View>
+          ),
           tabBarLabel: ({ focused, color }) => (
             <ThemedText
               type="body"
-              className={`text-xs mx-2 ${focused ? 'opacity-100' : 'opacity-70'}`}
+              className={`text-xs text-center mt-1 ${focused ? 'opacity-100' : 'opacity-60'}`}
               style={{ color }}
             >
               Profile
