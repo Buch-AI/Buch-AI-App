@@ -29,14 +29,6 @@ interface CreationProfileUpdate {
   tags?: string[];
 }
 
-interface CreationResponse {
-  data: string;
-}
-
-interface CostCentreResponse {
-  data: string;
-}
-
 interface StoryPartsResponse {
   data: string[][];
 }
@@ -49,13 +41,17 @@ interface VideoResponse {
   data: string; // URL
 }
 
-interface GenerateResponse {
-  data: string; // URL
-}
-
 interface TaskStatusResponse {
   status: 'pending' | 'completed' | 'failed';
   message?: string;
+}
+
+interface CreationResponse {
+  data: string;
+}
+
+interface CostCentreResponse {
+  data: string;
 }
 
 export class CreationAdapter {
