@@ -300,7 +300,7 @@ export default function Editor() {
         try {
           // Use the generated image prompt if available, fallback to text
           const promptText = part.imagePrompt || part.textJoined;
-          const imageData = await imageAdapter.generateImage(promptText);
+          const imageData = await imageAdapter.generateImage(promptText, costCentreId);
           updatedParts.push({ ...part, imageData });
         } catch (error) {
           Logger.error(`Failed to generate image: ${error}`);
@@ -321,7 +321,7 @@ export default function Editor() {
       });
 
       // Start video generation
-      const videoGeneration = await creationAdapter.generateVideo(activeCreationId);
+      const videoGeneration = await creationAdapter.generateVideo(activeCreationId, costCentreId);
       if (videoGeneration.status === 'failed') {
         throw new Error(videoGeneration.message || 'Failed to start video generation');
       }

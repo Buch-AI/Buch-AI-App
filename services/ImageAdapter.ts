@@ -3,11 +3,9 @@ import Logger from '@/utils/Logger';
 
 interface ImageGenerationRequest {
   prompt: string;
-  negative_prompt?: string;
   width?: number;
   height?: number;
-  num_inference_steps?: number;
-  guidance_scale?: number;
+  cost_centre_id?: string;
 }
 
 interface ImageGenerationResponse {
@@ -22,20 +20,18 @@ export class ImageAdapter {
     this.baseUrl = BUCHAI_SERVER_URL;
   }
 
-  async generateImage(prompt: string): Promise<string> {
+  async generateImage(prompt: string, costCentreId: string): Promise<string> {
     try {
       Logger.info(`Starting image generation with prompt: ${prompt}`);
 
       const url = `${this.baseUrl}/image/generate`;
       Logger.info(`Sending request to: ${url}`);
 
-      // TODO: There is a mismatch between this structure and the API request.
       const request: ImageGenerationRequest = {
         prompt,
         width: 512,
         height: 512,
-        num_inference_steps: 30,
-        guidance_scale: 7.5,
+        cost_centre_id: costCentreId,
       };
 
       let response;

@@ -136,12 +136,12 @@ export class CreationAdapter {
     }
   }
 
-  async generateVideo(creationId: string): Promise<TaskStatusResponse> {
+  async generateVideo(creationId: string, costCentreId: string): Promise<TaskStatusResponse> {
     try {
       Logger.info(`Generating video for creation: ${creationId}`);
       const response = await axios.get<TaskStatusResponse>(
         `${this.baseUrl}/creation/${creationId}/generate_video`,
-        { headers: this.headers },
+        { headers: this.headers, params: { cost_centre_id: costCentreId } },
       );
       return response.data;
     } catch (error) {
