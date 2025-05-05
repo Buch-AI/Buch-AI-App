@@ -7,7 +7,7 @@ export interface LlmAdaptable {
   generateStoryStream(prompt: string, costCentreId?: string): void;
   splitStory(prompt: string, costCentreId?: string): Promise<string[][]>;
   summariseStory(story: string, costCentreId?: string): Promise<string>;
-  generateImagePrompts(storySummary: string, storyParts: string[], costCentreId?: string): Promise<string[]>;
+  generateImagePrompts(story: string, storyParts: string[], costCentreId?: string): Promise<string[]>;
 }
 
 export class LlmAdapter implements LlmAdaptable {
@@ -115,11 +115,11 @@ export class LlmAdapter implements LlmAdaptable {
     }
   }
 
-  async generateImagePrompts(storySummary: string, storyParts: string[], costCentreId?: string): Promise<string[]> {
+  async generateImagePrompts(story: string, storyParts: string[], costCentreId?: string): Promise<string[]> {
     try {
       Logger.info(`Sending request to: ${BUCHAI_SERVER_URL}/llm/generate_image_prompts`);
       const response = await axios.post(`${BUCHAI_SERVER_URL}/llm/generate_image_prompts`, {
-        story_summary: storySummary,
+        story: story,
         story_parts: storyParts,
         model_type: 'lite',
         cost_centre_id: costCentreId,

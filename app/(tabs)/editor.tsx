@@ -279,7 +279,7 @@ export default function Editor() {
 
       // Create array of joined text parts for image prompt generation
       const imagePrompts = await llmAdapter.generateImagePrompts(
-        storySummary, 
+        generatedText, 
         textPartsWithoutImages.map((part) => part.textJoined),
         costCentreId
       );
