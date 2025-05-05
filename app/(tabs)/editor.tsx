@@ -461,6 +461,8 @@ export default function Editor() {
                 <ActivityIndicator size="small" />
                 <ThemedText className="mt-2">Loading creation profile...</ThemedText>
               </View>
+            ) : !(hasActiveCreationId && !isGenningCreation) ? (
+              <></>
             ) : (
               <>
                 <View className="mb-4">
@@ -535,6 +537,12 @@ export default function Editor() {
             title={isGenningCreation ? 'Generating...' : 'Generate Story'}
           />
 
+          {isGenningCreation && (
+            <ThemedText className="my-1 text-center text-xs">
+              End-to-end story creation takes around 5 minutes.
+            </ThemedText>
+          )}
+
           {isLoadingCreation ? (
             <View className="my-6 items-center justify-center py-8">
               <ActivityIndicator size="small" />
@@ -554,18 +562,19 @@ export default function Editor() {
                   </ThemedText>
 
                   {workflowState.currStep === 'generating-images' && !part.imageData ? (
-                    <View className="h-[512px] items-center justify-center rounded-lg bg-gray-200 dark:bg-gray-800">
+                    <View className="h-[480px] items-center justify-center rounded-lg bg-gray-200 dark:bg-gray-800">
                       <ThemedText>Generating image...</ThemedText>
                     </View>
                   ) : part.imageData ? (
-                    <View className="h-[512px] items-center justify-center rounded-lg">
+                    <View className="items-center justify-center">
                       <ThemedImage
                         source={{ uri: part.imageData }}
+                        rfSize={180}
                         className="rounded-lg"
                       />
                     </View>
                   ) : (
-                    <View className="h-[512px] items-center justify-center rounded-lg bg-gray-200 dark:bg-gray-800">
+                    <View className="h-[480px] items-center justify-center rounded-lg bg-gray-200 dark:bg-gray-800">
                       <ThemedText>Failed to generate image</ThemedText>
                     </View>
                   )}
