@@ -4,8 +4,8 @@ import { SafeAreaScrollView } from '@/components/ui-custom/SafeAreaScrollView';
 import { ThemedBackgroundView } from '@/components/ui-custom/ThemedBackgroundView';
 import { ThemedButton } from '@/components/ui-custom/ThemedButton';
 import { ThemedContainerView } from '@/components/ui-custom/ThemedContainerView';
-import { ThemedText } from '@/components/ui-custom/ThemedText';
 import { ThemedImage } from '@/components/ui-custom/ThemedImage';
+import { ThemedText } from '@/components/ui-custom/ThemedText';
 
 export default function AuthIndex() {
   return (
@@ -15,6 +15,7 @@ export default function AuthIndex() {
           <View pointerEvents="none" className="mb-8 w-full items-center">
             <ThemedImage
               source={require('@/assets/images/illustration-sample-1@2000.png')}
+              rfSize={160}
             />
           </View>
 
@@ -26,10 +27,10 @@ export default function AuthIndex() {
           </ThemedText>
 
           <ThemedText
-            type="book"
+            type="body"
             className="mb-12 text-center text-lg text-gray-600 dark:text-gray-400"
           >
-          Your personal AI storytelling companion.
+          Your personal AI-powered short story ideation and illustration companion.
           </ThemedText>
 
           <View className="w-full">
@@ -41,7 +42,6 @@ export default function AuthIndex() {
             <ThemedButton
               title="I already have an account"
               onPress={() => router.push('/login')}
-              className="my-2"
               variant="text"
             />
           </View>
