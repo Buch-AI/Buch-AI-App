@@ -107,6 +107,9 @@ export function SafeAreaScrollView(props: SafeAreaScrollViewProps) {
     return shadowHeight;
   };
 
+  // Calculate the final content container style
+  const contentContainerStyle = { flex: 1, padding: 16 };
+
   return (
     <SafeAreaView style={[{ flex: 1 }, style]}>
       <View className="relative flex-1">
@@ -124,9 +127,9 @@ export function SafeAreaScrollView(props: SafeAreaScrollViewProps) {
           scrollEventThrottle={16}
           onLayout={handleScrollViewLayout}
           onContentSizeChange={handleContentSizeChange}
+          contentContainerStyle={contentContainerStyle}
         >
-          {/* Content container with padding */}
-          <View style={{ flex: 1 }} className="w-full p-4">{children}</View>
+          {children}
         </ScrollView>
 
         {showShadows && showBottomShadow && (

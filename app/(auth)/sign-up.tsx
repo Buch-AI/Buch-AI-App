@@ -90,7 +90,7 @@ export default function SignUpScreen() {
               title="Already have an account? Log in." 
               onPress={() => {}} 
               variant="text" 
-              className="mt-4"
+              className="mt-2"
             />
           </Link>
         </SafeAreaScrollView>

@@ -4,7 +4,7 @@ import { ThemedButton } from '@/components/ui-custom/ThemedButton';
 import { ThemedContainerView } from '@/components/ui-custom/ThemedContainerView';
 import { ThemedText } from '@/components/ui-custom/ThemedText';
 import { useAuth } from '@/contexts/AuthContext';
-
+import { TabBarSpacerView } from '@/components/ui-custom/TabBarSpacerView';
 export default function ProfileScreen() {
   const { signOut } = useAuth();
 
@@ -22,6 +22,8 @@ export default function ProfileScreen() {
             className="!bg-red-500"
           />
         </View>
+
+        <TabBarSpacerView />
       </ThemedContainerView>
     </ThemedBackgroundView>
   );

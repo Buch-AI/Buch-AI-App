@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { View, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { View } from 'react-native';
 import { SafeAreaScrollView } from '@/components/ui-custom/SafeAreaScrollView';
 import { ThemedBackgroundView } from '@/components/ui-custom/ThemedBackgroundView';
 import { ThemedButton } from '@/components/ui-custom/ThemedButton';
@@ -14,6 +14,7 @@ import { CreationAdapter } from '@/services/CreationAdapter';
 import Logger from '@/utils/Logger';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { ThemedCheckbox } from '@/components/ui-custom/ThemedCheckbox';
+import { TabBarSpacerView } from '@/components/ui-custom/TabBarSpacerView';
 
 interface Creation {
   creation_id: string;
@@ -188,6 +189,19 @@ export default function Home() {
   return (
     <ThemedBackgroundView>
       <ThemedContainerView className="flex-1">
+        <ThemedModal
+          visible={deleteModalVisible}
+          onClose={() => setDeleteModalVisible(false)}
+          title={'Delete Stories'}
+          message={`Are you sure you want to delete ${selectedCreationIds.size} ${selectedCreationIds.size === 1 ? 'story' : 'stories'}? This action cannot be undone.`}
+          primaryButton={{
+            title: 'Delete',
+            onPress: handleDeleteConfirm,
+            loading: isDeleting,
+            variant: 'danger',
+          }}
+        />
+
         <View className="my-4">
           <ThemedText type="title">Your Stories</ThemedText>
         </View>
@@ -286,25 +300,16 @@ export default function Home() {
               </ThemedText>
             </View>
           ) : (
-            <FlatList
-              data={creations}
-              renderItem={renderCreationItem}
-              keyExtractor={(item) => item.creation_id}
-            />
+            <View>
+              {creations.map((item) => (
+                <React.Fragment key={item.creation_id}>
+                  {renderCreationItem({ item })}
+                </React.Fragment>
+              ))}
+            </View>
           )}
 
-          <ThemedModal
-            visible={deleteModalVisible}
-            onClose={() => setDeleteModalVisible(false)}
-            title={'Delete Stories'}
-            message={`Are you sure you want to delete ${selectedCreationIds.size} ${selectedCreationIds.size === 1 ? 'story' : 'stories'}? This action cannot be undone.`}
-            primaryButton={{
-              title: 'Delete',
-              onPress: handleDeleteConfirm,
-              loading: isDeleting,
-              variant: 'danger',
-            }}
-          />
+          <TabBarSpacerView />
         </SafeAreaScrollView>
       </ThemedContainerView>
     </ThemedBackgroundView>

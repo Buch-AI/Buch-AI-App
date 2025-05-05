@@ -19,6 +19,7 @@ import Logger from '@/utils/Logger';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedImage } from '@/components/ui-custom/ThemedImage';
 import { ThemedHorizontalRule } from '@/components/ui-custom/ThemedHorizontalRule';
+import { TabBarSpacerView } from '@/components/ui-custom/TabBarSpacerView';
 
 interface CreationPart {
   textJoined: string;
@@ -592,6 +593,8 @@ export default function Editor() {
               )}
             </>
           )}
+          
+          <TabBarSpacerView />
         </SafeAreaScrollView>
       </ThemedContainerView>
     </ThemedBackgroundView>

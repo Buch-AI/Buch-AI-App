@@ -70,7 +70,7 @@ export default function LoginScreen() {
               title="Don't have an account? Sign up." 
               onPress={() => {}} 
               variant="text" 
-              className="mt-4"
+              className="mt-2"
             />
           </Link>
         </SafeAreaScrollView>

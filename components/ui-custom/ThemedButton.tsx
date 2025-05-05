@@ -95,7 +95,7 @@ export const ThemedButton: React.FC<ThemedButtonProps> = ({
   };
 
   // Combine all classes
-  const buttonClasses = `${bgClass} ${borderClass} flex flex-row items-center justify-center ${paddingClasses[size]} ${pill ? 'rounded-full' : 'rounded-lg'} ${className}`;
+  const buttonClasses = `${bgClass} ${borderClass} flex flex-row items-center justify-center ${paddingClasses[size]} ${pill ? 'rounded-full' : 'rounded-lg'} shadow-custom ${className}`;
   const textClasses = `${textClass} font-body ${textSizeClasses[size]} font-semibold`;
 
   // Special style handling for variants that use tintColor
