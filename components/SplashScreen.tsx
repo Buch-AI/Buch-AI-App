@@ -10,7 +10,7 @@ export function SplashScreenComponent() {
   const backgroundColor = useThemeColor({}, 'background');
 
   return (
-    <View className="flex-1 items-center justify-center p-8" style={{ backgroundColor }}>
+    <View className="flex-1 items-center justify-center p-8" style={{ backgroundColor }} pointerEvents="none">
       <View className="items-center justify-center">
         <ThemedImage
           source={require('../assets/images/illustration-sample-1@512.png')}
