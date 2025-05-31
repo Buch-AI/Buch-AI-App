@@ -1,6 +1,7 @@
 // https://docs.expo.dev/guides/using-eslint/
 module.exports = {
   extends: ['expo', 'google', 'plugin:tailwindcss/recommended'],
+  plugins: ['unused-imports'],
   ignorePatterns: ['/dist/*'],
   rules: {
     // Disable conflicting rules from google style
@@ -14,7 +15,17 @@ module.exports = {
     'comma-dangle': ['error', 'always-multiline'],
     'quote-props': ['error', 'consistent'],
     'no-unused-vars': 'off',
-    '@typescript-eslint/no-unused-vars': ['error'],
+    '@typescript-eslint/no-unused-vars': 'off',
+    'unused-imports/no-unused-imports': 'error',
+    'unused-imports/no-unused-vars': [
+      'error',
+      {
+        'vars': 'all',
+        'varsIgnorePattern': '^_',
+        'args': 'after-used',
+        'argsIgnorePattern': '^_',
+      },
+    ],
     'import/newline-after-import': ['error', { 'count': 1 }],
     'import/order': [
       1,

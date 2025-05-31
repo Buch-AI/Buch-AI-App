@@ -45,6 +45,8 @@ export default function AuthIndex() {
               variant="text"
             />
           </View>
+
+          <View className="h-10" />
         </SafeAreaScrollView>
       </ThemedContainerView>
     </ThemedBackgroundView>
