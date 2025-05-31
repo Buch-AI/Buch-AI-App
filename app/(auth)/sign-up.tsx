@@ -6,25 +6,23 @@ import { SafeAreaScrollView } from '@/components/ui-custom/SafeAreaScrollView';
 import { ThemedBackgroundView } from '@/components/ui-custom/ThemedBackgroundView';
 import { ThemedButton } from '@/components/ui-custom/ThemedButton';
 import { ThemedContainerView } from '@/components/ui-custom/ThemedContainerView';
-import { ThemedModal } from '@/components/ui-custom/ThemedModal';
 import { ThemedText } from '@/components/ui-custom/ThemedText';
 import { ThemedTextInput } from '@/components/ui-custom/ThemedTextInput';
 import { registerUser } from '@/services/DatabaseAdapter';
 import Logger from '@/utils/Logger';
 import { ThemedImage } from '@/components/ui-custom/ThemedImage';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function SignUpScreen() {
+  const { setError } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [modalVisible, setModalVisible] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleSignUp = async () => {
     if (!email.trim() || !password.trim() || !confirmPassword.trim()) {
-      setErrorMessage('Please fill in all fields.');
-      setModalVisible(true);
+      setError('Please fill in all fields.');
       return;
     }
 
@@ -42,14 +40,12 @@ export default function SignUpScreen() {
         router.replace('/(auth)/login');
       } catch (error: any) {
         Logger.error(`Sign-up failed: ${error}`);
-        setErrorMessage(error.message || 'An error occurred during sign up.');
-        setModalVisible(true);
+        setError(error.message || 'An error occurred during sign up.');
       } finally {
         setLoading(false);
       }
     } else {
-      setErrorMessage('Passwords do not match.');
-      setModalVisible(true);
+      setError('Passwords do not match.');
     }
   };
 
@@ -93,15 +89,9 @@ export default function SignUpScreen() {
               className="mt-2"
             />
           </Link>
+          <View className="h-10" />
         </SafeAreaScrollView>
       </ThemedContainerView>
-
-      <ThemedModal
-        visible={modalVisible}
-        onClose={() => setModalVisible(false)}
-        title="Error"
-        message={errorMessage}
-      />
     </ThemedBackgroundView>
   );
 }

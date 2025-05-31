@@ -4,6 +4,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { StorageKeys } from '@/constants/Storage';
 import { getCurrentUser, login as authAdapterLogin } from '@/services/AuthAdapter';
 import Logger from '@/utils/Logger';
+import { ThemedModal } from '@/components/ui-custom/ThemedModal';
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -14,6 +15,7 @@ interface AuthContextType {
   signOut: () => Promise<void>;
   setAuthenticated: (value: boolean) => void;
   setIsLoading: (value: boolean) => void;
+  setError: (error: string | null) => void;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -70,7 +72,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     } catch (error: any) {
       Logger.error(`Login failed: ${error}`);
-      setError('An error occurred during sign in.');
+      setError(error.message || 'An error occurred during login.');
       
       // Terminate loading state on error
       setIsLoading(false);
@@ -109,9 +111,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         signOut,
         setAuthenticated,
         setIsLoading,
+        setError,
       }}
     >
       {children}
+      <ThemedModal
+        visible={!!error}
+        onClose={() => setError(null)}
+        title="Error"
+        message={error || ''}
+      />
     </AuthContext.Provider>
   );
 }

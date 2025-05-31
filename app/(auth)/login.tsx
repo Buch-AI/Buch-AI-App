@@ -6,7 +6,6 @@ import { SafeAreaScrollView } from '@/components/ui-custom/SafeAreaScrollView';
 import { ThemedBackgroundView } from '@/components/ui-custom/ThemedBackgroundView';
 import { ThemedButton } from '@/components/ui-custom/ThemedButton';
 import { ThemedContainerView } from '@/components/ui-custom/ThemedContainerView';
-import { ThemedModal } from '@/components/ui-custom/ThemedModal';
 import { ThemedText } from '@/components/ui-custom/ThemedText';
 import { ThemedTextInput } from '@/components/ui-custom/ThemedTextInput';
 import Logger from '@/utils/Logger';
@@ -17,8 +16,6 @@ export default function LoginScreen() {
   const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [modalVisible, setModalVisible] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const handleLogin = async () => {
@@ -32,10 +29,9 @@ export default function LoginScreen() {
       // NOTE: AuthContext keeps isLoading true during navigation
     } catch (error: any) {
       Logger.error(`Login failed: ${error}`);
-      setErrorMessage('An error occurred during sign in.');
-      setModalVisible(true);
       
       // NOTE: Only terminate the local loading state, not the AuthContext loading state
+      // NOTE: The error modal is automatically shown by AuthProvider
       setIsLoading(false);
     }
   };
@@ -73,15 +69,9 @@ export default function LoginScreen() {
               className="mt-2"
             />
           </Link>
+          <View className="h-10" />
         </SafeAreaScrollView>
       </ThemedContainerView>
-
-      <ThemedModal
-        visible={modalVisible}
-        onClose={() => setModalVisible(false)}
-        title="Error"
-        message={errorMessage}
-      />
     </ThemedBackgroundView>
   );
 }
