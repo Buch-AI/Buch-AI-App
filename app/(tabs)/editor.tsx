@@ -485,8 +485,7 @@ export default function Editor() {
                         variant={unsavedTitle ? 'primary' : 'secondary'}
                         disabled={!unsavedTitle || isSavingTitle || isGenningCreation}
                         loading={isSavingTitle}
-                        size="sm"
-                        style={{ borderRadius: 6 }}
+                        size="xs"
                       />
                     </View>
                   </View>
@@ -511,8 +510,7 @@ export default function Editor() {
                         variant={unsavedDescription ? 'primary' : 'secondary'}
                         disabled={!unsavedDescription || isSavingDescription || isGenningCreation}
                         loading={isSavingDescription}
-                        size="sm"
-                        style={{ borderRadius: 6 }}
+                        size="xs"
                       />
                     </View>
                   </View>
@@ -526,7 +524,7 @@ export default function Editor() {
             value={prompt}
             onChangeText={setPrompt}
             multiline
-            className="h-24 rounded-lg"
+            className="mb-4 rounded-lg"
             editable={!isGenningCreation}
             maxLength={1000}
           />

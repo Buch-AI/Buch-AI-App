@@ -108,7 +108,15 @@ export function SafeAreaScrollView(props: SafeAreaScrollViewProps) {
   };
 
   // Calculate the final content container style
-  const contentContainerStyle = { flex: 1, padding: 16 };
+  const contentContainerStyle = { 
+    flex: 1, 
+    // NOTE: Top and bottom padding are kept as is
+    paddingTop: 16,
+    paddingBottom: 16,
+    // NOTE: Left and right padding are counteracted by the margin on the ScrollView
+    paddingLeft: 16,
+    paddingRight: 16,
+  };
 
   return (
     <SafeAreaView style={[{ flex: 1 }, style]}>
@@ -128,6 +136,13 @@ export function SafeAreaScrollView(props: SafeAreaScrollViewProps) {
           onLayout={handleScrollViewLayout}
           onContentSizeChange={handleContentSizeChange}
           contentContainerStyle={contentContainerStyle}
+          style={{ 
+            marginTop: 0,
+            marginBottom: 0,
+            // NOTE: Left and right margins are negative to give space for overflowing shadows
+            marginLeft: -16,
+            marginRight: -16,
+          }}
         >
           {children}
         </ScrollView>

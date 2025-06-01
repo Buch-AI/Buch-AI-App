@@ -3,6 +3,13 @@ import { useEffect, useRef, useState } from 'react';
 import { TextInput, TextInputProps, View, Animated, Pressable } from 'react-native';
 import { useThemeColor } from '@/hooks/useThemeColor';
 
+// Base spacing unit - equivalent to Tailwind's spacing scale
+const SPACING = 4; // 4px base unit (p-2 = 2 * 4 = 8px)
+
+// Font size constants based on Tailwind scale
+const TEXT_SM = 14; // text-sm = 14px
+const TEXT_XS = 12; // text-xs = 12px for focused/floating label
+
 export type ThemedTextInputProps = TextInputProps & {
   label: string;
   lightColor?: string;
@@ -29,14 +36,14 @@ export function ThemedTextInput(props: ThemedTextInputProps) {
 
   const labelStyle = {
     position: 'absolute' as const,
-    left: 16,
+    left: SPACING * 2, // calc(var(--spacing) * 2) = 8px to match p-2
     top: animatedValue.interpolate({
       inputRange: [0, 1],
-      outputRange: [18, -9],
+      outputRange: [SPACING * 2 + 2, -SPACING * 2], // [10px, -8px] - centered in input, then floating above
     }),
     fontSize: animatedValue.interpolate({
       inputRange: [0, 1],
-      outputRange: [16, 12],
+      outputRange: [TEXT_SM, TEXT_XS], // 14px (text-sm) to 12px (text-xs)
     }),
     color: animatedValue.interpolate({
       inputRange: [0, 1],
@@ -48,7 +55,7 @@ export function ThemedTextInput(props: ThemedTextInputProps) {
     }),
     paddingHorizontal: animatedValue.interpolate({
       inputRange: [0, 1],
-      outputRange: [0, 4],
+      outputRange: [0, SPACING], // 0 to 4px padding
     }),
     zIndex: 1,
   };
@@ -60,8 +67,8 @@ export function ThemedTextInput(props: ThemedTextInputProps) {
           {label}
         </Animated.Text>
         <TextInput
+          className={`w-full rounded-lg border border-gray-200 ${editable === false ? '!bg-gray-400/40' : '!bg-white/40'} p-2 text-sm shadow-custom backdrop-blur-sm transition-colors duration-200 focus:border-blue-500 focus:bg-white focus:shadow-custom-focused dark:border-gray-800 dark:bg-gray-800/80 dark:focus:border-blue-400 dark:focus:bg-gray-800`}
           style={[{ color, backgroundColor }, style]}
-          className={`w-full rounded-lg border border-gray-200 ${editable === false ? '!bg-gray-400/40' : '!bg-white/40'} p-4 text-base shadow-custom backdrop-blur-sm transition-colors duration-200 focus:border-blue-500 focus:bg-white focus:shadow-custom-focused dark:border-gray-800 dark:bg-gray-800/80 dark:focus:border-blue-400 dark:focus:bg-gray-800`}
           value={value}
           onFocus={(e) => {
             setIsFocused(true);
@@ -78,7 +85,11 @@ export function ThemedTextInput(props: ThemedTextInputProps) {
         {secureTextEntry && (
           <Pressable
             onPress={() => setIsPasswordVisible(!isPasswordVisible)}
-            className="absolute right-4 top-4"
+            style={{
+              position: 'absolute',
+              right: SPACING * 2, // calc(var(--spacing) * 2) = 8px to match right-2
+              top: SPACING * 2, // calc(var(--spacing) * 2) = 8px to match top-2
+            }}
           >
             <Ionicons
               name={isPasswordVisible ? 'eye-off-outline' : 'eye-outline'}

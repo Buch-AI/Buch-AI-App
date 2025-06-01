@@ -165,7 +165,7 @@ export default function Home() {
           disabled={isSelecting}
         >
           <View>
-            <ThemedText className="mb-1 text-lg font-bold">{item.title}</ThemedText>
+            <ThemedText className="mb-1 text-base font-bold">{item.title}</ThemedText>
             {item.description && (
               <ThemedText className="text-sm">{item.description}</ThemedText>
             )}
