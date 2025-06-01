@@ -29,6 +29,44 @@
       "initialScale": 1,
       "maximumScale": 1,
       "userScalable": "no"
+    },
+    "meta": {
+      "apple-mobile-web-app-capable": "yes",
+      "apple-mobile-web-app-status-bar-style": "default",
+      "apple-mobile-web-app-title": "Buch AI",
+      "application-name": "Buch AI",
+      "mobile-web-app-capable": "yes",
+      "msapplication-TileColor": "#ffffff",
+      "theme-color": "#ffffff"
+    },
+    "manifest": {
+      "name": "Buch AI",
+      "short_name": "Buch AI",
+      "description": "AI-powered short story ideation and illustration app",
+      "theme_color": "#ffffff",
+      "background_color": "#ffffff",
+      "display": "standalone",
+      "start_url": "/",
+      "icons": [
+        {
+          "src": "./assets/images/favicon@128.png",
+          "sizes": "128x128",
+          "type": "image/png",
+          "purpose": "any maskable"
+        },
+        {
+          "src": "./assets/images/favicon@256.png",
+          "sizes": "256x256",
+          "type": "image/png",
+          "purpose": "any maskable"
+        },
+        {
+          "src": "./assets/images/favicon@512.png",
+          "sizes": "512x512",
+          "type": "image/png",
+          "purpose": "any maskable"
+        }
+      ]
     }
   },
   "plugins": [
