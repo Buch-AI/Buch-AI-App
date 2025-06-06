@@ -7,6 +7,7 @@ import { useThemeColor } from '@/hooks/useThemeColor';
 const SPACING = 4; // 4px base unit (p-2 = 2 * 4 = 8px)
 
 // Font size constants based on Tailwind scale
+const TEXT_BASE = 16; // text-base = 16px
 const TEXT_SM = 14; // text-sm = 14px
 const TEXT_XS = 12; // text-xs = 12px for focused/floating label
 
@@ -43,7 +44,7 @@ export function ThemedTextInput(props: ThemedTextInputProps) {
     }),
     fontSize: animatedValue.interpolate({
       inputRange: [0, 1],
-      outputRange: [TEXT_SM, TEXT_XS], // 14px (text-sm) to 12px (text-xs)
+      outputRange: [TEXT_BASE, TEXT_XS], // 16px (text-base) to 12px (text-xs)
     }),
     color: animatedValue.interpolate({
       inputRange: [0, 1],
@@ -67,7 +68,7 @@ export function ThemedTextInput(props: ThemedTextInputProps) {
           {label}
         </Animated.Text>
         <TextInput
-          className={`w-full rounded-lg border border-gray-200 ${editable === false ? '!bg-gray-400/40' : '!bg-white/40'} p-2 text-sm shadow-custom backdrop-blur-sm transition-colors duration-200 focus:border-blue-500 focus:bg-white focus:shadow-custom-focused dark:border-gray-800 dark:bg-gray-800/80 dark:focus:border-blue-400 dark:focus:bg-gray-800`}
+          className={`w-full rounded-lg border border-gray-200 ${editable === false ? '!bg-gray-400/40' : '!bg-white/40'} p-2 text-base shadow-custom backdrop-blur-sm transition-colors duration-200 focus:border-blue-500 focus:bg-white focus:shadow-custom-focused dark:border-gray-800 dark:bg-gray-800/80 dark:focus:border-blue-400 dark:focus:bg-gray-800`}
           style={[{ color, backgroundColor }, style]}
           value={value}
           onFocus={(e) => {
