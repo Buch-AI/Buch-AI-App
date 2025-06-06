@@ -551,44 +551,54 @@ export default function Editor() {
             <>
               <ThemedHorizontalRule />
 
-              {workflowState.creationParts.map((part, index) => (
-                <View key={index} className="my-4">
-                  <ThemedText type="book" className="mb-2 text-xl font-bold opacity-50">
-                    Chapter {index + 1}
-                  </ThemedText>
-                  <ThemedText type="book" className="mb-4">
-                    {part.textJoined}
-                  </ThemedText>
-
-                  {workflowState.currStep === 'generating-images' && !part.imageData ? (
-                    <View className="h-[480px] items-center justify-center rounded-lg bg-gray-200 dark:bg-gray-800">
-                      <ThemedText>Generating image...</ThemedText>
-                    </View>
-                  ) : part.imageData ? (
-                    <View className="items-center justify-center">
-                      <ThemedImage
-                        source={{ uri: part.imageData }}
-                        rfSize={180}
-                        className="rounded-lg"
-                      />
-                    </View>
-                  ) : (
-                    <View className="h-[480px] items-center justify-center rounded-lg bg-gray-200 dark:bg-gray-800">
-                      <ThemedText>Failed to generate image</ThemedText>
-                    </View>
-                  )}
-                </View>
-              ))}
-
               {workflowState.creationVideoUrl && (
                 <>
-                  <ThemedHorizontalRule />
-                  <View className="h-[512px] w-full overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-800">
+                  <View className="h-[720px] w-[480px] mx-auto mb-6 overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-800">
                     {/* TODO: This needs refining. */}
                     <VideoPlayer base64DataUrl={workflowState.creationVideoUrl} />
                   </View>
+
+                  <ThemedHorizontalRule />
                 </>
               )}
+
+              {workflowState.creationParts.map((part, index) => (
+                <View key={index} className="mb-8 lg:mb-6">
+                  <ThemedText type="book" className="mb-2 text-xl font-bold opacity-50">
+                    Chapter {index + 1}
+                  </ThemedText>
+                  
+                  {/* Responsive container: vertical on mobile, horizontal on wide screens */}
+                  <View className="flex flex-col items-start justify-start space-y-4 lg:space-y-0 lg:flex-row lg:gap-6">
+                    {/* Text content container */}
+                    <View className="w-full lg:flex-1">
+                      <ThemedText type="book" className="text-base leading-relaxed">
+                        {part.textJoined}
+                      </ThemedText>
+                    </View>
+
+                    {/* Image container */}
+                    <View className="w-full lg:flex-1 lg:h-auto">
+                      {workflowState.currStep === 'generating-images' && !part.imageData ? (
+                        <View className="w-full h-64 lg:h-full items-center justify-center rounded-lg bg-gray-200 dark:bg-gray-800">
+                          <ThemedText>Generating image...</ThemedText>
+                        </View>
+                      ) : part.imageData ? (
+                        <View className="w-full lg:h-full items-center justify-center">
+                          <ThemedImage
+                            source={{ uri: part.imageData }}
+                            className="rounded-lg w-full h-full"
+                          />
+                        </View>
+                      ) : (
+                        <View className="w-full h-64 lg:h-full items-center justify-center rounded-lg bg-gray-200 dark:bg-gray-800">
+                          <ThemedText>Failed to generate image</ThemedText>
+                        </View>
+                      )}
+                    </View>
+                  </View>
+                </View>
+              ))}
             </>
           )}
           

@@ -12,26 +12,29 @@ interface ThemedImageProps extends Omit<ImageProps, 'style'> {
 
 export function ThemedImage({
   source,
-  rfSize = 200,
+  rfSize,
   aspectRatio = 1.0,
   style,
-  customWidth,
-  customHeight,
   ...restProps
 }: ThemedImageProps) {
-  // Calculate responsive dimensions
-  const responsiveWidth = customWidth || RFValue(rfSize);
-  const responsiveHeight = customHeight || responsiveWidth * aspectRatio;
+  // Calculate responsive dimensions or use full width
+  const baseStyle = rfSize 
+    ? {
+        width: RFValue(rfSize),
+        height: RFValue(rfSize) * aspectRatio,
+        resizeMode: 'contain' as const,
+      }
+    : {
+        width: '100%' as const,
+        aspectRatio: aspectRatio,
+        resizeMode: 'contain' as const,
+      };
 
   return (
     <Image
       source={source}
       style={[
-        {
-          width: responsiveWidth,
-          height: responsiveHeight,
-          resizeMode: 'contain',
-        },
+        baseStyle,
         style,
       ]}
       accessible={false}
