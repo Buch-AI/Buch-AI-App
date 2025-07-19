@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from './AxiosInterceptor';
 import { BUCHAI_SERVER_URL } from '@/constants/Config';
 import Logger from '@/utils/Logger';
 
@@ -57,6 +57,26 @@ export async function login(username: string, password: string): Promise<TokenRe
   }
 }
 
+// Function to refresh an existing access token
+export async function refreshToken(currentToken: string): Promise<TokenResponse> {
+  try {
+    const response = await axios.post(`${BUCHAI_SERVER_URL}/auth/token/refresh`, {}, {
+      headers: {
+        Authorization: `Bearer ${currentToken}`,
+      },
+    });
+    Logger.info('Token refreshed successfully');
+    return response.data;
+  } catch (error: any) {
+    if (error.response) {
+      Logger.error(`Token refresh failed: ${JSON.stringify(error.response.data)}`);
+    } else {
+      Logger.error(`Token refresh failed: ${error}`);
+    }
+    throw error; // Rethrow the error for handling in the component
+  }
+}
+
 // Function to get the current user's information
 export async function getCurrentUser(token: string): Promise<User> {
   try {
@@ -67,20 +87,6 @@ export async function getCurrentUser(token: string): Promise<User> {
     return response.data;
   } catch (error: any) {
     Logger.error(`Failed to retrieve user information: ${error}`);
-    throw error; // Rethrow the error for handling in the component
-  }
-}
-
-// Function to get the current user's items
-export async function getCurrentUserItems(token: string): Promise<any> {
-  try {
-    const response = await axios.get(`${BUCHAI_SERVER_URL}/auth/users/items`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    Logger.info(`Retrieved user items: ${JSON.stringify(response.data)}`);
-    return response.data;
-  } catch (error: any) {
-    Logger.error(`Failed to retrieve user items: ${error}`);
     throw error; // Rethrow the error for handling in the component
   }
 }

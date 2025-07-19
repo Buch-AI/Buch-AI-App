@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from './AxiosInterceptor';
 import bcrypt from 'bcryptjs'; // Import bcrypt for password hashing
 import sqlString from 'sqlstring'; // Import sqlstring for escaping SQL inputs
 import { BUCHAI_SERVER_URL } from '@/constants/Config';
@@ -99,7 +99,7 @@ export async function registerUser(userData: {
     const response = await axios.post(`${BUCHAI_SERVER_URL}/database/query`, {
       query: sqlQuery,
     });
-    Logger.info('User registered:', response.data);
+    Logger.info(`User registered: ${JSON.stringify(response.data)}`);
     return response.data;
   } catch (error) {
     Logger.error(`Registration error: ${error}`);
