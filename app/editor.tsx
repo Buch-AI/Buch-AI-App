@@ -472,15 +472,15 @@ export default function Editor() {
         />
 
         <View className="flex-row items-center justify-between my-2">
-          <TouchableOpacity 
-            onPress={handleClosePress}
-            className="mr-4"
-          >
-            <Ionicons name="close-circle" size={28} className="text-gray-600 dark:text-gray-300" />
-          </TouchableOpacity>
-          <View className="flex-1">
-            <ThemedText type="title">Create Your Story</ThemedText>
-          </View>
+          <ThemedButton
+            iconOnly
+            icon={<Ionicons name="close" size={16} />}
+            onPress={() => router.back()}
+            variant="icon"
+          />
+          <ThemedText type="title" className="flex-1 text-end">
+            Create Your Story
+          </ThemedText>
         </View>
 
         <WorkflowStatusBox

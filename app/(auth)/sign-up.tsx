@@ -89,6 +89,18 @@ export default function SignUpScreen() {
               className="mt-2"
             />
           </Link>
+          {/* Privacy Policy Agreement */}
+          <View className="mt-4 mb-2">
+            <ThemedText className="text-center text-sm text-gray-400 dark:text-gray-600">
+              By signing up, you agree to our{' '}
+              <Pressable onPress={() => router.push('/privacy-policy' as any)}>
+                <View className="text-center text-sm underline">
+                  Privacy Policy
+                </View>
+              </Pressable>
+              .
+            </ThemedText>
+          </View>
           <View className="h-10" />
         </SafeAreaScrollView>
       </ThemedContainerView>

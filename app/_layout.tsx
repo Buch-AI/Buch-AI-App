@@ -82,6 +82,15 @@ function RootLayoutRoutes() {
             }}
           />
           <Stack.Screen
+            name="privacy-policy"
+            options={{ 
+              presentation: 'modal',
+              animation: 'slide_from_bottom',
+              gestureEnabled: true,
+              gestureDirection: 'vertical',
+            }}
+          />
+          <Stack.Screen
             name="+not-found"
             options={{ presentation: 'modal' }}
           />
