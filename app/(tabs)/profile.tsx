@@ -1,10 +1,11 @@
 import { View } from 'react-native';
+import { TabBarSpacerView } from '@/components/ui-custom/TabBarSpacerView';
 import { ThemedBackgroundView } from '@/components/ui-custom/ThemedBackgroundView';
 import { ThemedButton } from '@/components/ui-custom/ThemedButton';
 import { ThemedContainerView } from '@/components/ui-custom/ThemedContainerView';
 import { ThemedText } from '@/components/ui-custom/ThemedText';
 import { useAuth } from '@/contexts/AuthContext';
-import { TabBarSpacerView } from '@/components/ui-custom/TabBarSpacerView';
+
 export default function ProfileScreen() {
   const { signOut } = useAuth();
 

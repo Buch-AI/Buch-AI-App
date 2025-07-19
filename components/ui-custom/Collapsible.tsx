@@ -1,9 +1,9 @@
+import { Ionicons } from '@expo/vector-icons';
 import { PropsWithChildren, useState } from 'react';
 import { TouchableOpacity, View } from 'react-native';
 
 import { ThemedContainerView } from '@/components/ui-custom/ThemedContainerView';
 import { ThemedText } from '@/components/ui-custom/ThemedText';
-import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 

@@ -1,6 +1,6 @@
+import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import { TouchableOpacity, StyleProp, ViewStyle } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 import { useColorScheme } from '@/hooks/useColorScheme';
 
 interface ThemedCheckboxProps {
@@ -39,4 +39,4 @@ export const ThemedCheckbox: React.FC<ThemedCheckboxProps> = ({
       )}
     </TouchableOpacity>
   );
-}; 
+};

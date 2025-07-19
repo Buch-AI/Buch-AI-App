@@ -3,18 +3,18 @@ import { Link } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { SafeAreaScrollView } from '@/components/ui-custom/SafeAreaScrollView';
+import { TabBarSpacerView } from '@/components/ui-custom/TabBarSpacerView';
 import { ThemedBackgroundView } from '@/components/ui-custom/ThemedBackgroundView';
 import { ThemedButton } from '@/components/ui-custom/ThemedButton';
+import { ThemedCheckbox } from '@/components/ui-custom/ThemedCheckbox';
 import { ThemedContainerView } from '@/components/ui-custom/ThemedContainerView';
 import { ThemedModal } from '@/components/ui-custom/ThemedModal';
 import { ThemedText } from '@/components/ui-custom/ThemedText';
 import { useAuth } from '@/contexts/AuthContext';
-import { MeAdapter } from '@/services/MeAdapter';
-import { CreationAdapter } from '@/services/CreationAdapter';
-import Logger from '@/utils/Logger';
 import { useColorScheme } from '@/hooks/useColorScheme';
-import { ThemedCheckbox } from '@/components/ui-custom/ThemedCheckbox';
-import { TabBarSpacerView } from '@/components/ui-custom/TabBarSpacerView';
+import { CreationAdapter } from '@/services/CreationAdapter';
+import { MeAdapter } from '@/services/MeAdapter';
+import Logger from '@/utils/Logger';
 
 interface Creation {
   creation_id: string;
@@ -76,7 +76,7 @@ export default function Home() {
   const handleDeleteConfirm = async () => {
     try {
       setIsDeleting(true);
-      
+
       if (!jsonWebToken) {
         throw new Error('Unauthorized');
       }

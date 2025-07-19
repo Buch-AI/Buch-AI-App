@@ -1,16 +1,16 @@
 import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router/stack';
 import { usePathname, useRouter } from 'expo-router';
+import { Stack } from 'expo-router/stack';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useCallback, useEffect, useState } from 'react';
 import 'react-native-reanimated';
 import { View } from 'react-native';
+import { SplashScreenComponent } from '@/components/SplashScreen';
 import { AuthProvider, useAuth } from '@/contexts/AuthContext';
 import { StoryProvider } from '@/contexts/StoryContext';
 import '@/global.css';
 import Logger from '@/utils/Logger';
-import { SplashScreenComponent } from '@/components/SplashScreen';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -19,7 +19,7 @@ function RootLayoutRoutes() {
   const pathname = usePathname();
   const router = useRouter();
   const { isAuthenticated, isLoading, signOut, setAuthenticated, setIsLoading } = useAuth();
-  
+
   // Sign out current user when they navigate to sign-up route.
   useEffect(() => {
     if (isAuthenticated && pathname.includes('sign-up')) {
@@ -34,16 +34,16 @@ function RootLayoutRoutes() {
       if (isAuthenticated && pathname.includes('login')) {
         try {
           // Small delay to ensure transition feels natural
-          await new Promise(resolve => setTimeout(resolve, 200));
-          
+          await new Promise((resolve) => setTimeout(resolve, 200));
+
           // Make sure SplashScreen is prevented from auto-hiding during transition
-          await SplashScreen.preventAutoHideAsync().catch(e => {
+          await SplashScreen.preventAutoHideAsync().catch((e) => {
             Logger.error(`Failed to prevent auto-hide of splash screen: ${e}`);
           });
         } finally {
           // Hide splash after a short delay to ensure the new screen is ready
           setTimeout(async () => {
-            await SplashScreen.hideAsync().catch(e => {
+            await SplashScreen.hideAsync().catch((e) => {
               Logger.error(`Failed to hide splash screen: ${e}`);
             });
             // Set isLoading to false after navigation and splash screen handling
@@ -52,7 +52,7 @@ function RootLayoutRoutes() {
         }
       }
     };
-    
+
     handleAuthTransition();
   }, [isAuthenticated, pathname, router, setIsLoading]);
 
@@ -74,7 +74,7 @@ function RootLayoutRoutes() {
           />
           <Stack.Screen
             name="editor"
-            options={{ 
+            options={{
               presentation: 'modal',
               animation: 'slide_from_bottom',
               gestureEnabled: true,
@@ -83,7 +83,7 @@ function RootLayoutRoutes() {
           />
           <Stack.Screen
             name="privacy-policy"
-            options={{ 
+            options={{
               presentation: 'modal',
               animation: 'slide_from_bottom',
               gestureEnabled: true,
@@ -103,7 +103,7 @@ function RootLayoutRoutes() {
 
 export default function RootLayout() {
   const [rootIsReady, setRootIsReady] = useState(false);
-  
+
   const [fontsLoaded, fontError] = useFonts({
     'IndieFlower': require('../assets/fonts/IndieFlower-Regular.ttf'),
     'SpaceGrotesk': require('../assets/fonts/SpaceGrotesk-VariableFont_wght.ttf'),
@@ -117,7 +117,7 @@ export default function RootLayout() {
         await SplashScreen.preventAutoHideAsync();
 
         // Artificially delay for 1 second to make splash visible during testing
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise((resolve) => setTimeout(resolve, 1000));
       } catch (e) {
         console.warn(e);
       } finally {

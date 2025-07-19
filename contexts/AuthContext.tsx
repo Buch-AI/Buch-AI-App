@@ -1,10 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { router } from 'expo-router';
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import { ThemedModal } from '@/components/ui-custom/ThemedModal';
 import { StorageKeys } from '@/constants/Storage';
 import { getCurrentUser, login as authAdapterLogin, refreshToken as authAdapterRefreshToken } from '@/services/AuthAdapter';
 import Logger from '@/utils/Logger';
-import { ThemedModal } from '@/components/ui-custom/ThemedModal';
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -38,7 +37,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             setIsAuthenticated(true);
           } catch (error) {
             Logger.error(`Token validation failed: ${error}`);
-            
+
             // Attempt to refresh the token before logging out
             const refreshedToken = await refreshTokenIfNeeded();
             if (!refreshedToken) {
@@ -66,7 +65,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     Logger.info('Setting up proactive token refresh interval (15 minutes)...');
-    
+
     const interval = setInterval(async () => {
       try {
         Logger.info('Proactive token refresh triggered');
@@ -87,7 +86,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = async (email: string, password: string) => {
     setIsLoading(true);
     setError(null);
-    
+
     try {
       const tokenResponse = await authAdapterLogin(email, password);
       const newToken = tokenResponse.access_token;
@@ -96,7 +95,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         await AsyncStorage.setItem(StorageKeys.AUTH_JWT, newToken);
         setJsonWebToken(newToken);
         setIsAuthenticated(true);
-        
+
         // NOTE: Keep isLoading true through the transition
         // NOTE: It will be set to false in _layout.tsx after navigation
       } else {
@@ -105,10 +104,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch (error: any) {
       Logger.error(`Login failed: ${error}`);
       setError(error.message || 'An error occurred during login.');
-      
+
       // Terminate loading state on error
       setIsLoading(false);
-      
+
       throw error;
     }
     // NOTE: We're not setting isLoading to false in the finally block because we want to keep the loading state active during navigation
@@ -117,7 +116,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Function to attempt token refresh before logging out
   const refreshTokenIfNeeded = async (): Promise<string | null> => {
     const currentToken = jsonWebToken || await AsyncStorage.getItem(StorageKeys.AUTH_JWT);
-    
+
     if (!currentToken) {
       return null;
     }
@@ -141,9 +140,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setJsonWebToken(null);
       setIsAuthenticated(false);
     }
-    
+
     return null;
-  };  
+  };
 
   const signOut = async () => {
     setIsLoading(true);
@@ -195,4 +194,4 @@ export function useAuth() {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
-} 
+}

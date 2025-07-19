@@ -1,16 +1,15 @@
 import { Link } from 'expo-router';
 import React, { useState } from 'react';
-import { Image, Pressable, View } from 'react-native';
-import { RFValue } from 'react-native-responsive-fontsize';
+import { View } from 'react-native';
 import { SafeAreaScrollView } from '@/components/ui-custom/SafeAreaScrollView';
 import { ThemedBackgroundView } from '@/components/ui-custom/ThemedBackgroundView';
 import { ThemedButton } from '@/components/ui-custom/ThemedButton';
 import { ThemedContainerView } from '@/components/ui-custom/ThemedContainerView';
+import { ThemedImage } from '@/components/ui-custom/ThemedImage';
 import { ThemedText } from '@/components/ui-custom/ThemedText';
 import { ThemedTextInput } from '@/components/ui-custom/ThemedTextInput';
-import Logger from '@/utils/Logger';
 import { useAuth } from '@/contexts/AuthContext';
-import { ThemedImage } from '@/components/ui-custom/ThemedImage';
+import Logger from '@/utils/Logger';
 
 export default function LoginScreen() {
   const { login } = useAuth();
@@ -24,12 +23,12 @@ export default function LoginScreen() {
       // NOTE: Perform login - AuthContext will keep isLoading true during the transition
       // NOTE: _layout.tsx will handle navigation and setting isLoading to false
       await login(email, password);
-      
-      // NOTE: We don't set loading to false on success because 
+
+      // NOTE: We don't set loading to false on success because
       // NOTE: AuthContext keeps isLoading true during navigation
     } catch (error: any) {
       Logger.error(`Login failed: ${error}`);
-      
+
       // NOTE: Only terminate the local loading state, not the AuthContext loading state
       // NOTE: The error modal is automatically shown by AuthProvider
       setIsLoading(false);
@@ -62,10 +61,10 @@ export default function LoginScreen() {
           />
           <ThemedButton title="Log In" onPress={handleLogin} loading={isLoading} />
           <Link href="/(auth)/sign-up" asChild>
-            <ThemedButton 
-              title="Don't have an account? Sign up." 
-              onPress={() => {}} 
-              variant="text" 
+            <ThemedButton
+              title="Don't have an account? Sign up."
+              onPress={() => {}}
+              variant="text"
               className="mt-2"
             />
           </Link>

@@ -1,8 +1,8 @@
-import axios from './AxiosInterceptor';
 import bcrypt from 'bcryptjs'; // Import bcrypt for password hashing
 import sqlString from 'sqlstring'; // Import sqlstring for escaping SQL inputs
 import { BUCHAI_SERVER_URL } from '@/constants/Config';
 import Logger from '@/utils/Logger';
+import axios from './AxiosInterceptor';
 
 export async function testQueryGithub() {
   const sqlQuery = `SELECT subject AS subject, COUNT(*) AS num_duplicates

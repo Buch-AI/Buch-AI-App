@@ -1,25 +1,25 @@
+import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { View, Image, ActivityIndicator, Platform, TouchableOpacity } from 'react-native';
+import { View, ActivityIndicator, Platform } from 'react-native';
 import { SafeAreaScrollView } from '@/components/ui-custom/SafeAreaScrollView';
 import { ThemedBackgroundView } from '@/components/ui-custom/ThemedBackgroundView';
 import { ThemedButton } from '@/components/ui-custom/ThemedButton';
 import { ThemedContainerView } from '@/components/ui-custom/ThemedContainerView';
+import { ThemedHorizontalRule } from '@/components/ui-custom/ThemedHorizontalRule';
+import { ThemedImage } from '@/components/ui-custom/ThemedImage';
+import { ThemedModal } from '@/components/ui-custom/ThemedModal';
 import { ThemedText } from '@/components/ui-custom/ThemedText';
 import { ThemedTextInput } from '@/components/ui-custom/ThemedTextInput';
 import { VideoPlayer } from '@/components/ui-custom/VideoPlayer';
 import { WorkflowStatusBox, WorkflowState } from '@/components/ui-custom/WorkflowStatusBox';
 import { useAuth } from '@/contexts/AuthContext';
 import { useStory } from '@/contexts/StoryContext';
+import { CreationAdapter } from '@/services/CreationAdapter';
 import { ImageAdapter } from '@/services/ImageAdapter';
 import { LlmAdapter } from '@/services/LlmAdapter';
 import { MeAdapter } from '@/services/MeAdapter';
-import { CreationAdapter } from '@/services/CreationAdapter';
 import Logger from '@/utils/Logger';
-import { Ionicons } from '@expo/vector-icons';
-import { ThemedImage } from '@/components/ui-custom/ThemedImage';
-import { ThemedHorizontalRule } from '@/components/ui-custom/ThemedHorizontalRule';
-import { ThemedModal } from '@/components/ui-custom/ThemedModal';
 
 interface CreationPart {
   textJoined: string;
@@ -63,7 +63,7 @@ export default function Editor() {
   const [workflowState, setWorkflowState] = useState<CreationWorkflowState>(initialWorkflowState);
   const [isLoadingCreation, setIsLoadingCreation] = useState(false);
   const [isGenningCreation, setIsGenningCreation] = useState(false);
-  
+
   // MeAdapter CreationProfileUpdate fields
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -88,8 +88,9 @@ export default function Editor() {
   }, [workflowState.creationVideoUrl]);
 
   useEffect(() => {
-    if (isGenningCreation)
+    if (isGenningCreation) {
       return;
+    }
 
     if (urlCreationId) {
       startLoadCreationWorkflow(urlCreationId);
@@ -199,7 +200,7 @@ export default function Editor() {
         payload: {
           id,
           prompt: '',
-          content: creationParts.map(part => part.textJoined).join('\n\n'),
+          content: creationParts.map((part) => part.textJoined).join('\n\n'),
           authorId: 'current-user',
           createdAt: new Date(),
           updatedAt: new Date(),
@@ -247,7 +248,7 @@ export default function Editor() {
       if (!urlCreationId) {
         const defaultTitle = activeCreationId;
         setTitle(defaultTitle);
-        
+
         // Save the default title
         await creationAdapter.updateCreation(activeCreationId, { title: defaultTitle });
       }
@@ -282,9 +283,9 @@ export default function Editor() {
 
       // Create array of joined text parts for image prompt generation
       const imagePrompts = await llmAdapter.generateImagePrompts(
-        generatedText, 
+        generatedText,
         textPartsWithoutImages.map((part) => part.textJoined),
-        costCentreId
+        costCentreId,
       );
 
       // Add image prompts to creation parts
@@ -357,7 +358,7 @@ export default function Editor() {
     } finally {
       setIsGenningCreation(false);
     }
-  }
+  };
 
   const loadCreationProfile = async (creationId: string) => {
     try {
@@ -365,7 +366,7 @@ export default function Editor() {
       // This method could stay with MeAdapter or move to a more specialized adapter
       // For simplicity, we'll assume it should continue to get the data from the MeAdapter
       // since it's about user-specific operations
-      
+
       if (!jsonWebToken) {
         throw new Error('Unauthorized');
       }
@@ -373,7 +374,7 @@ export default function Editor() {
       const meAdapter = new MeAdapter(jsonWebToken);
       const creations = await meAdapter.getUserCreations();
       const creation = creations.find((c) => c.creation_id === creationId);
-      
+
       if (creation) {
         setTitle(creation.title);
         setDescription(creation.description || '');
@@ -395,7 +396,7 @@ export default function Editor() {
       const creationAdapter = new CreationAdapter(jsonWebToken);
       await creationAdapter.updateCreation(workflowState.creationId, { title });
       setUnsavedTitle(false);
-      
+
       // Show success message or update UI as needed
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
@@ -416,7 +417,7 @@ export default function Editor() {
       const creationAdapter = new CreationAdapter(jsonWebToken);
       await creationAdapter.updateCreation(workflowState.creationId, { description });
       setUnsavedDescription(false);
-      
+
       // Show success message or update UI as needed
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
@@ -465,13 +466,13 @@ export default function Editor() {
           title="Leave while generating?"
           message="Your story is still being generated. If you leave now, you won't be able to track the generation progress in real time. Are you sure you want to leave?"
           primaryButton={{
-            title: "Leave",
+            title: 'Leave',
             onPress: handleConfirmLeave,
-            variant: "danger"
+            variant: 'danger',
           }}
         />
 
-        <View className="flex-row items-center justify-between my-2">
+        <View className="my-2 flex-row items-center justify-between">
           <ThemedButton
             iconOnly
             icon={<Ionicons name="close" size={16} />}
@@ -490,7 +491,7 @@ export default function Editor() {
         />
 
         {workflowState.error && (
-          <View className={`mt-2 rounded-lg bg-red-200/40 p-4 dark:bg-red-800/40 shadow-custom z-10`}>
+          <View className={`z-10 mt-2 rounded-lg bg-red-200/40 p-4 shadow-custom dark:bg-red-800/40`}>
             <ThemedText type="body">{workflowState.error}</ThemedText>
           </View>
         )}
@@ -498,7 +499,7 @@ export default function Editor() {
         <SafeAreaScrollView>
           <View>
             {isLoadingProfile ? (
-              <View className="py-2 items-center justify-center">
+              <View className="items-center justify-center py-2">
                 <ActivityIndicator size="small" />
                 <ThemedText className="mt-2">Loading creation profile...</ThemedText>
               </View>
@@ -508,7 +509,7 @@ export default function Editor() {
               <>
                 <View className="mb-4">
                   <View className="flex-row">
-                    <View className="flex-1 mr-2">
+                    <View className="mr-2 flex-1">
                       <ThemedTextInput
                         label="Title"
                         value={title}
@@ -520,7 +521,7 @@ export default function Editor() {
                     <View className="justify-center">
                       <ThemedButton
                         iconOnly
-                        icon={<Ionicons name="save-outline" size={20} color={unsavedTitle ? "#fff" : "#888"} />}
+                        icon={<Ionicons name="save-outline" size={20} color={unsavedTitle ? '#fff' : '#888'} />}
                         onPress={updateCreationTitle}
                         variant={unsavedTitle ? 'primary' : 'secondary'}
                         disabled={!unsavedTitle || isSavingTitle || isGenningCreation}
@@ -530,10 +531,10 @@ export default function Editor() {
                     </View>
                   </View>
                 </View>
-                
+
                 <View className="mb-4">
                   <View className="flex-row">
-                    <View className="flex-1 mr-2">
+                    <View className="mr-2 flex-1">
                       <ThemedTextInput
                         label="Description"
                         value={description}
@@ -545,7 +546,7 @@ export default function Editor() {
                     <View className="justify-center">
                       <ThemedButton
                         iconOnly
-                        icon={<Ionicons name="save-outline" size={20} color={unsavedDescription ? "#fff" : "#888"} />}
+                        icon={<Ionicons name="save-outline" size={20} color={unsavedDescription ? '#fff' : '#888'} />}
                         onPress={updateCreationDescription}
                         variant={unsavedDescription ? 'primary' : 'secondary'}
                         disabled={!unsavedDescription || isSavingDescription || isGenningCreation}
@@ -593,7 +594,7 @@ export default function Editor() {
 
               {workflowState.creationVideoUrl && (
                 <>
-                  <View className="h-[480px] w-[320px] mx-auto mb-6 overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-800">
+                  <View className="mx-auto mb-6 h-[480px] w-[320px] overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-800">
                     {/* TODO: This needs refining. */}
                     <VideoPlayer base64DataUrl={workflowState.creationVideoUrl} />
                   </View>
@@ -607,9 +608,9 @@ export default function Editor() {
                   <ThemedText type="book" className="mb-2 text-xl font-bold opacity-50">
                     Chapter {index + 1}
                   </ThemedText>
-                  
+
                   {/* Responsive container: vertical on mobile, horizontal on wide screens */}
-                  <View className="flex flex-col items-start justify-start space-y-4 lg:space-y-0 lg:flex-row lg:gap-6">
+                  <View className="flex flex-col items-start justify-start space-y-4 lg:flex-row lg:gap-6 lg:space-y-0">
                     {/* Text content container */}
                     <View className="w-full lg:flex-1">
                       <ThemedText type="book" className="text-base leading-relaxed">
@@ -618,20 +619,20 @@ export default function Editor() {
                     </View>
 
                     {/* Image container */}
-                    <View className="w-full lg:flex-1 lg:h-auto">
+                    <View className="w-full lg:h-auto lg:flex-1">
                       {workflowState.currStep === 'generating-images' && !part.imageData ? (
-                        <View className="w-full h-64 lg:h-full items-center justify-center rounded-lg bg-gray-200 dark:bg-gray-800">
+                        <View className="h-64 w-full items-center justify-center rounded-lg bg-gray-200 lg:h-full dark:bg-gray-800">
                           <ThemedText>Generating image...</ThemedText>
                         </View>
                       ) : part.imageData ? (
-                        <View className="w-full lg:h-full items-center justify-center">
+                        <View className="w-full items-center justify-center lg:h-full">
                           <ThemedImage
                             source={{ uri: part.imageData }}
-                            className="rounded-lg w-full h-full"
+                            className="size-full rounded-lg"
                           />
                         </View>
                       ) : (
-                        <View className="w-full h-64 lg:h-full items-center justify-center rounded-lg bg-gray-200 dark:bg-gray-800">
+                        <View className="h-64 w-full items-center justify-center rounded-lg bg-gray-200 lg:h-full dark:bg-gray-800">
                           <ThemedText>Failed to generate image</ThemedText>
                         </View>
                       )}
@@ -645,4 +646,4 @@ export default function Editor() {
       </ThemedContainerView>
     </ThemedBackgroundView>
   );
-} 
+}

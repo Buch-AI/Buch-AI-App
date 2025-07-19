@@ -108,8 +108,8 @@ export function SafeAreaScrollView(props: SafeAreaScrollViewProps) {
   };
 
   // Calculate the final content container style
-  const contentContainerStyle = { 
-    flex: 1, 
+  const contentContainerStyle = {
+    flex: 1,
     // NOTE: Top and bottom padding are kept as is
     paddingTop: 16,
     paddingBottom: 16,
@@ -136,7 +136,7 @@ export function SafeAreaScrollView(props: SafeAreaScrollViewProps) {
           onLayout={handleScrollViewLayout}
           onContentSizeChange={handleContentSizeChange}
           contentContainerStyle={contentContainerStyle}
-          style={{ 
+          style={{
             marginTop: 0,
             marginBottom: 0,
             // NOTE: Left and right margins are negative to give space for overflowing shadows

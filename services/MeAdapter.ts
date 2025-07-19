@@ -1,7 +1,8 @@
-import axios from './AxiosInterceptor';
 import { BUCHAI_SERVER_URL } from '@/constants/Config';
 import Logger from '@/utils/Logger';
+import axios from './AxiosInterceptor';
 import { CreationProfile } from './CreationAdapter';
+
 interface CreationsResponse {
   data: CreationProfile[];
 }

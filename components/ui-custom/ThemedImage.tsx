@@ -18,17 +18,17 @@ export function ThemedImage({
   ...restProps
 }: ThemedImageProps) {
   // Calculate responsive dimensions or use full width
-  const baseStyle = rfSize 
-    ? {
-        width: RFValue(rfSize),
-        height: RFValue(rfSize) * aspectRatio,
-        resizeMode: 'contain' as const,
-      }
-    : {
-        width: '100%' as const,
-        aspectRatio: aspectRatio,
-        resizeMode: 'contain' as const,
-      };
+  const baseStyle = rfSize ?
+    {
+      width: RFValue(rfSize),
+      height: RFValue(rfSize) * aspectRatio,
+      resizeMode: 'contain' as const,
+    } :
+    {
+      width: '100%' as const,
+      aspectRatio: aspectRatio,
+      resizeMode: 'contain' as const,
+    };
 
   // Web-specific styles to prevent selection, copying, and dragging
   const webSecurityStyle = Platform.OS === 'web' ? {

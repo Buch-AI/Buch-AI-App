@@ -1,10 +1,10 @@
+import { Ionicons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
 import { Platform, View } from 'react-native';
 import { HapticTab } from '@/components/ui-custom/HapticTab';
-import { Ionicons } from '@expo/vector-icons';
+import { ThemedText } from '@/components/ui-custom/ThemedText';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
-import { ThemedText } from '@/components/ui-custom/ThemedText';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -45,7 +45,7 @@ export default function TabLayout() {
           tabBarLabel: ({ focused, color }) => (
             <ThemedText
               type="body"
-              className={`text-xs text-center ${focused ? 'opacity-100' : 'opacity-60'}`}
+              className={`text-center text-xs ${focused ? 'opacity-100' : 'opacity-60'}`}
               style={{ color }}
             >
               Home
@@ -66,7 +66,7 @@ export default function TabLayout() {
           tabBarLabel: ({ focused, color }) => (
             <ThemedText
               type="body"
-              className={`text-xs text-center ${focused ? 'opacity-100' : 'opacity-60'}`}
+              className={`text-center text-xs ${focused ? 'opacity-100' : 'opacity-60'}`}
               style={{ color }}
             >
               Community
@@ -86,7 +86,7 @@ export default function TabLayout() {
           tabBarLabel: ({ focused, color }) => (
             <ThemedText
               type="body"
-              className={`text-xs text-center ${focused ? 'opacity-100' : 'opacity-60'}`}
+              className={`text-center text-xs ${focused ? 'opacity-100' : 'opacity-60'}`}
               style={{ color }}
             >
               Profile

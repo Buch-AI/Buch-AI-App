@@ -1,8 +1,7 @@
 import React from 'react';
 import { Modal, View } from 'react-native';
-import { ThemedContainerView } from './ThemedContainerView';
-import { ThemedText } from './ThemedText';
 import { ThemedButton, ButtonVariant } from './ThemedButton';
+import { ThemedText } from './ThemedText';
 
 interface ThemedModalProps {
   visible: boolean;

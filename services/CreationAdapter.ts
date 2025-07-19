@@ -1,6 +1,6 @@
-import axios from './AxiosInterceptor';
 import { BUCHAI_SERVER_URL } from '@/constants/Config';
 import Logger from '@/utils/Logger';
+import axios from './AxiosInterceptor';
 
 interface ImageDataRequest {
   data: string; // base64 encoded string
@@ -222,4 +222,4 @@ export class CreationAdapter {
       throw error;
     }
   }
-} 
+}

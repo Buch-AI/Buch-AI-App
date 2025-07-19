@@ -1,6 +1,6 @@
-import axios from './AxiosInterceptor';
 import { BUCHAI_SERVER_URL } from '@/constants/Config';
 import Logger from '@/utils/Logger';
+import axios from './AxiosInterceptor';
 
 export interface LlmAdaptable {
   generateStoryString(prompt: string, costCentreId?: string): Promise<string>;
@@ -39,10 +39,10 @@ export class LlmAdapter implements LlmAdaptable {
           'Content-Type': 'application/json',
           'Accept': 'text/event-stream',
         },
-        body: JSON.stringify({ 
-          prompt: prompt, 
+        body: JSON.stringify({
+          prompt: prompt,
           model_type: 'lite',
-          cost_centre_id: costCentreId
+          cost_centre_id: costCentreId,
         }),
       });
 

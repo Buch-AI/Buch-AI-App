@@ -1,6 +1,6 @@
-import axios from './AxiosInterceptor';
 import { BUCHAI_SERVER_URL } from '@/constants/Config';
 import Logger from '@/utils/Logger';
+import axios from './AxiosInterceptor';
 
 // Interface for the login request body
 interface LoginRequest {

@@ -26,30 +26,30 @@ export default function Root({ children }: { children: React.ReactNode }) {
         <link rel="icon" type="image/png" sizes="128x128" href="/assets/images/favicon@128.png" />
         <link rel="icon" type="image/png" sizes="256x256" href="/assets/images/favicon@256.png" />
         <link rel="icon" type="image/png" sizes="512x512" href="/assets/images/favicon@512.png" />
-        
+
         {/* Apple Touch Icons */}
         <link rel="apple-touch-icon" sizes="128x128" href="/assets/images/favicon@128.png" />
         <link rel="apple-touch-icon" sizes="256x256" href="/assets/images/favicon@256.png" />
         <link rel="apple-touch-icon" sizes="512x512" href="/assets/images/favicon@512.png" />
-        
+
         {/* Apple Web App Meta Tags */}
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="Buch AI" />
-        
+
         {/* Android/Chrome Web App Meta Tags */}
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="application-name" content="Buch AI" />
-        
+
         {/* Microsoft Tiles */}
         <meta name="msapplication-TileColor" content="#ffffff" />
         <meta name="msapplication-TileImage" content="/assets/images/favicon@256.png" />
-        
+
         {/* Theme Colors */}
         <meta name="theme-color" content="#ffffff" />
         <meta name="msapplication-navbutton-color" content="#ffffff" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        
+
         {/* Open Graph Meta Tags for Social Sharing */}
         <meta property="og:title" content="Buch AI - AI-Powered Story Generator" />
         <meta property="og:description" content="Your personal AI-powered short story ideation and illustration companion" />
@@ -57,15 +57,15 @@ export default function Root({ children }: { children: React.ReactNode }) {
         <meta property="og:image" content="/assets/images/favicon@512.png" />
         <meta property="og:image:width" content="512" />
         <meta property="og:image:height" content="512" />
-        
+
         {/* Twitter Card Meta Tags */}
         <meta name="twitter:card" content="summary" />
         <meta name="twitter:title" content="Buch AI - AI-Powered Story Generator" />
         <meta name="twitter:description" content="Your personal AI-powered short story ideation and illustration companion" />
         <meta name="twitter:image" content="/assets/images/favicon@512.png" />
 
-        {/* 
-          Disable body scrolling on web. This makes ScrollView components work closer to how they do on native. 
+        {/*
+          Disable body scrolling on web. This makes ScrollView components work closer to how they do on native.
           However, body scrolling is often nice to have for mobile web. If you want to enable it, remove this line.
         */}
         <ScrollViewStyleReset />
@@ -86,4 +86,4 @@ body {
   body {
     background-color: #000;
   }
-}`; 
+}`;

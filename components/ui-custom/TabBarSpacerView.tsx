@@ -11,6 +11,6 @@ interface TabBarSpacerViewProps {
  */
 export function TabBarSpacerView({ extraPadding = 20 }: TabBarSpacerViewProps) {
   const padding = useTabBarPadding(extraPadding);
-  
+
   return <View style={{ height: padding }} />;
-} 
+}

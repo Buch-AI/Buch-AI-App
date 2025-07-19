@@ -82,9 +82,9 @@ export function createMarkdownStyles({ textColor, tintColor }: MarkdownStylesOpt
   };
 }
 
-export function useMarkdownDocument({ 
-  filename, 
-  autoFetch = true 
+export function useMarkdownDocument({
+  filename,
+  autoFetch = true,
 }: UseMarkdownDocumentOptions): UseMarkdownDocumentReturn {
   const [content, setContent] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -94,15 +94,15 @@ export function useMarkdownDocument({
     try {
       setIsLoading(true);
       setError(null);
-      
+
       const response = await fetch(
-        `https://raw.githubusercontent.com/Buch-AI/Buch-AI-App/refs/heads/main/docs/${filename}`
+        `https://raw.githubusercontent.com/Buch-AI/Buch-AI-App/refs/heads/main/docs/${filename}`,
       );
-      
+
       if (!response.ok) {
         throw new Error(`Failed to fetch ${filename}: ${response.status} ${response.statusText}`);
       }
-      
+
       const documentContent = await response.text();
       setContent(documentContent);
       Logger.info(`${filename} loaded successfully`);
@@ -127,4 +127,4 @@ export function useMarkdownDocument({
     error,
     refetch: fetchDocument,
   };
-} 
+}

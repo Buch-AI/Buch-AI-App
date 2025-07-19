@@ -1,17 +1,16 @@
 import { Link, router } from 'expo-router';
 import React, { useState } from 'react';
-import { Image, Pressable, View } from 'react-native';
-import { RFValue } from 'react-native-responsive-fontsize';
+import { Pressable, View } from 'react-native';
 import { SafeAreaScrollView } from '@/components/ui-custom/SafeAreaScrollView';
 import { ThemedBackgroundView } from '@/components/ui-custom/ThemedBackgroundView';
 import { ThemedButton } from '@/components/ui-custom/ThemedButton';
 import { ThemedContainerView } from '@/components/ui-custom/ThemedContainerView';
+import { ThemedImage } from '@/components/ui-custom/ThemedImage';
 import { ThemedText } from '@/components/ui-custom/ThemedText';
 import { ThemedTextInput } from '@/components/ui-custom/ThemedTextInput';
+import { useAuth } from '@/contexts/AuthContext';
 import { registerUser } from '@/services/DatabaseAdapter';
 import Logger from '@/utils/Logger';
-import { ThemedImage } from '@/components/ui-custom/ThemedImage';
-import { useAuth } from '@/contexts/AuthContext';
 
 export default function SignUpScreen() {
   const { setError } = useAuth();
@@ -82,25 +81,25 @@ export default function SignUpScreen() {
           />
           <ThemedButton title="Sign Up" onPress={handleSignUp} loading={loading} />
           <Link href="/(auth)/login" asChild>
-            <ThemedButton 
-              title="Already have an account? Log in." 
-              onPress={() => {}} 
-              variant="text" 
+            <ThemedButton
+              title="Already have an account? Log in."
+              onPress={() => {}}
+              variant="text"
               className="mt-2"
             />
           </Link>
           {/* Privacy Policy and Terms of Service Agreement */}
-          <View className="mt-4 mb-2">
+          <View className="mb-2 mt-4">
             <ThemedText className="text-center text-sm text-gray-400 dark:text-gray-600">
               By signing up, you agree to our{' '}
               <Pressable onPress={() => router.push('/terms-of-service' as any)}>
-                <ThemedText className="text-center text-sm text-gray-400 dark:text-gray-600 underline">
+                <ThemedText className="text-center text-sm text-gray-400 underline dark:text-gray-600">
                   Terms of Service
                 </ThemedText>
               </Pressable>
               {' '}and{' '}
               <Pressable onPress={() => router.push('/privacy-policy' as any)}>
-                <ThemedText className="text-center text-sm text-gray-400 dark:text-gray-600 underline">
+                <ThemedText className="text-center text-sm text-gray-400 underline dark:text-gray-600">
                   Privacy Policy
                 </ThemedText>
               </Pressable>
