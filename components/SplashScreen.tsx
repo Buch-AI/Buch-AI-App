@@ -14,6 +14,7 @@ export function SplashScreenComponent() {
       <View className="items-center justify-center">
         <ThemedImage
           source={require('../assets/images/illustration-sample-1@512.png')}
+          rfSize={140}
         />
         <ThemedText type="title" className="text-center text-4xl font-bold text-white tracking-wide">
           Buch AI

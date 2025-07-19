@@ -19,6 +19,7 @@ import Logger from '@/utils/Logger';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedImage } from '@/components/ui-custom/ThemedImage';
 import { ThemedHorizontalRule } from '@/components/ui-custom/ThemedHorizontalRule';
+import { ThemedModal } from '@/components/ui-custom/ThemedModal';
 
 interface CreationPart {
   textJoined: string;
@@ -73,6 +74,9 @@ export default function Editor() {
 
   // MeAdapter CreationProfileUpdate loading state
   const [isLoadingProfile, setIsLoadingProfile] = useState(false);
+
+  // Modal state for leave confirmation
+  const [showLeaveModal, setShowLeaveModal] = useState(false);
 
   // Clean up Blob URL on unmount or when video URL changes
   useEffect(() => {
@@ -435,15 +439,44 @@ export default function Editor() {
 
   const hasActiveCreationId = !!workflowState.creationId;
 
+  const handleClosePress = () => {
+    if (isGenningCreation) {
+      setShowLeaveModal(true);
+    } else {
+      router.back();
+    }
+  };
+
+  const handleConfirmLeave = () => {
+    setShowLeaveModal(false);
+    router.back();
+  };
+
+  const handleCancelLeave = () => {
+    setShowLeaveModal(false);
+  };
+
   return (
     <ThemedBackgroundView>
       <ThemedContainerView className="flex-1">
+        <ThemedModal
+          visible={showLeaveModal}
+          onClose={handleCancelLeave}
+          title="Leave while generating?"
+          message="Your story is still being generated. If you leave now, you won't be able to track the generation progress in real time. Are you sure you want to leave?"
+          primaryButton={{
+            title: "Leave",
+            onPress: handleConfirmLeave,
+            variant: "danger"
+          }}
+        />
+
         <View className="flex-row items-center justify-between my-2">
           <TouchableOpacity 
-            onPress={() => router.back()}
+            onPress={handleClosePress}
             className="mr-4"
           >
-            <Ionicons name="arrow-back" size={24} className="text-gray-600 dark:text-gray-300" />
+            <Ionicons name="close-circle" size={28} className="text-gray-600 dark:text-gray-300" />
           </TouchableOpacity>
           <View className="flex-1">
             <ThemedText type="title">Create Your Story</ThemedText>
@@ -560,7 +593,7 @@ export default function Editor() {
 
               {workflowState.creationVideoUrl && (
                 <>
-                  <View className="h-[720px] w-[480px] mx-auto mb-6 overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-800">
+                  <View className="h-[480px] w-[320px] mx-auto mb-6 overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-800">
                     {/* TODO: This needs refining. */}
                     <VideoPlayer base64DataUrl={workflowState.creationVideoUrl} />
                   </View>
