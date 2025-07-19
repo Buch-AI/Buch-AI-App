@@ -53,26 +53,7 @@ export default function TabLayout() {
           ),
         }}
       />
-      <Tabs.Screen
-        name="editor"
-        options={{
-          title: 'Create',
-          tabBarIcon: ({ color }) => (
-            <View className="items-center">
-              <Ionicons size={24} name="create-outline" color={color} />
-            </View>
-          ),
-          tabBarLabel: ({ focused, color }) => (
-            <ThemedText
-              type="body" 
-              className={`text-xs text-center ${focused ? 'opacity-100' : 'opacity-60'}`}
-              style={{ color }}
-            >
-              Create
-            </ThemedText>
-          ),
-        }}
-      />
+
       <Tabs.Screen
         name="community"
         options={{

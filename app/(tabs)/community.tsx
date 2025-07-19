@@ -12,7 +12,7 @@ export default function CommunityScreen() {
   return (
     <ThemedBackgroundView>
       <ThemedContainerView className="flex-1">
-        <View className="my-4">
+        <View className="my-2">
           <ThemedText type="title">Community</ThemedText>
         </View>
 

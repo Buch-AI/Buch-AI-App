@@ -19,7 +19,6 @@ import Logger from '@/utils/Logger';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedImage } from '@/components/ui-custom/ThemedImage';
 import { ThemedHorizontalRule } from '@/components/ui-custom/ThemedHorizontalRule';
-import { TabBarSpacerView } from '@/components/ui-custom/TabBarSpacerView';
 
 interface CreationPart {
   textJoined: string;
@@ -439,8 +438,16 @@ export default function Editor() {
   return (
     <ThemedBackgroundView>
       <ThemedContainerView className="flex-1">
-        <View className="my-4">
-          <ThemedText type="title">Create Your Story</ThemedText>
+        <View className="flex-row items-center justify-between my-2">
+          <TouchableOpacity 
+            onPress={() => router.back()}
+            className="mr-4"
+          >
+            <Ionicons name="arrow-back" size={24} className="text-gray-600 dark:text-gray-300" />
+          </TouchableOpacity>
+          <View className="flex-1">
+            <ThemedText type="title">Create Your Story</ThemedText>
+          </View>
         </View>
 
         <WorkflowStatusBox
@@ -601,10 +608,8 @@ export default function Editor() {
               ))}
             </>
           )}
-          
-          <TabBarSpacerView />
         </SafeAreaScrollView>
       </ThemedContainerView>
     </ThemedBackgroundView>
   );
-}
+} 

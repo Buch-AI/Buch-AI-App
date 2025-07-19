@@ -159,7 +159,7 @@ export default function Home() {
         )}
 
         <Link
-          href={{ pathname: '../editor', params: { id: item.creation_id } }}
+          href={{ pathname: '/editor', params: { id: item.creation_id } }}
           asChild
           className="flex-1"
           disabled={isSelecting}
@@ -202,12 +202,12 @@ export default function Home() {
           }}
         />
 
-        <View className="my-4">
+        <View className="my-2">
           <ThemedText type="title">Your Stories</ThemedText>
         </View>
 
         <View className="mb-4">
-          <Link href={{ pathname: '../editor', params: { id: undefined } }} asChild>
+          <Link href={{ pathname: '/editor', params: { id: undefined } }} asChild>
             <ThemedButton title="Create a New Story" onPress={() => {}} />
           </Link>
         </View>

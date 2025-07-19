@@ -73,6 +73,15 @@ function RootLayoutRoutes() {
             redirect={!isAuthenticated}
           />
           <Stack.Screen
+            name="editor"
+            options={{ 
+              presentation: 'modal',
+              animation: 'slide_from_bottom',
+              gestureEnabled: true,
+              gestureDirection: 'vertical',
+            }}
+          />
+          <Stack.Screen
             name="+not-found"
             options={{ presentation: 'modal' }}
           />
