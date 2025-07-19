@@ -73,6 +73,9 @@ function RootLayoutRoutes() {
             redirect={!isAuthenticated}
           />
           <Stack.Screen
+            name="(profile)"
+          />
+          <Stack.Screen
             name="editor"
             options={{
               presentation: 'modal',
@@ -83,6 +86,24 @@ function RootLayoutRoutes() {
           />
           <Stack.Screen
             name="privacy-policy"
+            options={{
+              presentation: 'modal',
+              animation: 'slide_from_bottom',
+              gestureEnabled: true,
+              gestureDirection: 'vertical',
+            }}
+          />
+          <Stack.Screen
+            name="terms-of-service"
+            options={{
+              presentation: 'modal',
+              animation: 'slide_from_bottom',
+              gestureEnabled: true,
+              gestureDirection: 'vertical',
+            }}
+          />
+          <Stack.Screen
+            name="legal"
             options={{
               presentation: 'modal',
               animation: 'slide_from_bottom',

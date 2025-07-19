@@ -148,7 +148,7 @@ export default function Home() {
   };
 
   const renderCreationItem = ({ item }: { item: Creation }) => (
-    <View className="mb-4 rounded-lg !bg-white/60 p-4">
+    <View className="mb-4 rounded-lg !bg-white/40 p-4">
       <View className="flex-row items-start justify-between">
         {isSelecting && (
           <ThemedCheckbox
@@ -165,21 +165,25 @@ export default function Home() {
           disabled={isSelecting}
         >
           <View>
-            <ThemedText className="mb-1 text-base font-bold">{item.title}</ThemedText>
-            {item.description && (
-              <ThemedText className="text-sm">{item.description}</ThemedText>
-            )}
-            <ThemedText className="text-sm opacity-70">
-              Created on {new Date(item.created_at).toLocaleDateString()} at {new Date(item.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-            </ThemedText>
-            <ThemedText className="text-sm opacity-70">
-              Last updated on {new Date(item.updated_at).toLocaleDateString()} at {new Date(item.updated_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-            </ThemedText>
-            <View className="mt-2">
-              <ThemedText className="inline-block rounded-full bg-gray-200 px-2 py-1 text-xs dark:bg-gray-700">
-                {item.status}
+            <View className="mb-1 flex-row items-center">
+              <ThemedText className="mr-2 flex-1 text-base font-bold">
+                {item.title}
               </ThemedText>
+              <View className="rounded-full bg-gray-200 px-2 py-1 dark:bg-gray-800">
+                <ThemedText className="text-xs">
+                  {item.status}
+                </ThemedText>
+              </View>
             </View>
+            {item.description && (
+              <ThemedText className="text-xs">{item.description}</ThemedText>
+            )}
+            <ThemedText className="text-xs opacity-60">
+              Created on {new Date(item.created_at).toLocaleDateString([], { year: 'numeric', month: 'long', day: 'numeric' })} at {new Date(item.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            </ThemedText>
+            <ThemedText className="text-xs opacity-60">
+              Last updated on {new Date(item.updated_at).toLocaleDateString([], { year: 'numeric', month: 'long', day: 'numeric' })} at {new Date(item.updated_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            </ThemedText>
           </View>
         </Link>
       </View>
