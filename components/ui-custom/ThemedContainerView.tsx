@@ -14,7 +14,7 @@ export function ThemedContainerView(props: ThemedContainerViewProps) {
 
   return (
     <View
-      className={`mx-auto min-h-full w-full max-w-[540px] px-4 sm:max-w-[720px] md:max-w-[960px] lg:max-w-[1140px] xl:max-w-[1320px] ${className || ''}`}
+      className={`mx-auto min-h-full w-full max-w-[540px] px-4 sm:max-w-[720px] md:max-w-[960px] lg:max-w-[960px] xl:max-w-[960px] ${className || ''}`}
       style={[{ backgroundColor }, style]}
       {...otherProps}
     />

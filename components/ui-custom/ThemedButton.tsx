@@ -64,12 +64,13 @@ export const ThemedButton: React.FC<ThemedButtonProps> = ({
     case 'outline':
       // For outline, we use tint color directly for text and border
       bgClass = 'bg-transparent';
-      borderClass = 'border border-blue-400'; // Default border, will be overridden by style
+      borderClass = 'border border-gray-200'; // Default border, will be overridden by style
       textClass = 'text-blue-400'; // Default text color, will be overridden by style
       break;
     case 'text':
       // For text, we use tint color directly for text
       bgClass = 'bg-transparent';
+      borderClass = 'border border-gray-200'; // Default border, will be overridden by style
       textClass = 'text-blue-400'; // Default text color, will be overridden by style
       break;
     case 'icon':

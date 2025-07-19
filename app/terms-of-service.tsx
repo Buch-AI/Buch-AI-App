@@ -1,11 +1,11 @@
 import React from 'react';
 import { DocumentScreen } from '@/components/DocumentScreen';
 
-export default function PrivacyPolicyScreen() {
+export default function TermsOfServiceScreen() {
   return (
     <DocumentScreen 
-      filename="PRIVACY_POLICY.md" 
-      title="Privacy Policy" 
+      filename="TERMS_OF_SERVICE.md" 
+      title="Terms of Service" 
     />
   );
 } 
