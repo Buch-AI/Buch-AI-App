@@ -4,12 +4,12 @@ import { Stack } from 'expo-router/stack';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useCallback, useEffect, useState } from 'react';
-import 'react-native-reanimated';
+import 'react-native-reanimated'; // NOTE: This is required for the app to work on web
 import { View } from 'react-native';
 import { SplashScreenComponent } from '@/components/SplashScreen';
 import { AuthProvider, useAuth } from '@/contexts/AuthContext';
 import { StoryProvider } from '@/contexts/StoryContext';
-import '@/global.css';
+import '@/global.css'; // NOTE: This is required for the app to work on web
 import Logger from '@/utils/Logger';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -77,6 +77,15 @@ function RootLayoutRoutes() {
           />
           <Stack.Screen
             name="editor"
+            options={{
+              presentation: 'modal',
+              animation: 'slide_from_bottom',
+              gestureEnabled: true,
+              gestureDirection: 'vertical',
+            }}
+          />
+          <Stack.Screen
+            name="payment"
             options={{
               presentation: 'modal',
               animation: 'slide_from_bottom',

@@ -22,22 +22,20 @@ export function ThemedImage({
     {
       width: RFValue(rfSize),
       height: RFValue(rfSize) * aspectRatio,
-      resizeMode: 'contain' as const,
     } :
     {
       width: '100%' as const,
       aspectRatio: aspectRatio,
-      resizeMode: 'contain' as const,
     };
 
   // Web-specific styles to prevent selection, copying, and dragging
   const webSecurityStyle = Platform.OS === 'web' ? {
     userSelect: 'none',
-    webkitUserSelect: 'none',
-    mozUserSelect: 'none',
+    WebkitUserSelect: 'none',
+    MozUserSelect: 'none',
     msUserSelect: 'none',
-    webkitUserDrag: 'none',
-    webkitTouchCallout: 'none',
+    WebkitUserDrag: 'none',
+    WebkitTouchCallout: 'none',
     pointerEvents: 'none',
   } as any : {};
 
@@ -57,6 +55,7 @@ export function ThemedImage({
   return (
     <Image
       source={source}
+      resizeMode="contain"
       style={[
         baseStyle,
         webSecurityStyle,

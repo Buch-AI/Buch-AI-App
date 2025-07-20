@@ -63,6 +63,12 @@ export default function ProfileScreen() {
       onPress: () => router.push('/(profile)/edit-profile'),
     },
     {
+      title: 'Billing & Payments',
+      subtitle: 'Purchase credits and premium features',
+      icon: 'card-outline',
+      onPress: () => router.push('/payment'),
+    },
+    {
       title: 'Legal',
       subtitle: 'Privacy Policy, Terms of Service',
       icon: 'document-text-outline',

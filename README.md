@@ -27,6 +27,28 @@ npm run ios:d
 npm run android:d
 ```
 
+## Appendix: FAQs
+
+### Why is the bundler complaining about the assets directory?
+
+You may see the following error when initializing the app:
+```
+Error: ENOENT: no such file or directory, scandir '/Users/jyjulianwong/Desktop/Programming/Buch-AI-App/images'
+    at Object.readdir (node:internal/fs/promises:950:18)
+    at getAbsoluteAssetRecord (/Users/jyjulianwong/Desktop/Programming/Buch-AI-App/node_modules/metro/src/Assets.js:77:17)
+    at getAsset (/Users/jyjulianwong/Desktop/Programming/Buch-AI-App/node_modules/metro/src/Assets.js:191:18)
+    at Server._processSingleAssetRequest (/Users/jyjulianwong/Desktop/Programming/Buch-AI-App/node_modules/metro/src/Server.js:335:20)
+    at Server._processRequest (/Users/jyjulianwong/Desktop/Programming/Buch-AI-App/node_modules/metro/src/Server.js:417:7)
+Error: ENOENT: no such file or directory, scandir '/Users/jyjulianwong/Desktop/Programming/Buch-AI-App/images'
+    at Object.readdir (node:internal/fs/promises:950:18)
+    at getAbsoluteAssetRecord (/Users/jyjulianwong/Desktop/Programming/Buch-AI-App/node_modules/metro/src/Assets.js:77:17)
+    at getAsset (/Users/jyjulianwong/Desktop/Programming/Buch-AI-App/node_modules/metro/src/Assets.js:191:18)
+    at Server._processSingleAssetRequest (/Users/jyjulianwong/Desktop/Programming/Buch-AI-App/node_modules/metro/src/Server.js:335:20)
+    at Server._processRequest (/Users/jyjulianwong/Desktop/Programming/Buch-AI-App/node_modules/metro/src/Server.js:417:7)
+```
+
+This is a known issue with the `metro` bundler for web. Specifically, the bundler expects the `images` directory to be present in the root of the project when the `baseUrl` option is set in `app.json`. You can safely ignore this error and expect the app to work as expected.
+
 ## Appendix: Expo
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).

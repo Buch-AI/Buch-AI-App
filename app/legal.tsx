@@ -49,7 +49,6 @@ export default function LegalScreen() {
           <ThemedText type="title" className="flex-1 text-end">
             Legal
           </ThemedText>
-          <View style={{ width: 40 }} />
         </View>
 
         <View className="my-4">

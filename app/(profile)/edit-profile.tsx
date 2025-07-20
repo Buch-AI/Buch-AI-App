@@ -84,7 +84,6 @@ export default function EditProfileScreen() {
           <ThemedText type="title" className="flex-1 text-end">
             Edit Profile
           </ThemedText>
-          <View style={{ width: 40 }} />
         </View>
 
         <SafeAreaScrollView>

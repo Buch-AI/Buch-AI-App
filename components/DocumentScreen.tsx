@@ -76,7 +76,6 @@ export function DocumentScreen({ filename, title }: DocumentScreenProps) {
           <ThemedText type="title" className="flex-1 text-end">
             {title}
           </ThemedText>
-          <View style={{ width: 40 }} />
         </View>
 
         {/* Content */}
