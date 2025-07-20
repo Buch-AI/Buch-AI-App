@@ -52,9 +52,9 @@ export default function SignUpScreen() {
     <ThemedBackgroundView>
       <ThemedContainerView className="flex-1 p-6">
         <SafeAreaScrollView>
-          <View pointerEvents="none" className="w-full items-center">
+          <View style={{ pointerEvents: 'none' }} className="w-full items-center">
             <ThemedImage
-              source={require('@/assets/images/illustration-sample-1@2000.png')}
+              source={require('../../assets/images/illustration-sample-1@2000.png')}
               rfSize={160}
             />
           </View>
