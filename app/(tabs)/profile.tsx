@@ -66,7 +66,7 @@ export default function ProfileScreen() {
       title: 'Billing & Payments',
       subtitle: 'Purchase credits and premium features',
       icon: 'card-outline',
-      onPress: () => router.push('/payment'),
+      onPress: () => router.push('/payments/checkout'),
     },
     {
       title: 'Legal',

@@ -174,7 +174,7 @@ export default function PaymentScreen() {
       setIsProcessingPayment(true);
 
       // Get current URL for success/cancel URLs
-      const baseUrl = window.location.origin + window.location.pathname.replace('/payment', '/payment-result');
+      const baseUrl = window.location.origin + window.location.pathname.replace('/payments/checkout', '/payments/response');
 
       // Create URLs that will properly handle Stripe's additional parameters
       // Stripe will append ?session_id=... so we need to ensure our parameters come first

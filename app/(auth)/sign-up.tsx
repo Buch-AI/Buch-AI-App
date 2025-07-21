@@ -92,13 +92,13 @@ export default function SignUpScreen() {
           <View className="mb-2 mt-4">
             <ThemedText className="text-center text-sm text-gray-400 dark:text-gray-600">
               By signing up, you agree to our{' '}
-              <Pressable onPress={() => router.push('/terms-of-service' as any)}>
+              <Pressable onPress={() => router.push('/legal/terms-of-service' as any)}>
                 <ThemedText className="text-center text-sm text-gray-400 underline dark:text-gray-600">
                   Terms of Service
                 </ThemedText>
               </Pressable>
               {' '}and{' '}
-              <Pressable onPress={() => router.push('/privacy-policy' as any)}>
+              <Pressable onPress={() => router.push('/legal/privacy-policy' as any)}>
                 <ThemedText className="text-center text-sm text-gray-400 underline dark:text-gray-600">
                   Privacy Policy
                 </ThemedText>

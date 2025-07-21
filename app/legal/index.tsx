@@ -19,12 +19,12 @@ const legalItems: LegalItem[] = [
   {
     title: 'Privacy Policy',
     subtitle: 'How we handle your personal information',
-    route: '/privacy-policy',
+    route: '/legal/privacy-policy',
   },
   {
     title: 'Terms of Service',
     subtitle: 'Terms and conditions for using Buch AI',
-    route: '/terms-of-service',
+    route: '/legal/terms-of-service',
   },
 ];
 

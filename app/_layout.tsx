@@ -85,7 +85,7 @@ function RootLayoutRoutes() {
             }}
           />
           <Stack.Screen
-            name="payment"
+            name="payments"
             options={{
               presentation: 'modal',
               animation: 'slide_from_bottom',
