@@ -21,8 +21,8 @@ export default function Root({ children }: { children: React.ReactNode }) {
         <link rel="manifest" href="/manifest.json" />
 
         {/* Favicons - Multiple sizes for better browser support */}
-        <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon.png" />
-        <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon@16.png" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon@32.png" />
         <link rel="icon" type="image/png" sizes="128x128" href="/assets/images/favicon@128.png" />
         <link rel="icon" type="image/png" sizes="256x256" href="/assets/images/favicon@256.png" />
         <link rel="icon" type="image/png" sizes="512x512" href="/assets/images/favicon@512.png" />

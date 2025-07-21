@@ -149,7 +149,7 @@ export default function ProfileScreen() {
           <View className="mb-8">
             {loading ? (
               <View className="rounded-lg bg-white/60 p-4 dark:bg-gray-800/60">
-                <ThemedText className="text-center opacity-70">Loading user information...</ThemedText>
+                <ThemedText className="text-center opacity-70">Loading your profile...</ThemedText>
               </View>
             ) : user ? (
               <View className="rounded-lg bg-white/60 p-4 dark:bg-gray-800/60">
@@ -172,7 +172,7 @@ export default function ProfileScreen() {
               </View>
             ) : (
               <View className="rounded-lg bg-white/60 p-2 dark:bg-gray-800/60">
-                <ThemedText className="text-center opacity-70">Failed to load user information</ThemedText>
+                <ThemedText className="text-center opacity-70">Failed to load your profile information</ThemedText>
               </View>
             )}
           </View>

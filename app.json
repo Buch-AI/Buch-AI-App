@@ -8,7 +8,7 @@
   "userInterfaceStyle": "automatic",
   "newArchEnabled": true,
   "splash": {
-    "image": "./assets/images/illustration-sample-1@512.png",
+    "image": "./assets/images/favicon@512.png",
     "resizeMode": "contain"
   },
   "ios": {
@@ -16,7 +16,7 @@
   },
   "android": {
     "adaptiveIcon": {
-      "foregroundImage": "./assets/images/adaptive-icon.png",
+      "foregroundImage": "./assets/images/favicon@1024.png",
       "backgroundColor": "#ffffff"
     }
   },

@@ -145,9 +145,6 @@ export default function RootLayout() {
       try {
         // Keep the splash screen visible while we fetch resources
         await SplashScreen.preventAutoHideAsync();
-
-        // Artificially delay for 1 second to make splash visible during testing
-        await new Promise((resolve) => setTimeout(resolve, 1000));
       } catch (e) {
         console.warn(e);
       } finally {

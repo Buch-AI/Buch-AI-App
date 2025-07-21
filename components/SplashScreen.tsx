@@ -12,8 +12,9 @@ export function SplashScreenComponent() {
     <View className="flex-1 items-center justify-center p-8" style={{ backgroundColor, pointerEvents: 'none' }}>
       <View className="items-center justify-center">
         <ThemedImage
-          source={require('../assets/images/illustration-sample-1@512.png')}
+          source={require('../assets/images/favicon@512.png')}
           rfSize={140}
+          className="mb-4"
         />
         <ThemedText type="title" className="text-center text-4xl font-bold tracking-wide text-white">
           Buch AI
