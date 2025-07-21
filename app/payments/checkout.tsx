@@ -3,6 +3,7 @@ import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Alert, FlatList, TouchableOpacity, View } from 'react-native';
 import { SafeAreaScrollView } from '@/components/ui-custom/SafeAreaScrollView';
+import { ThemedActivityOverlay } from '@/components/ui-custom/ThemedActivityOverlay';
 import { ThemedBackgroundView } from '@/components/ui-custom/ThemedBackgroundView';
 import { ThemedButton } from '@/components/ui-custom/ThemedButton';
 import { ThemedContainerView } from '@/components/ui-custom/ThemedContainerView';
@@ -97,22 +98,22 @@ function MobileNotSupportedView() {
               </View>
 
               <ThemedText type="title" className="mb-4 text-center">
-              Web Only Feature
+                Web-Only Feature
               </ThemedText>
 
               <ThemedText type="body" className="mb-6 text-center leading-6 text-gray-600 dark:text-gray-400">
-              Payments are currently only available on the web version of our app.
-              Please visit our website to purchase credits and premium features.
+                Payments are currently only available on the web version of our app.
+                Please visit our website to purchase credits and premium features.
               </ThemedText>
 
               <View className="mb-6 w-full rounded-xl bg-blue-100 p-4 dark:bg-blue-900/20">
                 <ThemedText type="body" className="text-center text-sm text-blue-600 dark:text-blue-400">
-                💡 You can access the web version at the same URL in your browser
+                💡 You can access the web version at the same URL in your browser.
                 </ThemedText>
               </View>
 
               <ThemedButton
-                title="Got it"
+                title="Got it!"
                 onPress={() => router.back()}
                 className="w-full"
               />
@@ -209,18 +210,13 @@ export default function PaymentScreen() {
     return <MobileNotSupportedView />;
   }
 
-  if (isLoading) {
-    return (
-      <ThemedBackgroundView>
-        <View className="flex-1 items-center justify-center">
-          <ThemedText type="body">Loading products...</ThemedText>
-        </View>
-      </ThemedBackgroundView>
-    );
-  }
-
   return (
     <ThemedBackgroundView>
+      <ThemedActivityOverlay
+        visible={isLoading}
+        text="Loading products..."
+      />
+
       <ThemedContainerView className="flex-1">
         {/* Header with cross button */}
         <View className="my-2 flex-row items-center justify-between">
