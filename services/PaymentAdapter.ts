@@ -9,7 +9,7 @@ export interface ProductInfo {
   description: string;
   price: number; // Price in cents
   currency: string;
-  type: 'one_time' | 'credit_purchase' | 'feature_unlock';
+  type: 'SUBSCRIPTION' | 'BONUS';
 }
 
 export interface CreateCheckoutSessionRequest {
@@ -31,7 +31,7 @@ export interface PaymentRecord {
   amount: number;
   currency: string;
   status: 'pending' | 'completed' | 'failed' | 'cancelled';
-  payment_type: 'one_time' | 'credit_purchase' | 'feature_unlock';
+  payment_type: 'SUBSCRIPTION' | 'BONUS';
   product_id: string;
   quantity: number;
   description?: string;
@@ -133,14 +133,12 @@ export class PaymentAdapter {
   /**
    * Get user-friendly payment type
    */
-  static getTypeDisplayText(type: PaymentRecord['payment_type']): string {
+  static getTypeDisplayText(type: PaymentRecord['payment_type'] | ProductInfo['type']): string {
     switch (type) {
-    case 'one_time':
-      return 'One-time Purchase';
-    case 'credit_purchase':
-      return 'Credits';
-    case 'feature_unlock':
-      return 'Premium Feature';
+    case 'SUBSCRIPTION':
+      return 'Subscription';
+    case 'BONUS':
+      return 'Bonus Credits';
     default:
       return 'Purchase';
     }
