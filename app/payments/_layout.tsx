@@ -6,7 +6,7 @@ export default function PaymentsLayout() {
       <Stack.Screen
         name="checkout"
         options={{
-          title: 'Purchase Credits & Features',
+          title: 'Upgrade Your Plan',
           presentation: 'modal',
           animation: 'slide_from_bottom',
           gestureEnabled: true,
@@ -16,7 +16,7 @@ export default function PaymentsLayout() {
       <Stack.Screen
         name="response"
         options={{
-          title: 'Payment Result',
+          title: 'Payment Response',
           presentation: 'modal',
           animation: 'slide_from_bottom',
           gestureEnabled: true,

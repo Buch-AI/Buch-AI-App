@@ -63,8 +63,8 @@ export default function ProfileScreen() {
       onPress: () => router.push('/(profile)/edit-profile'),
     },
     {
-      title: 'Billing & Payments',
-      subtitle: 'Purchase credits and premium features',
+      title: 'Upgrade Your Plan',
+      subtitle: 'Purchase bonus credits or subscribe to a plan',
       icon: 'card-outline',
       onPress: () => router.push('/payments/checkout'),
     },

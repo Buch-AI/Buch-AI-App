@@ -57,22 +57,22 @@ export default function PaymentResultScreen() {
 
   // Debug logging to see what we're getting
   useEffect(() => {
-    console.log('Payment Result - Status value:', status);
-    console.log('Payment Result - Status type:', typeof status);
-    console.log('Payment Result - URL status:', urlStatus);
+    console.log('Payment Response - Status value:', status);
+    console.log('Payment Response - Status type:', typeof status);
+    console.log('Payment Response - URL status:', urlStatus);
 
     // Also check window URL if we're on web
     if (typeof window !== 'undefined') {
-      console.log('Payment Result - Current URL:', window.location.href);
-      console.log('Payment Result - URL search params:', window.location.search);
+      console.log('Payment Response - Current URL:', window.location.href);
+      console.log('Payment Response - URL search params:', window.location.search);
       try {
         const urlParams = new URLSearchParams(window.location.search);
-        console.log('Payment Result - All URL params:', Object.fromEntries(urlParams.entries()));
+        console.log('Payment Response - All URL params:', Object.fromEntries(urlParams.entries()));
       } catch (error) {
-        console.log('Payment Result - URL params parsing error:', error);
+        console.log('Payment Response - URL params parsing error:', error);
       }
-      console.log('Payment Result - Has Stripe success indicators:', hasStripeSuccess);
-      console.log('Payment Result - Final success state:', finalIsSuccess);
+      console.log('Payment Response - Has Stripe success indicators:', hasStripeSuccess);
+      console.log('Payment Response - Final success state:', finalIsSuccess);
     }
   }, [status, urlStatus, hasStripeSuccess, finalIsSuccess]);
 

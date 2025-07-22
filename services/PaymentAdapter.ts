@@ -9,7 +9,7 @@ export interface ProductInfo {
   description: string;
   price: number; // Price in cents
   currency: string;
-  type: 'SUBSCRIPTION' | 'BONUS';
+  type: 'subscription' | 'bonus';
 }
 
 export interface CreateCheckoutSessionRequest {
@@ -136,8 +136,10 @@ export class PaymentAdapter {
   static getTypeDisplayText(type: PaymentRecord['payment_type'] | ProductInfo['type']): string {
     switch (type) {
     case 'SUBSCRIPTION':
+    case 'subscription':
       return 'Subscription';
     case 'BONUS':
+    case 'bonus':
       return 'Bonus Credits';
     default:
       return 'Purchase';

@@ -1,8 +1,9 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { Alert, FlatList, TouchableOpacity, View } from 'react-native';
 import { SafeAreaScrollView } from '@/components/ui-custom/SafeAreaScrollView';
+import { TabBarSpacerView } from '@/components/ui-custom/TabBarSpacerView';
 import { ThemedActivityOverlay } from '@/components/ui-custom/ThemedActivityOverlay';
 import { ThemedBackgroundView } from '@/components/ui-custom/ThemedBackgroundView';
 import { ThemedButton } from '@/components/ui-custom/ThemedButton';
@@ -28,6 +29,8 @@ function ProductCard({ product, onPress, isSelected }: ProductCardProps) {
   return (
     <TouchableOpacity
       onPress={onPress}
+      delayPressIn={70} // 70 ms delay to allow scroll gestures to start before touch is captured
+      activeOpacity={0.8} // Visual feedback when pressed - reduces opacity to 80%
       className={`mb-4 rounded-xl border-2 p-4 ${
         isSelected ? 'border-blue-500' : 'border-gray-200 dark:border-gray-700'
       }`}
@@ -50,10 +53,19 @@ function ProductCard({ product, onPress, isSelected }: ProductCardProps) {
       <View className="flex-row items-center">
         <View
           className={`rounded-full px-2 py-1 ${
-            isDark ? 'bg-gray-700' : 'bg-gray-100'
+            product.type === 'subscription' ?
+              isDark ? 'bg-blue-800/40' : 'bg-blue-200' : // Blue theme for subscriptions
+              isDark ? 'bg-green-800/40' : 'bg-green-200' // Green theme for bonus credits
           }`}
         >
-          <ThemedText type="body" className="text-sm">
+          <ThemedText
+            type="body"
+            className={`text-sm ${
+              product.type === 'subscription' ?
+                isDark ? 'text-blue-400' : 'text-blue-600' : // Blue text for subscriptions
+                isDark ? 'text-green-400' : 'text-green-600' // Green text for bonus credits
+            }`}
+          >
             {PaymentAdapter.getTypeDisplayText(product.type)}
           </ThemedText>
         </View>
@@ -67,6 +79,37 @@ function ProductCard({ product, onPress, isSelected }: ProductCardProps) {
         )}
       </View>
     </TouchableOpacity>
+  );
+}
+
+interface ProductSectionProps {
+  title: string;
+  products: ProductInfo[];
+  selectedProduct: ProductInfo | null;
+  onSelectProduct: (product: ProductInfo) => void;
+}
+
+function ProductSection({ title, products, selectedProduct, onSelectProduct }: ProductSectionProps) {
+  if (products.length === 0) return null;
+
+  return (
+    <View className="mb-6">
+      <ThemedText type="title" className="mb-3 text-base">
+        {title}
+      </ThemedText>
+      <FlatList
+        data={products}
+        keyExtractor={(item) => item.product_id}
+        renderItem={({ item }) => (
+          <ProductCard
+            product={item}
+            onPress={() => onSelectProduct(item)}
+            isSelected={selectedProduct?.product_id === item.product_id}
+          />
+        )}
+        scrollEnabled={false}
+      />
+    </View>
   );
 }
 
@@ -85,7 +128,7 @@ function MobileNotSupportedView() {
             variant="icon"
           />
           <ThemedText type="title" className="flex-1 text-end">
-            Purchase Credits & Features
+            Upgrade Your Plan
           </ThemedText>
         </View>
         <SafeAreaScrollView>
@@ -135,6 +178,22 @@ export default function PaymentScreen() {
   const isPaymentSupported = PaymentAdapter.isPaymentSupported();
   const textColor = useThemeColor({}, 'text');
 
+  // Separate and sort products by type
+  const { subscriptionProducts, bonusProducts } = useMemo(() => {
+    const subscriptions = products
+      .filter((product) => product.type === 'subscription')
+      .sort((a, b) => a.price - b.price);
+
+    const bonus = products
+      .filter((product) => product.type === 'bonus')
+      .sort((a, b) => a.price - b.price);
+
+    return {
+      subscriptionProducts: subscriptions,
+      bonusProducts: bonus,
+    };
+  }, [products]);
+
   useEffect(() => {
     if (!isAuthenticated) {
       router.replace('/(auth)/login');
@@ -154,8 +213,16 @@ export default function PaymentScreen() {
       setIsLoading(true);
       const productsData = await paymentAdapter.getProducts();
       setProducts(productsData);
+
+      // Auto-select the first product (lowest price subscription, then lowest price bonus)
       if (productsData.length > 0) {
-        setSelectedProduct(productsData[0]);
+        const sortedProducts = [...productsData].sort((a, b) => {
+          // Prioritize subscriptions, then sort by price
+          if (a.type === 'subscription' && b.type !== 'subscription') return -1;
+          if (a.type !== 'subscription' && b.type === 'subscription') return 1;
+          return a.price - b.price;
+        });
+        setSelectedProduct(sortedProducts[0]);
       }
     } catch (error) {
       Logger.error(`Failed to load products: ${error}`);
@@ -227,7 +294,7 @@ export default function PaymentScreen() {
             variant="icon"
           />
           <ThemedText type="title" className="flex-1 text-end">
-            Purchase Credits & Features
+            Upgrade Your Plan
           </ThemedText>
         </View>
 
@@ -246,23 +313,36 @@ export default function PaymentScreen() {
             </ThemedText>
           </View>
 
-          {/* Products List */}
+          {/* Products List - Separated by Type */}
           <View className="mb-6">
             <ThemedText type="title" className="mb-4 text-lg">
               Available Products
             </ThemedText>
-            <FlatList
-              data={products}
-              keyExtractor={(item) => item.product_id}
-              renderItem={({ item }) => (
-                <ProductCard
-                  product={item}
-                  onPress={() => setSelectedProduct(item)}
-                  isSelected={selectedProduct?.product_id === item.product_id}
-                />
-              )}
-              scrollEnabled={false}
+
+            {/* Subscription Products */}
+            <ProductSection
+              title="📅 Monthly Subscriptions"
+              products={subscriptionProducts}
+              selectedProduct={selectedProduct}
+              onSelectProduct={setSelectedProduct}
             />
+
+            {/* Bonus Credit Products */}
+            <ProductSection
+              title="💰 Bonus Credits"
+              products={bonusProducts}
+              selectedProduct={selectedProduct}
+              onSelectProduct={setSelectedProduct}
+            />
+
+            {/* No Products Message */}
+            {products.length === 0 && !isLoading && (
+              <View className="items-center py-8">
+                <ThemedText type="body" className="text-center text-gray-500 dark:text-gray-400">
+                  No products available at the moment.
+                </ThemedText>
+              </View>
+            )}
           </View>
 
           {/* Payment Section */}
@@ -277,6 +357,12 @@ export default function PaymentScreen() {
                   <ThemedText type="body">Selected Product:</ThemedText>
                   <ThemedText type="body" className="font-medium">
                     {selectedProduct.name}
+                  </ThemedText>
+                </View>
+                <View className="mb-2 flex-row items-center justify-between">
+                  <ThemedText type="body">Type:</ThemedText>
+                  <ThemedText type="body" className="font-medium">
+                    {PaymentAdapter.getTypeDisplayText(selectedProduct.type)}
                   </ThemedText>
                 </View>
                 <View className="flex-row items-center justify-between">
@@ -302,11 +388,13 @@ export default function PaymentScreen() {
           />
 
           {/* Security Info */}
-          <View className="mt-4 rounded-xl bg-blue-100 p-4 dark:bg-blue-900/20">
+          <View className="my-4 rounded-xl bg-blue-100 p-4 dark:bg-blue-900/20">
             <ThemedText type="body" className="text-center text-sm text-blue-600 dark:text-blue-400">
               💳 Your payment is secured by Stripe. We never store your card details.
             </ThemedText>
           </View>
+
+          <TabBarSpacerView />
         </SafeAreaScrollView>
       </ThemedContainerView>
     </ThemedBackgroundView>
