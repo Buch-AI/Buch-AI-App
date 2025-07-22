@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import React, { useEffect, useState, useMemo } from 'react';
-import { Alert, FlatList, TouchableOpacity, View } from 'react-native';
+import { Alert, TouchableOpacity, View } from 'react-native';
 import { SafeAreaScrollView } from '@/components/ui-custom/SafeAreaScrollView';
 import { TabBarSpacerView } from '@/components/ui-custom/TabBarSpacerView';
 import { ThemedActivityOverlay } from '@/components/ui-custom/ThemedActivityOverlay';
@@ -97,18 +97,16 @@ function ProductSection({ title, products, selectedProduct, onSelectProduct }: P
       <ThemedText type="title" className="mb-3 text-base">
         {title}
       </ThemedText>
-      <FlatList
-        data={products}
-        keyExtractor={(item) => item.product_id}
-        renderItem={({ item }) => (
+      <View>
+        {products.map((item) => (
           <ProductCard
+            key={item.product_id}
             product={item}
             onPress={() => onSelectProduct(item)}
             isSelected={selectedProduct?.product_id === item.product_id}
           />
-        )}
-        scrollEnabled={false}
-      />
+        ))}
+      </View>
     </View>
   );
 }
