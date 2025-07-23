@@ -499,8 +499,23 @@ export default function Editor() {
         <SafeAreaScrollView>
           <View>
             {isLoadingProfile ? (
-              <View className="items-center justify-center py-2">
-                <ActivityIndicator size="small" />
+              <View 
+                style={{
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  paddingVertical: 8,
+                }}
+              >
+                <View
+                  style={{
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    minWidth: 24,
+                    minHeight: 24,
+                  }}
+                >
+                  <ActivityIndicator size="small" />
+                </View>
                 <ThemedText className="mt-2">Loading creation profile...</ThemedText>
               </View>
             ) : !(hasActiveCreationId && !isGenningCreation) ? (
@@ -584,8 +599,24 @@ export default function Editor() {
           )}
 
           {isLoadingCreation ? (
-            <View className="my-6 items-center justify-center py-8">
-              <ActivityIndicator size="small" />
+            <View 
+              style={{
+                marginVertical: 24,
+                alignItems: 'center',
+                justifyContent: 'center',
+                paddingVertical: 32,
+              }}
+            >
+              <View
+                style={{
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  minWidth: 24,
+                  minHeight: 24,
+                }}
+              >
+                <ActivityIndicator size="small" />
+              </View>
               <ThemedText className="mt-2">Loading creation assets...</ThemedText>
             </View>
           ) : workflowState.creationParts.length > 0 && (

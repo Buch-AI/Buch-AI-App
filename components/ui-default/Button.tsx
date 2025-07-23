@@ -1,4 +1,4 @@
-import { TouchableOpacity, Text, ActivityIndicator } from 'react-native';
+import { TouchableOpacity, Text, ActivityIndicator, View } from 'react-native';
 
 interface ButtonProps {
   onPress: () => void;
@@ -14,7 +14,16 @@ export function Button({ onPress, children, disabled, loading }: ButtonProps) {
       onPress={onPress}
       disabled={disabled || loading}>
       {loading ? (
-        <ActivityIndicator color="#fff" />
+        <View
+          style={{
+            alignItems: 'center',
+            justifyContent: 'center',
+            minWidth: 24,
+            minHeight: 24,
+          }}
+        >
+          <ActivityIndicator color="#fff" />
+        </View>
       ) : (
         <Text className="text-lg font-semibold text-white">{children}</Text>
       )}
