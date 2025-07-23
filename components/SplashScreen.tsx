@@ -19,7 +19,9 @@ export function SplashScreenComponent() {
         <ThemedText type="title" className="text-center text-4xl font-bold tracking-wide text-white">
           Buch AI
         </ThemedText>
-        <ActivityIndicator size="small" className="mt-6" />
+        <View style={{ marginTop: 24, alignItems: 'center', justifyContent: 'center' }}>
+          <ActivityIndicator size="small" />
+        </View>
       </View>
     </View>
   );

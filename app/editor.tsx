@@ -499,7 +499,7 @@ export default function Editor() {
         <SafeAreaScrollView>
           <View>
             {isLoadingProfile ? (
-              <View className="items-center justify-center py-2">
+              <View style={{ alignItems: 'center', justifyContent: 'center', paddingVertical: 8 }}>
                 <ActivityIndicator size="small" />
                 <ThemedText className="mt-2">Loading creation profile...</ThemedText>
               </View>
@@ -584,7 +584,7 @@ export default function Editor() {
           )}
 
           {isLoadingCreation ? (
-            <View className="my-6 items-center justify-center py-8">
+            <View style={{ marginVertical: 24, alignItems: 'center', justifyContent: 'center', paddingVertical: 32 }}>
               <ActivityIndicator size="small" />
               <ThemedText className="mt-2">Loading creation assets...</ThemedText>
             </View>

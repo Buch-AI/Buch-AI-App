@@ -10,7 +10,14 @@ interface ButtonProps {
 export function Button({ onPress, children, disabled, loading }: ButtonProps) {
   return (
     <TouchableOpacity
-      className={`items-center rounded-lg bg-[#0a7ea4] p-3 ${disabled ? 'opacity-50' : ''}`}
+      style={{
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 8,
+        backgroundColor: '#0a7ea4',
+        padding: 12,
+        opacity: disabled ? 0.5 : 1,
+      }}
       onPress={onPress}
       disabled={disabled || loading}>
       {loading ? (

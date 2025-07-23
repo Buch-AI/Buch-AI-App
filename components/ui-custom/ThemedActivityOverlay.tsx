@@ -100,7 +100,7 @@ export function ThemedActivityOverlay({
       }}
     >
       <View className="rounded-xl bg-white p-6 dark:bg-gray-800">
-        <View className="items-center">
+        <View style={{ alignItems: 'center', justifyContent: 'center' }}>
           <ActivityIndicator size={size} color={finalIndicatorColor} />
           {text && (
             <ThemedText type="body" className="mt-4 text-center">

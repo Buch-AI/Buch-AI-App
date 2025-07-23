@@ -81,7 +81,7 @@ export function DocumentScreen({ filename, title }: DocumentScreenProps) {
         {/* Content */}
         <SafeAreaScrollView className="flex-1 px-4">
           {isLoading ? (
-            <View className="flex-1 items-center justify-center py-20">
+            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: 80 }}>
               <ActivityIndicator size="large" color={tintColor} />
               <ThemedText className="mt-4 text-center text-gray-600 dark:text-gray-400">
                 Loading {title}...
