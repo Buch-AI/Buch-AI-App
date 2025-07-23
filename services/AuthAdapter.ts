@@ -23,6 +23,21 @@ interface User {
   disabled?: boolean | null;
 }
 
+// Interface for user registration request
+interface RegistrationRequest {
+  username: string;
+  email: string;
+  password: string;
+}
+
+// Interface for registration response
+interface RegistrationResponse {
+  message: string;
+  user_id: string;
+  username: string;
+  email: string;
+}
+
 // Function to log in and retrieve an access token
 export async function login(username: string, password: string): Promise<TokenResponse> {
   // Create a request body that conforms to the LoginRequest interface
@@ -88,5 +103,38 @@ export async function getCurrentUser(token: string): Promise<User> {
   } catch (error: any) {
     Logger.error(`Failed to retrieve user information: ${error}`);
     throw error; // Rethrow the error for handling in the component
+  }
+}
+
+// Function to register a new user
+export async function registerUser(userData: {
+  username: string;
+  email: string;
+  password: string;
+}): Promise<RegistrationResponse> {
+  const requestBody: RegistrationRequest = {
+    username: userData.username,
+    email: userData.email,
+    password: userData.password,
+  };
+
+  try {
+    const response = await axios.post(`${BUCHAI_SERVER_URL}/auth/register`, requestBody, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    Logger.info(`User registration successful: ${JSON.stringify(response.data)}`);
+    return response.data;
+  } catch (error: any) {
+    if (error.response) {
+      Logger.error(`User registration failed: ${JSON.stringify(error.response.data)}`);
+      // Extract the error message from the response if available
+      const errorMessage = error.response.data?.detail || 'Registration failed';
+      throw new Error(errorMessage);
+    } else {
+      Logger.error(`User registration failed: ${error}`);
+      throw new Error('Registration failed');
+    }
   }
 }

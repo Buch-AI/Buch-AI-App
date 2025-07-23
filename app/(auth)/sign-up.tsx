@@ -9,7 +9,7 @@ import { ThemedImage } from '@/components/ui-custom/ThemedImage';
 import { ThemedText } from '@/components/ui-custom/ThemedText';
 import { ThemedTextInput } from '@/components/ui-custom/ThemedTextInput';
 import { useAuth } from '@/contexts/AuthContext';
-import { registerUser } from '@/services/DatabaseAdapter';
+import { registerUser } from '@/services/AuthAdapter';
 import Logger from '@/utils/Logger';
 
 export default function SignUpScreen() {
@@ -29,8 +29,7 @@ export default function SignUpScreen() {
       setLoading(true);
       try {
         const userData = {
-          user_id: email,
-          username: email,
+          username: email, // Using email as username for simplicity
           email,
           password,
         };
