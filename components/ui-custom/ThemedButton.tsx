@@ -123,7 +123,9 @@ export const ThemedButton: React.FC<ThemedButtonProps> = ({
       style={buttonStyle}
       disabled={disabled || loading}>
       {loading ? (
-        <ActivityIndicator color={variant === 'outline' || variant === 'text' ? tintColor : (textClass === 'text-white' ? '#FFFFFF' : '#374151')} />
+        <View className="items-center justify-center">
+          <ActivityIndicator color={variant === 'outline' || variant === 'text' ? tintColor : (textClass === 'text-white' ? '#FFFFFF' : '#374151')} />
+        </View>
       ) : (
         <>
           {icon && iconOnly && (
