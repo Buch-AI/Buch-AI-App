@@ -1,8 +1,9 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { View, ActivityIndicator, Platform } from 'react-native';
+import { View, Platform } from 'react-native';
 import { SafeAreaScrollView } from '@/components/ui-custom/SafeAreaScrollView';
+import { Spinner } from '@/components/ui-custom/Spinner';
 import { ThemedBackgroundView } from '@/components/ui-custom/ThemedBackgroundView';
 import { ThemedButton } from '@/components/ui-custom/ThemedButton';
 import { ThemedContainerView } from '@/components/ui-custom/ThemedContainerView';
@@ -500,7 +501,7 @@ export default function Editor() {
           <View>
             {isLoadingProfile ? (
               <View className="items-center justify-center py-2">
-                <ActivityIndicator size="small" />
+                <Spinner size="small" />
                 <ThemedText className="mt-2">Loading creation profile...</ThemedText>
               </View>
             ) : !(hasActiveCreationId && !isGenningCreation) ? (
@@ -585,7 +586,7 @@ export default function Editor() {
 
           {isLoadingCreation ? (
             <View className="my-6 items-center justify-center py-8">
-              <ActivityIndicator size="small" />
+              <Spinner size="small" />
               <ThemedText className="mt-2">Loading creation assets...</ThemedText>
             </View>
           ) : workflowState.creationParts.length > 0 && (

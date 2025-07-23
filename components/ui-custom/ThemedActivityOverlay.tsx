@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, ActivityIndicator, Animated } from 'react-native';
+import { View, Animated } from 'react-native';
 import { useThemeColor } from '@/hooks/useThemeColor';
+import { Spinner } from './Spinner';
 import { ThemedText } from './ThemedText';
 
 interface ThemedActivityOverlayProps {
@@ -101,7 +102,7 @@ export function ThemedActivityOverlay({
     >
       <View className="rounded-xl bg-white p-6 dark:bg-gray-800">
         <View className="items-center">
-          <ActivityIndicator size={size} color={finalIndicatorColor} />
+          <Spinner size={size} color={finalIndicatorColor} />
           {text && (
             <ThemedText type="body" className="mt-4 text-center">
               {text}

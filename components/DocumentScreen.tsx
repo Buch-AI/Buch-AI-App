@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import React from 'react';
-import { View, ActivityIndicator } from 'react-native';
+import { View } from 'react-native';
 import Markdown from 'react-native-markdown-display';
 import { SafeAreaScrollView } from '@/components/ui-custom/SafeAreaScrollView';
 import { ThemedBackgroundView } from '@/components/ui-custom/ThemedBackgroundView';
@@ -10,6 +10,7 @@ import { ThemedContainerView } from '@/components/ui-custom/ThemedContainerView'
 import { ThemedText } from '@/components/ui-custom/ThemedText';
 import { useMarkdownDocument, createMarkdownStyles } from '@/hooks/useMarkdownDocument';
 import { useThemeColor } from '@/hooks/useThemeColor';
+import { Spinner } from './ui-custom/Spinner';
 
 /**
  * Props for the DocumentScreen component
@@ -82,7 +83,7 @@ export function DocumentScreen({ filename, title }: DocumentScreenProps) {
         <SafeAreaScrollView className="flex-1 px-4">
           {isLoading ? (
             <View className="flex-1 items-center justify-center py-20">
-              <ActivityIndicator size="large" color={tintColor} />
+              <Spinner size="large" color={tintColor} />
               <ThemedText className="mt-4 text-center text-gray-600 dark:text-gray-400">
                 Loading {title}...
               </ThemedText>
