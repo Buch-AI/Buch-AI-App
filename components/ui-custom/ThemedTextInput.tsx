@@ -37,10 +37,12 @@ export function ThemedTextInput(props: ThemedTextInputProps) {
 
   const labelStyle = {
     position: 'absolute' as const,
-    left: SPACING * 2, // calc(var(--spacing) * 2) = 8px to match p-2
+    // NOTE: +2 is to match the border-2
+    left: SPACING * 2 + 2, // calc(var(--spacing) * 2) = 8px to match p-2
     top: animatedValue.interpolate({
       inputRange: [0, 1],
-      outputRange: [SPACING * 2 + 2, -SPACING * 2], // [10px, -8px] - centered in input, then floating above
+      // NOTE: +4 is to match the border-2 (2 pixels on each side)
+      outputRange: [SPACING * 2 + 4, -SPACING * 2], // [10px, -8px] - centered in input, then floating above
     }),
     fontSize: animatedValue.interpolate({
       inputRange: [0, 1],
@@ -68,7 +70,7 @@ export function ThemedTextInput(props: ThemedTextInputProps) {
           {label}
         </Animated.Text>
         <TextInput
-          className={`w-full rounded-lg border border-gray-200 ${editable === false ? '!bg-gray-400/40' : '!bg-white/40'} p-2 text-base shadow-custom backdrop-blur-sm transition-colors duration-200 focus:border-blue-500 focus:bg-white focus:shadow-custom-focused dark:border-gray-800 dark:bg-gray-800/80 dark:focus:border-blue-400 dark:focus:bg-gray-800`}
+          className={`w-full rounded-lg border-2 border-gray-600 ${editable === false ? '!bg-gray-400/40' : '!bg-white/40'} p-2 text-base shadow-custom backdrop-blur-sm transition-colors duration-200 focus:border-blue-500 focus:bg-white focus:shadow-custom-focused dark:border-gray-800 dark:bg-gray-800/80 dark:focus:border-blue-400 dark:focus:bg-gray-800`}
           style={[{ color, backgroundColor }, style]}
           value={value}
           onFocus={(e) => {
@@ -88,8 +90,10 @@ export function ThemedTextInput(props: ThemedTextInputProps) {
             onPress={() => setIsPasswordVisible(!isPasswordVisible)}
             style={{
               position: 'absolute',
-              right: SPACING * 2, // calc(var(--spacing) * 2) = 8px to match right-2
-              top: SPACING * 2, // calc(var(--spacing) * 2) = 8px to match top-2
+              // NOTE: +2 is to match the border-2
+              top: SPACING * 2 + 2, // calc(var(--spacing) * 2) = 8px to match top-2
+              // NOTE: +2 is to match the border-2
+              right: SPACING * 2 + 2, // calc(var(--spacing) * 2) = 8px to match right-2
             }}
           >
             <Ionicons

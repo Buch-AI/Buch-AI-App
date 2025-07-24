@@ -4,10 +4,10 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { Alert, TouchableOpacity, View } from 'react-native';
 import { SafeAreaScrollView } from '@/components/ui-custom/SafeAreaScrollView';
 import { TabBarSpacerView } from '@/components/ui-custom/TabBarSpacerView';
-import { ThemedActivityOverlay } from '@/components/ui-custom/ThemedActivityOverlay';
 import { ThemedBackgroundView } from '@/components/ui-custom/ThemedBackgroundView';
 import { ThemedButton } from '@/components/ui-custom/ThemedButton';
 import { ThemedContainerView } from '@/components/ui-custom/ThemedContainerView';
+import { ThemedSpinnerOverlay } from '@/components/ui-custom/ThemedSpinnerOverlay';
 import { ThemedText } from '@/components/ui-custom/ThemedText';
 import { useAuth } from '@/contexts/AuthContext';
 import { useColorScheme } from '@/hooks/useColorScheme';
@@ -31,7 +31,7 @@ function ProductCard({ product, onPress, isSelected }: ProductCardProps) {
       onPress={onPress}
       delayPressIn={70} // 70 ms delay to allow scroll gestures to start before touch is captured
       activeOpacity={0.8} // Visual feedback when pressed - reduces opacity to 80%
-      className={`mb-4 rounded-xl border-2 p-4 ${
+      className={`mb-4 rounded-xl border-2 p-4 shadow-custom ${
         isSelected ? 'border-blue-500' : 'border-gray-200 dark:border-gray-700'
       }`}
       style={{
@@ -277,7 +277,7 @@ export default function PaymentScreen() {
 
   return (
     <ThemedBackgroundView>
-      <ThemedActivityOverlay
+      <ThemedSpinnerOverlay
         visible={isLoading}
         text="Loading products..."
       />

@@ -18,7 +18,7 @@ export default function TabLayout() {
         tabBarButton: HapticTab,
         tabBarLabelPosition: 'below-icon',
         tabBarBackground: () => (
-          <View className={`absolute inset-0 ${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-2xl shadow-custom-focused`} />
+          <View className={`absolute inset-0 ${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-2xl border-2 border-gray-600 shadow-custom-focused`} />
         ),
         tabBarStyle: {
           position: 'absolute',

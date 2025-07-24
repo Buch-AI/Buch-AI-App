@@ -47,34 +47,39 @@ export const ThemedButton: React.FC<ThemedButtonProps> = ({
   case 'primary':
     // For primary, we use the tint color directly in style instead of classes
     bgClass = '';
+    borderClass = 'border-2 border-gray-600'; // Default border, will be overridden by style
     textClass = isDark ? 'text-white' : 'text-white';
     break;
   case 'secondary':
     bgClass = isDark ? 'bg-gray-800' : 'bg-gray-200';
+    borderClass = 'border-2 border-gray-600'; // Default border, will be overridden by style
     textClass = isDark ? 'text-white' : 'text-gray-800';
     break;
   case 'danger':
     bgClass = 'bg-red-400';
+    borderClass = 'border-2 border-gray-600'; // Default border, will be overridden by style
     textClass = 'text-white';
     break;
   case 'success':
     textClass = 'text-white';
+    borderClass = 'border-2 border-gray-600'; // Default border, will be overridden by style
     bgClass = 'bg-green-400';
     break;
   case 'outline':
     // For outline, we use tint color directly for text and border
     bgClass = 'bg-transparent';
-    borderClass = 'border border-gray-200'; // Default border, will be overridden by style
+    borderClass = 'border-2 border-gray-600'; // Default border, will be overridden by style
     textClass = 'text-blue-400'; // Default text color, will be overridden by style
     break;
   case 'text':
     // For text, we use tint color directly for text
     bgClass = 'bg-transparent';
-    borderClass = 'border border-gray-200'; // Default border, will be overridden by style
+    borderClass = 'border border-gray-600'; // Default border, will be overridden by style
     textClass = 'text-blue-400'; // Default text color, will be overridden by style
     break;
   case 'icon':
     bgClass = isDark ? 'bg-gray-800' : 'bg-gray-200';
+    borderClass = 'border-2 border-gray-600'; // Default border, will be overridden by style
     textClass = isDark ? 'text-white' : 'text-gray-800';
     break;
   }

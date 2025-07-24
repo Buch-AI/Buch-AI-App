@@ -152,9 +152,9 @@ export default function PaymentResultScreen() {
             <View className={`mb-8 w-full rounded-xl p-6 ${getBackgroundColor()}`}>
               <View className="items-center">
                 <ThemedText type="body" className={`text-center text-sm ${getTextColor()}`}>
-                  {finalIsSuccess && '✅ Transaction completed successfully'}
-                  {isCancelled && '⚠️ No charges were made'}
-                  {!finalIsSuccess && !isCancelled && '❌ Payment processing failed'}
+                  {finalIsSuccess && '✅ Transaction completed successfully.'}
+                  {isCancelled && '⚠️ No charges were made.'}
+                  {!finalIsSuccess && !isCancelled && '❌ Payment processing failed.'}
                 </ThemedText>
               </View>
             </View>
@@ -181,7 +181,7 @@ export default function PaymentResultScreen() {
             {finalIsSuccess && (
               <View className="mt-8 w-full rounded-xl bg-blue-100 p-4 dark:bg-blue-900/20">
                 <ThemedText type="body" className="text-center text-sm text-blue-600 dark:text-blue-400">
-                   💡 You can view your updated credits and features in your profile
+                   💡 You can view your updated credits and features in your profile.
                 </ThemedText>
               </View>
             )}

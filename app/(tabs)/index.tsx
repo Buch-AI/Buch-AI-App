@@ -148,7 +148,7 @@ export default function Home() {
   };
 
   const renderCreationItem = ({ item }: { item: Creation }) => (
-    <View className="mb-4 rounded-lg !bg-white/40 p-4">
+    <View className="mb-4 rounded-lg border border-gray-600 !bg-white/40 p-4 shadow-custom">
       <View className="flex-row items-start justify-between">
         {isSelecting && (
           <ThemedCheckbox

@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { View, Pressable } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
 import { SafeAreaScrollView } from '@/components/ui-custom/SafeAreaScrollView';
 import { TabBarSpacerView } from '@/components/ui-custom/TabBarSpacerView';
 import { ThemedBackgroundView } from '@/components/ui-custom/ThemedBackgroundView';
@@ -93,13 +93,13 @@ export default function ProfileScreen() {
   ];
 
   const renderProfileItem = (item: ProfileItem, index: number) => (
-    <Pressable
+    <TouchableOpacity
       key={index}
       onPress={item.onPress}
       disabled={item.disabled}
-      className={`mb-3 rounded-lg p-4 ${
+      className={`mb-3 rounded-lg border-2 border-gray-600 p-4 shadow-custom ${
         item.disabled ?
-          'bg-gray-200/60 dark:bg-gray-700/60' :
+          'bg-gray-200/60 dark:bg-gray-800/60' :
           'bg-white/60 active:bg-white/80 dark:bg-gray-800/60 dark:active:bg-gray-800/80'
       }`}
     >
@@ -134,7 +134,7 @@ export default function ProfileScreen() {
           />
         )}
       </View>
-    </Pressable>
+    </TouchableOpacity>
   );
 
   return (
@@ -148,11 +148,11 @@ export default function ProfileScreen() {
           {/* User Information Section */}
           <View className="mb-8">
             {loading ? (
-              <View className="rounded-lg bg-white/60 p-4 dark:bg-gray-800/60">
+              <View className="rounded-lg border-2 border-gray-600 bg-white/60 p-4 shadow-custom dark:bg-gray-800/60">
                 <ThemedText className="text-center opacity-70">Loading your profile...</ThemedText>
               </View>
             ) : user ? (
-              <View className="rounded-lg bg-white/60 p-4 dark:bg-gray-800/60">
+              <View className="rounded-lg border-2 border-gray-600 bg-white/60 p-4 shadow-custom dark:bg-gray-800/60">
                 <View className="flex-row items-center">
                   <View className="mr-4 size-16 items-center justify-center rounded-full bg-gray-200 dark:bg-gray-700">
                     <Ionicons name="person" size={32} color={tintColor} />

@@ -4,7 +4,7 @@ import { useThemeColor } from '@/hooks/useThemeColor';
 import { Spinner } from './Spinner';
 import { ThemedText } from './ThemedText';
 
-interface ThemedActivityOverlayProps {
+interface ThemedSpinnerOverlayProps {
   /** Whether the overlay is visible */
   visible: boolean;
   /** Text to display below the activity indicator */
@@ -27,17 +27,17 @@ interface ThemedActivityOverlayProps {
  * @example
  * ```tsx
  * // Basic usage
- * <ThemedActivityOverlay visible={isLoading} text="Loading..." />
+ * <ThemedSpinnerOverlay visible={isLoading} text="Loading..." />
  *
  * // With custom opacity
- * <ThemedActivityOverlay
+ * <ThemedSpinnerOverlay
  *   visible={isLoading}
  *   text="Processing payment..."
  *   backgroundOpacity={0.5}
  * />
  *
  * // Small indicator with custom color
- * <ThemedActivityOverlay
+ * <ThemedSpinnerOverlay
  *   visible={isLoading}
  *   text="Saving..."
  *   size="small"
@@ -45,13 +45,13 @@ interface ThemedActivityOverlayProps {
  * />
  * ```
  */
-export function ThemedActivityOverlay({
+export function ThemedSpinnerOverlay({
   visible,
   text = 'Loading...',
   backgroundOpacity = 0.2,
   size = 'large',
   indicatorColor,
-}: ThemedActivityOverlayProps) {
+}: ThemedSpinnerOverlayProps) {
   const tintColor = useThemeColor({}, 'tint');
   const finalIndicatorColor = indicatorColor ?? tintColor;
   const fadeAnim = useRef(new Animated.Value(0)).current;

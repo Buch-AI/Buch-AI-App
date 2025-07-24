@@ -62,7 +62,7 @@ export default function LegalScreen() {
             <Pressable
               key={index}
               onPress={() => handleItemPress(item.route)}
-              className="mb-3 rounded-lg bg-white/60 p-4 active:bg-white/80 dark:bg-gray-800/60 dark:active:bg-gray-800/80"
+              className="mb-3 rounded-lg border-2 border-gray-600 bg-white/60 p-4 shadow-custom active:bg-white/80 dark:bg-gray-800/60 dark:active:bg-gray-800/80"
             >
               <View className="flex-row items-center justify-between">
                 <View className="flex-1">
